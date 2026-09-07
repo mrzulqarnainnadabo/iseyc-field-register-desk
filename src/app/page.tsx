@@ -23,17 +23,26 @@ export default function Page() {
   return (
     <div className="flex min-h-screen flex-col bg-desk-paper">
       <Header />
-      <main className="mx-auto w-full max-w-3xl flex-1 px-3 py-5 sm:px-6 sm:py-8">
-        {!notionConfigured && <div className="mb-5 rounded-xl border border-amber-300/80 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950" role="status">{COPY.configBanner}</div>}
-        <div className="mb-5 sm:mb-6"><Tabs active={tab} onChange={setTab} /></div>
-        {tab === "rsvp" ? (
-          <div className="space-y-4 sm:space-y-5">
-            <EventStrip />
-            <TrustStrip />
-            <div className="rounded-xl border border-desk-line/70 bg-white/70 px-4 py-3 sm:px-5"><p className="text-sm leading-6 text-desk-ink/70">{COPY.rsvpIntro}</p></div>
-            <RsvpForm />
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 sm:py-9">
+        {!notionConfigured && (
+          <div className="mb-6 rounded-2xl border border-amber-300/80 bg-amber-50 px-4 py-3.5 text-sm leading-6 text-amber-950" role="status">
+            {COPY.configBanner}
           </div>
-        ) : <ParticipationForm passcodeRequired={passcodeRequired} />}
+        )}
+
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-5 sm:mb-6"><Tabs active={tab} onChange={setTab} /></div>
+          {tab === "rsvp" ? (
+            <div className="space-y-5 sm:space-y-6">
+              <EventStrip />
+              <TrustStrip />
+              <div className="px-1 sm:px-2">
+                <p className="text-sm font-medium leading-6 text-desk-ink/65 sm:text-[0.95rem]">{COPY.rsvpIntro}</p>
+              </div>
+              <RsvpForm />
+            </div>
+          ) : <ParticipationForm passcodeRequired={passcodeRequired} />}
+        </div>
       </main>
       <Footer />
     </div>
