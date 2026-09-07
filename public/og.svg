@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0B3D2E"/>
+  <rect x="48" y="48" width="1104" height="534" fill="none" stroke="#D4A017" stroke-width="2" opacity="0.35"/>
+  <text x="80" y="160" font-family="Georgia, serif" font-size="28" fill="#D4A017" letter-spacing="4">ISEYC</text>
+  <text x="80" y="240" font-family="Georgia, serif" font-size="52" fill="#FFFFFF" font-weight="600">Field Register Desk</text>
+  <text x="80" y="300" font-family="system-ui, sans-serif" font-size="26" fill="#E8F0EC">Tirngan Sickle Cell Foundation</text>
+  <text x="80" y="350" font-family="system-ui, sans-serif" font-size="22" fill="#A8C4B8">Programme led by Tirngan · Systems powered by ISEYC</text>
+  <text x="80" y="480" font-family="system-ui, sans-serif" font-size="20" fill="#A8C4B8">RSVP · Participation records · 18 September 2026</text>
+  <text x="80" y="530" font-family="system-ui, sans-serif" font-size="18" fill="#7A9A8C">Not a medical record</text>
+</svg>

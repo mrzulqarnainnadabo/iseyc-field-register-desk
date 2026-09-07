@@ -12,10 +12,41 @@ export const EVENT = {
   venue: "LIMCEEG Multipurpose Event Centre, Karji, Yakowa Express Way",
 } as const;
 
+/**
+ * Partnership model (do not over-claim ownership):
+ * - Tirngan leads the programme and field work.
+ * - ISEYC provides the Field Register Desk as systems support.
+ * - Records serve programme integrity and recognition — not medical care.
+ */
 export const ORG = {
   name: "ISEYC",
   fullName: "Initiative for Sustainable Evolution for Youth and Community",
   supportLine: `In support of ${EVENT.programme}`,
+  partnershipLine: "Programme led by Tirngan · Systems powered by ISEYC",
+  tagline: "Community systems for participation, recognition, and integrity",
+  web: "https://www.iseyc.com.ng",
+  email: "iseycglobal@gmail.com",
+} as const;
+
+export const SITE = {
+  productName: "Field Register Desk",
+  title: "Field Register Desk · Tirngan × ISEYC",
+  description:
+    "Official register desk for Tirngan Sickle Cell Foundation — RSVP for the 5th Anniversary Dinner (18 September 2026) and ongoing programme participation records. Programme led by Tirngan. Systems powered by ISEYC. Not a medical record.",
+  shortDescription:
+    "RSVP and field participation records for Tirngan Sickle Cell Foundation. Powered by ISEYC.",
+  keywords: [
+    "Tirngan Sickle Cell Foundation",
+    "ISEYC",
+    "Field Register Desk",
+    "sickle cell Nigeria",
+    "5th anniversary dinner",
+    "caregiver recognition",
+    "genotype awareness",
+    "community health register",
+    "Karji",
+    "programme participation",
+  ],
 } as const;
 
 // --- RSVP (Database A) ---
