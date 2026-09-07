@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     description: SITE.shortDescription,
     images: [
       {
-        url: "/og.png",
+        url: "/og.svg",
         width: 1200,
         height: 630,
         alt: `${SITE.productName} — ${EVENT.programme} · Powered by ISEYC`,
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SITE.title,
     description: SITE.shortDescription,
-    images: ["/og.png"],
+    images: [`${siteUrl}/og.svg`],
   },
   other: {
     "theme-color": "#0B3D2E",
