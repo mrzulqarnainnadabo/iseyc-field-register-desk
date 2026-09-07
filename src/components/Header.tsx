@@ -21,11 +21,11 @@ export function Header() {
         <div className="flex min-h-[76px] items-center justify-between gap-5 py-3.5 sm:min-h-[88px] sm:py-4">
           <div className="flex min-w-0 items-center gap-3.5 sm:gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center sm:h-14 sm:w-14">
-              <BrandMark src="/brand/iseyc-mark.svg" alt={ORG.name} fallback="ISEYC" />
+              <BrandMark src="/brand/iseyc-mark.svg" alt="ISEYC" fallback="ISEYC" />
             </div>
             <div className="min-w-0">
-              <p className="text-[0.66rem] font-extrabold uppercase tracking-[0.2em] text-desk-green">ISEYC</p>
-              <p className="mt-0.5 truncate text-sm font-semibold tracking-[-0.01em] text-desk-ink sm:text-[0.92rem]">Registration Desk</p>
+              <p className="text-[0.66rem] font-extrabold uppercase tracking-[0.2em] text-desk-green">ISEYC × TIRNGAN</p>
+              <p className="mt-0.5 truncate text-sm font-semibold tracking-[-0.01em] text-desk-ink sm:text-[0.92rem]">Joint Registration Desk</p>
             </div>
           </div>
 
