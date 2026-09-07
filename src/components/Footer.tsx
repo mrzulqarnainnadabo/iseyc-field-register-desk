@@ -1,4 +1,4 @@
-import { COPY, ORG, PARTNER } from "@/lib/constants";
+import { COPY, ORG } from "@/lib/constants";
 
 export function Footer() {
   return (
