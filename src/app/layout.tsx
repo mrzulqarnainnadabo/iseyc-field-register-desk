@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { SITE, ORG, EVENT } from "@/lib/constants";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta", display: "swap" });
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
@@ -44,7 +44,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${manrope.variable} min-h-screen bg-desk-paper font-sans antialiased`}>
+      <body className={`${inter.variable} ${jakarta.variable} min-h-screen bg-desk-paper font-sans antialiased`}>
         {children}
       </body>
     </html>
