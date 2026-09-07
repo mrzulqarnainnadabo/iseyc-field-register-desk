@@ -33,26 +33,34 @@ export function RsvpForm() {
 
   if (status === "success") {
     return (
-      <section className="overflow-hidden rounded-3xl border border-desk-green/15 bg-white shadow-[0_16px_45px_rgba(16,34,27,0.08)]" role="status" aria-live="polite">
-        <div className="border-t-4 border-desk-green px-5 py-8 text-center sm:px-8 sm:py-10">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-desk-green text-2xl font-black text-white shadow-lg shadow-desk-green/15">✓</div>
-          <p className="mt-5 text-2xl font-extrabold tracking-tight text-desk-ink">{COPY.rsvpSuccessTitle}</p>
-          <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-desk-ink/60">{COPY.rsvpSuccessBody}</p>
-          <div className="mx-auto mt-6 max-w-md rounded-2xl border border-desk-line bg-desk-paper/70 px-4 py-4 text-left">
-            <p className="text-xs font-extrabold uppercase tracking-[0.12em] text-desk-green">Next step</p>
+      <section className="overflow-hidden rounded-[28px] border border-desk-green/15 bg-white shadow-[0_24px_70px_rgba(16,34,27,0.08)]" role="status" aria-live="polite">
+        <div className="bg-[#0b6848] px-5 py-8 text-center text-white sm:px-8 sm:py-10">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-2xl font-black text-desk-green shadow-xl">✓</div>
+          <p className="mt-5 text-[1.7rem] font-extrabold tracking-[-0.04em]">{COPY.rsvpSuccessTitle}</p>
+          <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-white/72">{COPY.rsvpSuccessBody}</p>
+        </div>
+        <div className="px-5 py-5 sm:px-8 sm:py-6">
+          <div className="rounded-2xl border border-desk-line bg-desk-paper/65 px-4 py-4">
+            <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.14em] text-desk-green">What happens next</p>
             <p className="mt-1.5 text-sm leading-6 text-desk-ink/65">Please keep the event date and venue details available. If your plans change, contact the programme team through the official channel.</p>
           </div>
-          <div className="mt-7"><PrimaryButton type="button" onClick={() => { setForm(initial); setStatus("idle"); }}>Register another guest</PrimaryButton></div>
+          <div className="mt-5"><PrimaryButton type="button" onClick={() => { setForm(initial); setStatus("idle"); }}>Register another guest</PrimaryButton></div>
         </div>
       </section>
     );
   }
 
   return (
-    <form onSubmit={onSubmit} className="rounded-3xl border border-desk-line bg-white p-4 shadow-[0_14px_40px_rgba(16,34,27,0.06)] sm:p-6">
-      <div className="mb-6 border-b border-desk-line/80 pb-4">
-        <h2 className="text-xl font-extrabold tracking-tight text-desk-ink">Confirm your attendance</h2>
-        <p className="mt-1.5 text-xs leading-5 text-desk-ink/55">Complete the details below. Fields marked <span className="font-bold text-desk-accent">*</span> are required.</p>
+    <form onSubmit={onSubmit} className="rounded-[28px] border border-black/[0.07] bg-white p-4 shadow-[0_20px_60px_rgba(16,34,27,0.07)] sm:p-7">
+      <div className="mb-6 border-b border-desk-line/80 pb-5">
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-[0.62rem] font-extrabold uppercase tracking-[0.16em] text-desk-green">Registration</p>
+            <h2 className="mt-1.5 text-[1.45rem] font-extrabold tracking-[-0.04em] text-desk-ink">Reserve your place</h2>
+          </div>
+          <span className="hidden rounded-full bg-desk-paper px-3 py-1.5 text-[0.62rem] font-bold uppercase tracking-[0.12em] text-desk-ink/45 sm:inline-flex">About 1 minute</span>
+        </div>
+        <p className="mt-2 max-w-xl text-sm leading-6 text-desk-ink/55">Tell us who you are and how you plan to attend so the programme team can prepare for you.</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
         <Field label="Full name" htmlFor="rsvp-name" required error={errors.name}><TextInput id="rsvp-name" value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Name for the guest list" autoComplete="name" /></Field>
@@ -66,7 +74,7 @@ export function RsvpForm() {
         <div className="sm:col-span-2"><Checkbox id="rsvp-consent" label="I agree that these details may be kept for event planning and programme records." checked={form.consent} onChange={(v) => update("consent", v)} />{errors.consent && <p className="mt-1 text-xs font-medium text-red-700">{errors.consent}</p>}</div>
       </div>
       {serverError && <p className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm leading-relaxed text-red-700" role="alert">{serverError}</p>}
-      <div className="mt-6"><PrimaryButton type="submit" disabled={submitting}>{submitting ? "Submitting…" : "Confirm registration"}</PrimaryButton></div>
+      <div className="mt-6"><PrimaryButton type="submit" disabled={submitting}>{submitting ? "Submitting…" : "Complete registration"}</PrimaryButton></div>
     </form>
   );
 }
