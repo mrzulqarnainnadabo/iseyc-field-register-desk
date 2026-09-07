@@ -1,6 +1,6 @@
 "use client";
 
-import { ORG, PARTNER, SITE } from "@/lib/constants";
+import { ORG, PARTNER } from "@/lib/constants";
 import { useState } from "react";
 
 function BrandMark({ src, alt, fallback, className = "" }: { src: string; alt: string; fallback: string; className?: string }) {
@@ -16,34 +16,33 @@ function BrandMark({ src, alt, fallback, className = "" }: { src: string; alt: s
 
 export function Header() {
   return (
-    <header className="border-b border-black/10 bg-white">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6">
-        <div className="flex min-h-[92px] items-center justify-between gap-4 py-4 sm:min-h-[104px] sm:py-5">
-          <div className="flex min-w-0 items-center gap-3 sm:gap-4">
-            <div className="flex h-[62px] w-[62px] shrink-0 items-center justify-center rounded-2xl bg-white p-1 shadow-[0_8px_24px_rgba(16,34,27,0.10)] ring-1 ring-black/10 sm:h-[74px] sm:w-[74px]">
-              <BrandMark src="/brand/iseyc.svg" alt={ORG.name} fallback="ISEYC" />
+    <header className="border-b border-black/[0.07] bg-white/95 backdrop-blur">
+      <div className="mx-auto max-w-6xl px-4 sm:px-7">
+        <div className="flex min-h-[76px] items-center justify-between gap-5 py-3.5 sm:min-h-[88px] sm:py-4">
+          <div className="flex min-w-0 items-center gap-3.5 sm:gap-4">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center sm:h-14 sm:w-14">
+              <BrandMark src="/brand/iseyc-mark.svg" alt={ORG.name} fallback="ISEYC" />
             </div>
             <div className="min-w-0">
-              <p className="text-[0.66rem] font-bold uppercase tracking-[0.18em] text-desk-green/70">{ORG.name}</p>
-              <p className="mt-1 max-w-[240px] text-sm font-extrabold leading-tight text-desk-ink sm:max-w-none sm:text-base">{SITE.productName}</p>
-              <p className="mt-1 hidden text-xs leading-5 text-desk-ink/55 sm:block">A simple, trusted registration desk for programme participation.</p>
+              <p className="text-[0.66rem] font-extrabold uppercase tracking-[0.2em] text-desk-green">ISEYC</p>
+              <p className="mt-0.5 truncate text-sm font-semibold tracking-[-0.01em] text-desk-ink sm:text-[0.92rem]">Registration Desk</p>
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3 sm:gap-4">
-            <div className="hidden h-10 w-px bg-black/10 sm:block" aria-hidden />
-            <div className="flex h-[62px] w-[118px] items-center justify-center rounded-2xl bg-white px-2 shadow-[0_8px_24px_rgba(16,34,27,0.08)] ring-1 ring-black/10 sm:h-[74px] sm:w-[150px]">
+          <div className="flex items-center gap-3 sm:gap-5">
+            <div className="hidden h-9 w-px bg-black/10 sm:block" aria-hidden />
+            <div className="h-11 w-[128px] sm:h-12 sm:w-[155px]">
               <BrandMark src="/brand/tirngan.svg" alt={PARTNER.name} fallback="Tirngan" />
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-black/[0.07] py-3.5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-2 text-xs font-semibold text-desk-ink/70">
-            <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-desk-green text-[10px] font-black text-white">✓</span>
-            <span>{ORG.partnershipLine}</span>
+        <div className="flex items-center justify-between gap-3 border-t border-black/[0.06] py-2.5">
+          <div className="flex min-w-0 items-center gap-2 text-[0.68rem] font-semibold text-desk-ink/60 sm:text-xs">
+            <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-desk-green text-[10px] font-black text-white">✓</span>
+            <span className="truncate">{ORG.partnershipLine}</span>
           </div>
-          <span className="text-[0.64rem] font-bold uppercase tracking-[0.12em] text-desk-ink/45">Official programme registration</span>
+          <span className="hidden shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-desk-ink/35 sm:block">Official registration</span>
         </div>
       </div>
     </header>
