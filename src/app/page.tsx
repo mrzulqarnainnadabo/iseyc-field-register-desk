@@ -11,58 +11,30 @@ import { ParticipationForm } from "@/components/ParticipationForm";
 import { COPY, EVENT } from "@/lib/constants";
 
 export default function Page() {
-  const defaultTab: TabKey = useMemo(() => {
-    const now = new Date();
-    const cutoff = new Date(EVENT.isoCutoff);
-    return now <= cutoff ? "rsvp" : "participation";
-  }, []);
-
+  const defaultTab: TabKey = useMemo(() => new Date() <= new Date(EVENT.isoCutoff) ? "rsvp" : "participation", []);
   const [tab, setTab] = useState<TabKey>(defaultTab);
   const [passcodeRequired, setPasscodeRequired] = useState(false);
   const [notionConfigured, setNotionConfigured] = useState(true);
 
   useEffect(() => {
-    fetch("/api/health")
-      .then((r) => r.json())
-      .then((d) => {
-        setPasscodeRequired(Boolean(d.staffPasscodeEnabled));
-        setNotionConfigured(Boolean(d.notionConfigured));
-      })
-      .catch(() => {
-        /* submit endpoints still validate server-side */
-      });
+    fetch("/api/health").then((r) => r.json()).then((d) => { setPasscodeRequired(Boolean(d.staffPasscodeEnabled)); setNotionConfigured(Boolean(d.notionConfigured)); }).catch(() => {});
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-desk-paper">
       <Header />
-
-      <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">
-        {!notionConfigured && (
-          <div
-            className="mb-4 rounded-lg border border-amber-300/80 bg-amber-50 px-3 py-3 text-sm text-amber-950"
-            role="status"
-          >
-            {COPY.configBanner}
-          </div>
-        )}
-
-        <div className="mb-5">
-          <Tabs active={tab} onChange={setTab} />
-        </div>
-
+      <main className="mx-auto w-full max-w-3xl flex-1 px-3 py-5 sm:px-6 sm:py-8">
+        {!notionConfigured && <div className="mb-5 rounded-xl border border-amber-300/80 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950" role="status">{COPY.configBanner}</div>}
+        <div className="mb-5 sm:mb-6"><Tabs active={tab} onChange={setTab} /></div>
         {tab === "rsvp" ? (
-          <div className="flex flex-col gap-4">
+          <div className="space-y-4 sm:space-y-5">
             <EventStrip />
             <TrustStrip />
-            <p className="text-sm text-desk-ink/70">{COPY.rsvpIntro}</p>
+            <div className="rounded-xl border border-desk-line/70 bg-white/70 px-4 py-3 sm:px-5"><p className="text-sm leading-6 text-desk-ink/70">{COPY.rsvpIntro}</p></div>
             <RsvpForm />
           </div>
-        ) : (
-          <ParticipationForm passcodeRequired={passcodeRequired} />
-        )}
+        ) : <ParticipationForm passcodeRequired={passcodeRequired} />}
       </main>
-
       <Footer />
     </div>
   );
