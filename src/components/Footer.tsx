@@ -6,11 +6,7 @@ export function Footer() {
       <div className="mx-auto max-w-2xl px-4 py-7 text-center text-xs leading-relaxed text-desk-ink/65">
         <div className="mb-4 flex items-center justify-center gap-4">
           <div className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-desk-ink/50">
-            {PARTNER.shortName}
-          </div>
-          <span className="h-3 w-px bg-desk-line" aria-hidden />
-          <div className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-desk-ink/50">
-            {ORG.name}
+            ISEYC × TIRNGAN
           </div>
         </div>
         <p className="font-medium text-desk-ink/80">{COPY.footerOwner}</p>
