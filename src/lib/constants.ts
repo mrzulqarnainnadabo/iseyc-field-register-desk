@@ -1,8 +1,8 @@
-// Event facts + dual-organisation brand language.
+// Event facts + joint-organisation brand language.
 // Keep select option names in sync with Notion databases.
 
 export const EVENT = {
-  programme: "Tirngan Sickle Cell Foundation",
+  programme: "ISEYC × TIRNGAN",
   name: "5th Anniversary Dinner & Recognition Ceremony",
   theme: "Five years of breaking cycles, recognising resilience, and building a stronger future.",
   date: "Friday, 18 September 2026",
@@ -12,18 +12,12 @@ export const EVENT = {
   venue: "LIMCEEG Multipurpose Event Centre, Karji, Yakowa Express Way",
 } as const;
 
-/**
- * Brand model (how serious organisations partner):
- * - Tirngan = programme owner (mission, caregivers, ceremony)
- * - ISEYC = systems partner (register desk, structure, integrity of records)
- * Never claim ISEYC runs the foundation or owns the data narrative.
- */
 export const ORG = {
-  name: "ISEYC",
-  fullName: "Initiative for Sustainable Evolution for Youth and Community",
-  motto: "Empowering Youth, Shaping Futures",
-  supportLine: `In support of ${EVENT.programme}`,
-  partnershipLine: "Tirngan leads the programme · ISEYC supports the registration system",
+  name: "ISEYC × TIRNGAN",
+  fullName: "Initiative for Sustainable Evolution for Youth and Community × Tirngan Sickle Cell Foundation",
+  motto: "Joint Registration Desk",
+  supportLine: "A joint registration experience by ISEYC and Tirngan Sickle Cell Foundation",
+  partnershipLine: "ISEYC × TIRNGAN · Joint Registration Desk",
   tagline: "A clear, trusted registration experience for attendance and programme coordination.",
   web: "https://www.iseyc.com.ng",
   email: "iseycglobal@gmail.com",
@@ -31,23 +25,24 @@ export const ORG = {
 
 export const PARTNER = {
   name: "Tirngan Sickle Cell Foundation",
-  shortName: "Tirngan",
+  shortName: "TIRNGAN",
   tagline: "Breaking Cycles",
 } as const;
 
 export const SITE = {
-  productName: "Programme Registration Desk",
-  title: "5th Anniversary Dinner & Recognition Ceremony · Tirngan Sickle Cell Foundation",
+  productName: "ISEYC × TIRNGAN Joint Registration Desk",
+  title: "ISEYC × TIRNGAN · 5th Anniversary Dinner & Recognition Ceremony",
   description:
-    "Official registration desk for Tirngan Sickle Cell Foundation’s 5th Anniversary Dinner & Recognition Ceremony on 18 September 2026. Led by Tirngan, supported by ISEYC.",
+    "Joint registration desk for ISEYC × TIRNGAN’s 5th Anniversary Dinner & Recognition Ceremony on 18 September 2026.",
   shortDescription:
     "Reserve your place for an evening celebrating five years of resilience, service, and community impact.",
   keywords: [
-    "Tirngan Sickle Cell Foundation",
     "ISEYC",
-    "Programme Registration Desk",
-    "sickle cell Nigeria",
+    "Tirngan Sickle Cell Foundation",
+    "ISEYC × TIRNGAN",
+    "Joint Registration Desk",
     "5th anniversary",
+    "sickle cell Nigeria",
     "caregiver recognition",
     "RSVP",
     "Karji",
@@ -65,7 +60,7 @@ export const COPY = {
   configBanner:
     "Registration is temporarily unavailable because the programme database is not connected. Please complete the system setup before accepting live responses.",
   footerOwner:
-    "Tirngan Sickle Cell Foundation leads the programme. ISEYC provides the registration desk and supporting systems.",
+    "ISEYC × TIRNGAN presents this joint registration desk for the 5th Anniversary Dinner & Recognition Ceremony.",
   footerPrivacy: "Programme records only · No medical information is requested by this registration desk",
 } as const;
 
