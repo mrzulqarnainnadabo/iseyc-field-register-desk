@@ -1,1 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" role="img" aria-labelledby="title"><title>ISEYC</title><circle cx="210" cy="210" r="196" fill="#fff" stroke="#0b6848" stroke-width="24"/><circle cx="210" cy="210" r="168" fill="none" stroke="#f4e500" stroke-width="5"/><text x="210" y="67" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700" letter-spacing="2" style="paint-order:stroke;stroke:#0b6848;stroke-width:22">INITIATIVE FOR SUSTAINABLE EVOLUTION</text><g transform="translate(210 188)"><path d="M-15 102c-34-29-49-60-43-92 6-34 35-59 67-58 34 1 62 27 66 60 4 35-13 67-45 91-14 11-29 20-45 31z" fill="none" stroke="#0b6848" stroke-width="9"/><path d="M-4 78c-3-38 3-68 19-91 18-25 37-38 56-43-8 25-22 44-42 58-18 13-30 37-33 76" fill="none" stroke="#8d7048" stroke-width="8"/><path d="M-56 15c22-12 40-14 55-5M-61 40c22-11 41-10 57-1M-53 66c18-7 35-5 49 5M56 7c-19-12-37-14-54-6M59 34c-20-10-38-8-55 2M52 61c-17-7-32-4-46 6" fill="none" stroke="#0b6848" stroke-width="8" stroke-linecap="round"/><path d="M-89 115c24-21 47-28 69-19 13 5 25 13 36 25 11-12 23-20 36-25 22-9 45-2 69 19" fill="none" stroke="#252c88" stroke-width="12" stroke-linecap="round"/></g><text x="210" y="342" text-anchor="middle" fill="#0b6848" font-family="Arial,sans-serif" font-size="44" font-weight="800" letter-spacing="-2">ISEYC</text><text x="210" y="391" text-anchor="middle" fill="#0b6848" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.8">EMPOWERMENT · YOUTH · COMMUNITY</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">ISEYC</title>
+  <desc id="desc">Initiative for Sustainable Evolution for Youth and Community</desc>
+  <defs>
+    <path id="topArc" d="M 74,246 A 182,182 0 0 1 438,246"/>
+  </defs>
+  <circle cx="256" cy="256" r="244" fill="#0B6848"/>
+  <circle cx="256" cy="256" r="211" fill="#fff" stroke="#F4E500" stroke-width="6"/>
+  <text fill="#fff" font-family="Arial,sans-serif" font-size="18" font-weight="700" letter-spacing="1.8">
+    <textPath href="#topArc" startOffset="50%" text-anchor="middle">INITIATIVE FOR SUSTAINABLE EVOLUTION</textPath>
+  </text>
+  <g transform="translate(256 268)">
+    <path d="M0 76 C-10 42 -12 9 0 -25 C12 9 10 42 0 76Z" fill="#8A7046"/>
+    <path d="M0 5 C-38 -16 -65 -49 -70 -78 C-40 -75 -13 -59 0 -34 C13 -59 40 -75 70 -78 C65 -49 38 -16 0 5Z" fill="#0B6848"/>
+    <path d="M-3 -22 C-48 -20 -78 -2 -99 27 C-70 30 -42 19 -3 -3" fill="none" stroke="#0B6848" stroke-width="10" stroke-linecap="round"/>
+    <path d="M3 -22 C48 -20 78 -2 99 27 C70 30 42 19 3 -3" fill="none" stroke="#0B6848" stroke-width="10" stroke-linecap="round"/>
+    <path d="M-96 30 C-66 23 -43 32 -20 55 C-44 54 -70 48 -96 30Z" fill="#2B328A"/>
+    <path d="M96 30 C66 23 43 32 20 55 C44 54 70 48 96 30Z" fill="#2B328A"/>
+    <circle cx="-43" cy="-45" r="12" fill="#0B6848"/>
+    <circle cx="43" cy="-45" r="12" fill="#0B6848"/>
+    <circle cx="0" cy="-66" r="12" fill="#0B6848"/>
+  </g>
+  <text x="256" y="376" text-anchor="middle" fill="#0B6848" font-family="Arial,sans-serif" font-size="56" font-weight="900" letter-spacing="-2">ISEYC</text>
+  <text x="256" y="405" text-anchor="middle" fill="#0B6848" font-family="Arial,sans-serif" font-size="11" font-weight="700" letter-spacing="1.6">YOUTH · COMMUNITY · SUSTAINABLE EVOLUTION</text>
+</svg>
