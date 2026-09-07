@@ -1,10 +1,10 @@
-// Event facts + dual-organisation brand language.
+// Event facts + joint-organisation brand language.
 // Keep select option names in sync with Notion databases.
 
 export const EVENT = {
-  programme: "Tirngan Sickle Cell Foundation",
+  programme: "ISEYC × TIRNGAN",
   name: "5th Anniversary Dinner & Recognition Ceremony",
-  theme: "Five Years of Breaking Cycles and Building Futures",
+  theme: "Five years of breaking cycles, recognising resilience, and building a stronger future.",
   date: "Friday, 18 September 2026",
   isoCutoff: "2026-09-18T23:59:59+01:00",
   redCarpet: "4:00 PM",
@@ -12,42 +12,37 @@ export const EVENT = {
   venue: "LIMCEEG Multipurpose Event Centre, Karji, Yakowa Express Way",
 } as const;
 
-/**
- * Brand model (how serious organisations partner):
- * - Tirngan = programme owner (mission, caregivers, ceremony)
- * - ISEYC = systems partner (register desk, structure, integrity of records)
- * Never claim ISEYC runs the foundation or owns the data narrative.
- */
 export const ORG = {
-  name: "ISEYC",
-  fullName: "Initiative for Sustainable Evolution for Youth and Community",
-  motto: "Empowering Youth, Shaping Futures",
-  supportLine: `In support of ${EVENT.programme}`,
-  partnershipLine: "Programme led by Tirngan · Systems powered by ISEYC",
-  tagline: "A shared register for participation, recognition, and care of records",
+  name: "ISEYC × TIRNGAN",
+  fullName: "Initiative for Sustainable Evolution for Youth and Community × Tirngan Sickle Cell Foundation",
+  motto: "Joint Registration Desk",
+  supportLine: "A joint registration experience by ISEYC and Tirngan Sickle Cell Foundation",
+  partnershipLine: "ISEYC × TIRNGAN · Joint Registration Desk",
+  tagline: "A clear, trusted registration experience for attendance and programme coordination.",
   web: "https://www.iseyc.com.ng",
   email: "iseycglobal@gmail.com",
 } as const;
 
 export const PARTNER = {
   name: "Tirngan Sickle Cell Foundation",
-  shortName: "Tirngan",
+  shortName: "TIRNGAN",
   tagline: "Breaking Cycles",
 } as const;
 
 export const SITE = {
-  productName: "Field Register Desk",
-  title: "Field Register Desk · Tirngan Sickle Cell Foundation",
+  productName: "ISEYC × TIRNGAN Joint Registration Desk",
+  title: "ISEYC × TIRNGAN · 5th Anniversary Dinner & Recognition Ceremony",
   description:
-    "Official RSVP and programme participation register for Tirngan Sickle Cell Foundation’s 5th Anniversary Dinner & Recognition Ceremony (18 September 2026). Programme led by Tirngan. Register desk powered by ISEYC. Not a medical record.",
+    "Joint registration desk for ISEYC × TIRNGAN’s 5th Anniversary Dinner & Recognition Ceremony on 18 September 2026.",
   shortDescription:
-    "Confirm attendance and keep programme records with dignity. Led by Tirngan · Powered by ISEYC.",
+    "Reserve your place for an evening celebrating five years of resilience, service, and community impact.",
   keywords: [
-    "Tirngan Sickle Cell Foundation",
     "ISEYC",
-    "Field Register Desk",
-    "sickle cell Nigeria",
+    "Tirngan Sickle Cell Foundation",
+    "ISEYC × TIRNGAN",
+    "Joint Registration Desk",
     "5th anniversary",
+    "sickle cell Nigeria",
     "caregiver recognition",
     "RSVP",
     "Karji",
@@ -56,17 +51,17 @@ export const SITE = {
 
 export const COPY = {
   trustStrip:
-    "Your details help the organising team plan seating, recognition, and follow-up. They are programme records only — not a medical file.",
+    "Your details are used only to coordinate attendance and programme arrangements. This registration desk does not request or store medical information.",
   rsvpIntro:
-    "Please confirm whether you will attend. This takes about a minute.",
-  rsvpSuccessTitle: "You are on the list",
+    "Reserve your place by completing the short registration below. It takes about one minute.",
+  rsvpSuccessTitle: "You’re registered",
   rsvpSuccessBody:
-    "Thank you. The organising team has your response for the 18 September ceremony.",
+    "Thank you. Your place has been recorded for the 18 September 2026 programme. We look forward to welcoming you.",
   configBanner:
-    "This register is not linked to the programme database yet. Please complete setup before collecting live responses.",
+    "Registration is temporarily unavailable because the programme database is not connected. Please complete the system setup before accepting live responses.",
   footerOwner:
-    "Tirngan Sickle Cell Foundation leads this programme. ISEYC provides the Field Register Desk as systems support.",
-  footerPrivacy: "Records held for programme integrity and recognition · Not a medical record",
+    "ISEYC × TIRNGAN presents this joint registration desk for the 5th Anniversary Dinner & Recognition Ceremony.",
+  footerPrivacy: "Programme records only · No medical information is requested by this registration desk",
 } as const;
 
 export const RSVP_ROLES = [
