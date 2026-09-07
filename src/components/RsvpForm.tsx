@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { RSVP_ATTENDANCE, RSVP_ROLES } from "@/lib/constants";
+import { COPY, RSVP_ATTENDANCE, RSVP_ROLES } from "@/lib/constants";
 import { Field } from "@/components/ui/Field";
 import { Checkbox, PrimaryButton, Select, Textarea, TextInput } from "@/components/ui/inputs";
 
@@ -66,14 +66,14 @@ export function RsvpForm() {
           }
           setErrors(flat);
         }
-        setServerError(data.error ?? "Something went wrong. Please try again.");
+        setServerError(data.error ?? "We could not save this response. Please try again.");
         setStatus("error");
         return;
       }
 
       setStatus("success");
     } catch {
-      setServerError("Network error. Please check your connection and try again.");
+      setServerError("Network error. Check your connection and try again.");
       setStatus("error");
     } finally {
       setSubmitting(false);
@@ -82,11 +82,9 @@ export function RsvpForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-xl border border-desk-green/30 bg-white p-6 text-center">
-        <p className="text-lg font-semibold text-desk-green">RSVP recorded. Thank you.</p>
-        <p className="mt-1 text-sm text-desk-ink/60">
-          We look forward to seeing you at the ceremony.
-        </p>
+      <div className="rounded-xl border border-desk-green/25 bg-white p-6 text-center shadow-sm">
+        <p className="text-lg font-semibold text-desk-green">{COPY.rsvpSuccessTitle}</p>
+        <p className="mt-2 text-sm leading-relaxed text-desk-ink/65">{COPY.rsvpSuccessBody}</p>
         <div className="mt-5">
           <PrimaryButton
             type="button"
@@ -95,7 +93,7 @@ export function RsvpForm() {
               setStatus("idle");
             }}
           >
-            Submit another
+            Submit another response
           </PrimaryButton>
         </div>
       </div>
@@ -109,7 +107,7 @@ export function RsvpForm() {
           id="rsvp-name"
           value={form.name}
           onChange={(e) => update("name", e.target.value)}
-          placeholder="e.g. Aisha Bello"
+          placeholder="As it should appear on the guest list"
           autoComplete="name"
         />
       </Field>
@@ -119,7 +117,7 @@ export function RsvpForm() {
           id="rsvp-phone"
           value={form.phone}
           onChange={(e) => update("phone", e.target.value)}
-          placeholder="e.g. 0803 000 0000"
+          placeholder="0800 000 0000"
           inputMode="tel"
           autoComplete="tel"
         />
@@ -136,10 +134,10 @@ export function RsvpForm() {
         />
       </Field>
 
-      <Field label="Role" htmlFor="rsvp-role" required error={errors.role}>
+      <Field label="How are you attending?" htmlFor="rsvp-role" required error={errors.role}>
         <Select id="rsvp-role" value={form.role} onChange={(e) => update("role", e.target.value)}>
           <option value="" disabled>
-            Select role
+            Select one
           </option>
           {RSVP_ROLES.map((r) => (
             <option key={r} value={r}>
@@ -154,18 +152,18 @@ export function RsvpForm() {
           id="rsvp-org"
           value={form.organisation}
           onChange={(e) => update("organisation", e.target.value)}
-          placeholder="e.g. Ministry of Health"
+          placeholder="If you represent an organisation"
         />
       </Field>
 
-      <Field label="Attendance" htmlFor="rsvp-attendance" required error={errors.attendance}>
+      <Field label="Will you attend?" htmlFor="rsvp-attendance" required error={errors.attendance}>
         <Select
           id="rsvp-attendance"
           value={form.attendance}
           onChange={(e) => update("attendance", e.target.value)}
         >
           <option value="" disabled>
-            Select attendance
+            Select one
           </option>
           {RSVP_ATTENDANCE.map((a) => (
             <option key={a} value={a}>
@@ -175,7 +173,7 @@ export function RsvpForm() {
         </Select>
       </Field>
 
-      <Field label="Number of plus ones" htmlFor="rsvp-plusones" error={errors.plusOnes}>
+      <Field label="Additional guests with you" htmlFor="rsvp-plusones" error={errors.plusOnes}>
         <Select
           id="rsvp-plusones"
           value={String(form.plusOnes)}
@@ -183,17 +181,17 @@ export function RsvpForm() {
         >
           {[0, 1, 2, 3, 4, 5].map((n) => (
             <option key={n} value={n}>
-              {n}
+              {n === 0 ? "Just me" : n}
             </option>
           ))}
         </Select>
       </Field>
 
       <Field
-        label="Dietary or access note"
+        label="Access or dietary note"
         htmlFor="rsvp-note"
         error={errors.dietaryOrAccessNote}
-        hint="Optional — keep it short"
+        hint="Optional"
       >
         <Textarea
           id="rsvp-note"
@@ -201,13 +199,13 @@ export function RsvpForm() {
           maxLength={300}
           value={form.dietaryOrAccessNote}
           onChange={(e) => update("dietaryOrAccessNote", e.target.value)}
-          placeholder="e.g. Wheelchair access needed"
+          placeholder="Only if the organisers should know something practical"
         />
       </Field>
 
       <Checkbox
         id="rsvp-consent"
-        label="I agree to be recorded for event planning and programme records."
+        label="I agree that these details may be kept for event planning and programme records."
         checked={form.consent}
         onChange={(v) => update("consent", v)}
       />
@@ -218,7 +216,7 @@ export function RsvpForm() {
       )}
 
       <PrimaryButton type="submit" disabled={submitting}>
-        {submitting ? "Submitting…" : "Submit RSVP"}
+        {submitting ? "Saving…" : "Confirm response"}
       </PrimaryButton>
     </form>
   );

@@ -4,10 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { EventStrip } from "@/components/EventStrip";
+import { TrustStrip } from "@/components/TrustStrip";
 import { Tabs, TabKey } from "@/components/Tabs";
 import { RsvpForm } from "@/components/RsvpForm";
 import { ParticipationForm } from "@/components/ParticipationForm";
-import { EVENT } from "@/lib/constants";
+import { COPY, EVENT } from "@/lib/constants";
 
 export default function Page() {
   const defaultTab: TabKey = useMemo(() => {
@@ -28,8 +29,7 @@ export default function Page() {
         setNotionConfigured(Boolean(d.notionConfigured));
       })
       .catch(() => {
-        // If health check fails, fall through with defaults; submit
-        // endpoints re-check configuration server-side regardless.
+        /* submit endpoints still validate server-side */
       });
   }, []);
 
@@ -39,9 +39,11 @@ export default function Page() {
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">
         {!notionConfigured && (
-          <div className="mb-4 rounded-lg border border-desk-accent/40 bg-desk-accent/10 p-3 text-sm text-desk-ink">
-            This desk is not yet connected to Notion. Submissions will not save until the
-            programme team completes setup.
+          <div
+            className="mb-4 rounded-lg border border-amber-300/80 bg-amber-50 px-3 py-3 text-sm text-amber-950"
+            role="status"
+          >
+            {COPY.configBanner}
           </div>
         )}
 
@@ -50,8 +52,10 @@ export default function Page() {
         </div>
 
         {tab === "rsvp" ? (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-4">
             <EventStrip />
+            <TrustStrip />
+            <p className="text-sm text-desk-ink/70">{COPY.rsvpIntro}</p>
             <RsvpForm />
           </div>
         ) : (

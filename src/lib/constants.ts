@@ -1,5 +1,5 @@
-// Single source of truth for event facts and Notion select options.
-// Keep these in sync with the exact option names configured on the Notion databases.
+// Event facts + dual-organisation brand language.
+// Keep select option names in sync with Notion databases.
 
 export const EVENT = {
   programme: "Tirngan Sickle Cell Foundation",
@@ -13,43 +13,62 @@ export const EVENT = {
 } as const;
 
 /**
- * Partnership model (do not over-claim ownership):
- * - Tirngan leads the programme and field work.
- * - ISEYC provides the Field Register Desk as systems support.
- * - Records serve programme integrity and recognition — not medical care.
+ * Brand model (how serious organisations partner):
+ * - Tirngan = programme owner (mission, caregivers, ceremony)
+ * - ISEYC = systems partner (register desk, structure, integrity of records)
+ * Never claim ISEYC runs the foundation or owns the data narrative.
  */
 export const ORG = {
   name: "ISEYC",
   fullName: "Initiative for Sustainable Evolution for Youth and Community",
+  motto: "Empowering Youth, Shaping Futures",
   supportLine: `In support of ${EVENT.programme}`,
   partnershipLine: "Programme led by Tirngan · Systems powered by ISEYC",
-  tagline: "Community systems for participation, recognition, and integrity",
+  tagline: "A shared register for participation, recognition, and care of records",
   web: "https://www.iseyc.com.ng",
   email: "iseycglobal@gmail.com",
 } as const;
 
+export const PARTNER = {
+  name: "Tirngan Sickle Cell Foundation",
+  shortName: "Tirngan",
+  tagline: "Breaking Cycles",
+} as const;
+
 export const SITE = {
   productName: "Field Register Desk",
-  title: "Field Register Desk · Tirngan × ISEYC",
+  title: "Field Register Desk · Tirngan Sickle Cell Foundation",
   description:
-    "Official register desk for Tirngan Sickle Cell Foundation — RSVP for the 5th Anniversary Dinner (18 September 2026) and ongoing programme participation records. Programme led by Tirngan. Systems powered by ISEYC. Not a medical record.",
+    "Official RSVP and programme participation register for Tirngan Sickle Cell Foundation’s 5th Anniversary Dinner & Recognition Ceremony (18 September 2026). Programme led by Tirngan. Register desk powered by ISEYC. Not a medical record.",
   shortDescription:
-    "RSVP and field participation records for Tirngan Sickle Cell Foundation. Powered by ISEYC.",
+    "Confirm attendance and keep programme records with dignity. Led by Tirngan · Powered by ISEYC.",
   keywords: [
     "Tirngan Sickle Cell Foundation",
     "ISEYC",
     "Field Register Desk",
     "sickle cell Nigeria",
-    "5th anniversary dinner",
+    "5th anniversary",
     "caregiver recognition",
-    "genotype awareness",
-    "community health register",
+    "RSVP",
     "Karji",
-    "programme participation",
   ],
 } as const;
 
-// --- RSVP (Database A) ---
+export const COPY = {
+  trustStrip:
+    "Your details help the organising team plan seating, recognition, and follow-up. They are programme records only — not a medical file.",
+  rsvpIntro:
+    "Please confirm whether you will attend. This takes about a minute.",
+  rsvpSuccessTitle: "You are on the list",
+  rsvpSuccessBody:
+    "Thank you. The organising team has your response for the 18 September ceremony.",
+  configBanner:
+    "This register is not linked to the programme database yet. Please complete setup before collecting live responses.",
+  footerOwner:
+    "Tirngan Sickle Cell Foundation leads this programme. ISEYC provides the Field Register Desk as systems support.",
+  footerPrivacy: "Records held for programme integrity and recognition · Not a medical record",
+} as const;
+
 export const RSVP_ROLES = [
   "Guest",
   "Caregiver",
@@ -65,7 +84,6 @@ export const RSVP_ATTENDANCE = ["Will attend", "Maybe", "Cannot attend"] as cons
 
 export const RSVP_SOURCES = ["Register Desk", "WhatsApp", "Referral", "Other"] as const;
 
-// --- Activities (Database B) ---
 export const ACTIVITY_TYPES = [
   "Genotype testing",
   "Medication support",
@@ -77,7 +95,6 @@ export const ACTIVITY_TYPES = [
   "Other",
 ] as const;
 
-// --- Participants (Database C) ---
 export const PARTICIPANT_ROLES = [
   "Warrior (living with SCD)",
   "Caregiver",
