@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  background-color: #f7f6f2;
+  color: #141414;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+/* Large, honest tap targets for field/phone use */
+.tap-target {
+  min-height: 48px;
+}
