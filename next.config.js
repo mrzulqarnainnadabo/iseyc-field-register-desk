@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Notion secrets are only ever read server-side inside API routes / lib/notion.ts.
-  // Nothing in `env` here is exposed to the client bundle.
+  poweredByHeader: false,
+  compress: true,
+  // Notion secrets stay server-side only (API routes / lib/notion.ts).
+  swcMinify: true,
+  experimental: {
+    optimizePackageImports: ["@notionhq/client"],
+  },
 };
 
 module.exports = nextConfig;
