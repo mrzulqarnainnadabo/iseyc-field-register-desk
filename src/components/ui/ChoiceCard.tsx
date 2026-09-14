@@ -1,6 +1,6 @@
 "use client";
 
-/** Large touch-friendly choice cards for field workers */
+/** Large touch-friendly choice cards — 48px+ targets, clear selected state */
 export function ChoiceCard({
   label,
   description,
@@ -16,24 +16,31 @@ export function ChoiceCard({
     <button
       type="button"
       onClick={onSelect}
-      className={`tap-target flex w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left transition ${
+      aria-pressed={selected}
+      className={`tap-target flex w-full items-start gap-3 rounded-2xl border-2 px-4 py-3.5 text-left transition active:scale-[0.99] ${
         selected
-          ? "border-desk-green bg-desk-green/10 shadow-sm"
-          : "border-desk-line bg-white hover:border-desk-ink/20 hover:bg-desk-paper/40"
+          ? "border-desk-green bg-desk-green/[0.08] shadow-[0_0_0_1px_rgba(36,91,67,0.12)]"
+          : "border-desk-line bg-white hover:border-desk-ink/20 hover:bg-desk-paper/50"
       }`}
     >
       <span
-        className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs font-black ${
+        className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-[11px] font-black transition ${
           selected
             ? "border-desk-green bg-desk-green text-white"
-            : "border-desk-ink/25 text-transparent"
+            : "border-desk-ink/20 bg-white text-transparent"
         }`}
         aria-hidden
       >
         ✓
       </span>
-      <span className="min-w-0">
-        <span className="block text-sm font-semibold text-desk-ink">{label}</span>
+      <span className="min-w-0 pt-0.5">
+        <span
+          className={`block text-sm leading-5 ${
+            selected ? "font-bold text-desk-ink" : "font-semibold text-desk-ink"
+          }`}
+        >
+          {label}
+        </span>
         {description ? (
           <span className="mt-0.5 block text-xs leading-4 text-desk-ink/55">{description}</span>
         ) : null}
@@ -68,7 +75,7 @@ export function ChoiceGrid({
   }
 
   return (
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
       {options.map((opt) => {
         const label = typeof opt === "string" ? opt : opt.label;
         const description = typeof opt === "string" ? undefined : opt.description;

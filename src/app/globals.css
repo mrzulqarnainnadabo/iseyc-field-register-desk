@@ -5,36 +5,90 @@
 :root {
   --font-body: var(--font-inter), Inter, ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-jakarta), "Plus Jakarta Sans", Inter, ui-sans-serif, sans-serif;
+  --desk-green: #245b43;
+  --desk-green-dark: #173f30;
+  --desk-paper: #f7f8f5;
+  --desk-ink: #101c16;
+  --desk-line: #d8ded9;
+  --desk-gold: #d9b83f;
 }
 
-html { background: #f7f8f6; scroll-behavior: smooth; }
+html {
+  background: var(--desk-paper);
+  scroll-behavior: smooth;
+}
+
 body {
   background:
-    radial-gradient(circle at 50% -10%, rgba(11, 104, 72, 0.06), transparent 34rem),
-    #f7f8f6;
-  color: #10221b;
+    radial-gradient(circle at 50% -10%, rgba(36, 91, 67, 0.07), transparent 34rem),
+    var(--desk-paper);
+  color: var(--desk-ink);
   font-family: var(--font-body);
   font-feature-settings: "cv11", "ss01";
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
 
-* { -webkit-tap-highlight-color: transparent; }
-input, select, textarea, button { font: inherit; }
-button, a, input, select, textarea { -webkit-touch-callout: none; }
-.tap-target { min-height: 48px; }
+* {
+  -webkit-tap-highlight-color: transparent;
+}
 
-h1, h2, h3, h4 {
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-touch-callout: none;
+}
+
+/* Design system: 48px minimum touch targets */
+.tap-target {
+  min-height: 48px;
+}
+
+h1,
+h2,
+h3,
+h4 {
   font-family: var(--font-display);
   letter-spacing: -0.035em;
 }
 
-::selection { background: rgba(11, 104, 72, 0.16); }
+::selection {
+  background: rgba(36, 91, 67, 0.16);
+}
 
 @media (max-width: 639px) {
-  body { overflow-x: hidden; }
+  body {
+    overflow-x: hidden;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Print styles for Founder Evidence Brief */
+@media print {
+  body {
+    background: white;
+  }
+  header,
+  footer,
+  .print\\:hidden {
+    display: none !important;
+  }
+  #founder-brief {
+    border: none !important;
+    box-shadow: none !important;
+  }
 }

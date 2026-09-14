@@ -8,15 +8,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Restrained institutional palette — deep green + navy + one warm accent.
+        // Approved institutional design system (ISEYC × TIRNGAN)
         desk: {
-          green: "#0E3B2E",
-          "green-dark": "#082720",
-          navy: "#0B1F33",
-          paper: "#F7F6F2",
-          ink: "#141414",
-          line: "#E3E0D8",
-          accent: "#B08A3E",
+          green: "#245B43",
+          "green-dark": "#173F30",
+          paper: "#F7F8F5",
+          ink: "#101C16",
+          line: "#D8DED9",
+          gold: "#D9B83F",
+          black: "#171717",
         },
       },
       fontFamily: {
@@ -31,6 +31,13 @@ const config: Config = {
           "Arial",
           "sans-serif",
         ],
+      },
+      borderRadius: {
+        "2xl": "1rem",
+        "3xl": "1.25rem",
+      },
+      minHeight: {
+        tap: "48px",
       },
     },
   },
