@@ -29,6 +29,8 @@ export const STEWARDSHIP = {
     "Community responses collected through this desk are programme intelligence for Tirngan Sickle Cell Foundation and its partners. They exist to guide priorities, strengthen proposals, and improve support for warriors and caregivers.",
   accessNote:
     "Founder-level access is provided through the Evidence Brief. Operational field collection is managed by trained staff under institutional oversight.",
+  formalStatement:
+    "Information collected through the ISEYC × Tirngan Community Outreach Intelligence Desk is collected for defined community outreach, programme planning and evidence-generation purposes. Data collection follows principles of purpose limitation, data minimisation, responsible access and appropriate confidentiality. The platform is not intended to create clinical records or collect medical diagnoses. Information is analysed primarily in aggregate to identify community-level barriers, needs and programme priorities. Where personal information is collected for an expressly stated programme purpose, it should be handled only for that purpose and in accordance with applicable data-protection requirements and approved organisational procedures.",
 } as const;
 
 export const SITE = {
@@ -54,9 +56,9 @@ export const SITE = {
 
 export const COPY = {
   trustStrip:
-    "Your responses help us understand community barriers and improve programmes. This desk does not collect medical diagnoses or clinical records.",
+    "ISEYC × Tirngan · Purpose-led data collection · Privacy-conscious · Community-focused",
   consentIntro:
-    "ISEYC and Tirngan Sickle Cell Foundation collect community information to understand barriers to health information, access and support, and to improve future programmes. We do not use this form as a medical record. Your responses will be analysed mainly in aggregate. You may choose not to answer individual questions.",
+    "We are collecting this information to understand community barriers and improve future programmes. You may choose not to answer any question. This desk does not collect clinical diagnoses or create medical records.",
   configBanner:
     "The desk is temporarily unavailable because the programme database is not connected. Please complete the system setup before accepting live responses.",
   footerOwner:
@@ -65,6 +67,11 @@ export const COPY = {
   offlineBanner: "Offline · Responses are being saved securely on this device",
   syncingBanner: "Syncing responses…",
   syncedBanner: "All responses synced",
+  saveSuccess: "Response saved successfully. Ready for the next person.",
+  emptyInsightsTitle: "No outreach evidence yet",
+  emptyInsightsBody:
+    "Insights will appear here once community responses have been collected. Start an outreach session to begin building the evidence base.",
+  emptySessionsBody: "No outreach sessions yet. Start one above to begin collecting community evidence.",
 } as const;
 
 // ---------- Outreach Session dictionaries ----------
@@ -161,7 +168,6 @@ export const RESIDENCE_OPTIONS = [
   "Other community",
 ] as const;
 
-// Access & Affordability
 export const MEDICATION_ACCESS = [
   "Usually easy",
   "Sometimes difficult",
@@ -220,7 +226,6 @@ export const FACILITY_AVAILABILITY = [
   "Not applicable",
 ] as const;
 
-// Knowledge & Awareness
 export const GENOTYPE_KNOWLEDGE = [
   "Yes",
   "No",
@@ -241,7 +246,6 @@ export const YES_NO_NOTSURE = [
   "Not sure",
 ] as const;
 
-// Barriers (multi-select)
 export const MAIN_BARRIERS = [
   "Cost of medication",
   "Medication unavailable",
@@ -260,7 +264,6 @@ export const MAIN_BARRIERS = [
   "Other",
 ] as const;
 
-// Programme Need (multi-select)
 export const SUPPORT_NEEDED = [
   "Health education",
   "Genotype education/testing referral",
@@ -276,7 +279,7 @@ export const SUPPORT_NEEDED = [
   "No immediate support requested",
 ] as const;
 
-// Legacy (kept temporarily for migration safety — will be removed in Deploy 3)
+// Legacy (migration safety)
 export const ACTIVITY_TYPES = [
   "Genotype testing",
   "Medication support",
