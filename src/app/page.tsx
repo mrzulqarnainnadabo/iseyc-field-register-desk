@@ -1,23 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { EventStrip } from "@/components/EventStrip";
 import { TrustStrip } from "@/components/TrustStrip";
-import { Tabs, TabKey } from "@/components/Tabs";
-import { RsvpForm } from "@/components/RsvpForm";
 import { ParticipationForm } from "@/components/ParticipationForm";
-import { COPY, EVENT } from "@/lib/constants";
+import { COPY } from "@/lib/constants";
 
 export default function Page() {
-  const defaultTab: TabKey = useMemo(() => new Date() <= new Date(EVENT.isoCutoff) ? "rsvp" : "participation", []);
-  const [tab, setTab] = useState<TabKey>(defaultTab);
   const [passcodeRequired, setPasscodeRequired] = useState(false);
   const [notionConfigured, setNotionConfigured] = useState(true);
 
   useEffect(() => {
-    fetch("/api/health").then((r) => r.json()).then((d) => { setPasscodeRequired(Boolean(d.staffPasscodeEnabled)); setNotionConfigured(Boolean(d.notionConfigured)); }).catch(() => {});
+    fetch("/api/health")
+      .then((r) => r.json())
+      .then((d) => {
+        setPasscodeRequired(Boolean(d.staffPasscodeEnabled));
+        setNotionConfigured(Boolean(d.notionConfigured));
+      })
+      .catch(() => {});
   }, []);
 
   return (
@@ -25,23 +26,32 @@ export default function Page() {
       <Header />
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-7 sm:py-10">
         {!notionConfigured && (
-          <div className="mx-auto mb-6 max-w-4xl rounded-2xl border border-amber-300/80 bg-amber-50 px-4 py-3.5 text-sm leading-6 text-amber-950" role="status">
+          <div
+            className="mx-auto mb-6 max-w-4xl rounded-2xl border border-amber-300/80 bg-amber-50 px-4 py-3.5 text-sm leading-6 text-amber-950"
+            role="status"
+          >
             {COPY.configBanner}
           </div>
         )}
 
         <div className="mx-auto max-w-4xl">
-          <div className="mb-5 sm:mb-7"><Tabs active={tab} onChange={setTab} /></div>
-          {tab === "rsvp" ? (
-            <div className="space-y-5 sm:space-y-7">
-              <EventStrip />
-              <div className="px-1 sm:px-2">
-                <p className="max-w-2xl text-sm font-medium leading-6 text-desk-ink/58 sm:text-[0.95rem]">{COPY.rsvpIntro}</p>
-              </div>
-              <TrustStrip />
-              <RsvpForm />
-            </div>
-          ) : <ParticipationForm passcodeRequired={passcodeRequired} />}
+          {/* Temporary transitional surface while full Session + Response UI is built */}
+          <div className="mb-6 space-y-3">
+            <h1 className="text-xl font-semibold tracking-tight text-desk-ink sm:text-2xl">
+              Community Outreach Desk
+            </h1>
+            <p className="max-w-2xl text-sm leading-6 text-desk-ink/65 sm:text-[0.95rem]">
+              Capture structured community information securely and consistently.
+              This desk collects programme-relevant barriers, knowledge and support
+              needs — not medical diagnoses.
+            </p>
+          </div>
+
+          <TrustStrip />
+
+          <div className="mt-6">
+            <ParticipationForm passcodeRequired={passcodeRequired} />
+          </div>
         </div>
       </main>
       <Footer />
