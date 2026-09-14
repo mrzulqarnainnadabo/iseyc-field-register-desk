@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { FounderBrief } from "@/components/FounderBrief";
+import { COPY } from "@/lib/constants";
 
 type Indicator = {
   value: number;
@@ -99,13 +100,13 @@ export function InsightsDashboard({ passcode }: { passcode: string }) {
     );
   }
 
-  if (!data?.indicators) {
+  if (!data?.indicators || data.sampleSize === 0) {
     return (
       <div className="space-y-4">
         <div className="rounded-2xl border border-desk-line bg-white p-6 text-center">
-          <p className="text-sm font-semibold text-desk-ink">No insights yet</p>
+          <p className="text-sm font-semibold text-desk-ink">{COPY.emptyInsightsTitle}</p>
           <p className="mt-1 text-sm text-desk-ink/55">
-            {data?.note || data?.error || "Start collecting responses to generate programme evidence."}
+            {data?.note || data?.error || COPY.emptyInsightsBody}
           </p>
         </div>
         <button

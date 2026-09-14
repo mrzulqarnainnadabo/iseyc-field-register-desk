@@ -18,6 +18,7 @@ import {
   YES_NO_NOTSURE,
   MAIN_BARRIERS,
   SUPPORT_NEEDED,
+  COPY,
 } from "@/lib/constants";
 import { Field } from "@/components/ui/Field";
 import { ChoiceGrid } from "@/components/ui/ChoiceCard";
@@ -194,7 +195,6 @@ export function ResponseForm({
 
   return (
     <div className="space-y-4">
-      {/* Session chip */}
       <div className="flex items-center justify-between gap-3 rounded-xl border border-desk-green/20 bg-desk-green/5 px-3.5 py-2.5">
         <div className="min-w-0">
           <p className="text-[0.65rem] font-bold uppercase tracking-[0.12em] text-desk-green">
@@ -213,12 +213,12 @@ export function ResponseForm({
 
       {savedCount > 0 && (
         <p className="rounded-xl bg-desk-green/10 px-3.5 py-2.5 text-sm font-medium text-desk-green">
-          {savedCount} response{savedCount === 1 ? "" : "s"} saved this session
-          {lastSaved ? " · Ready for next person" : ""}
+          {lastSaved
+            ? COPY.saveSuccess
+            : `${savedCount} response${savedCount === 1 ? "" : "s"} saved this session`}
         </p>
       )}
 
-      {/* Progress */}
       <div>
         <div className="mb-1.5 flex items-center justify-between text-xs font-semibold text-desk-ink/50">
           <span>
@@ -235,7 +235,6 @@ export function ResponseForm({
       </div>
 
       <form onSubmit={onSubmit} className="rounded-2xl border border-desk-line bg-white p-4 sm:p-5">
-        {/* STEP 0 — About */}
         {step === 0 && (
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">About the respondent</h3>
@@ -270,7 +269,6 @@ export function ResponseForm({
           </div>
         )}
 
-        {/* STEP 1 — Access */}
         {step === 1 && (
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">Access & affordability</h3>
@@ -326,7 +324,6 @@ export function ResponseForm({
           </div>
         )}
 
-        {/* STEP 2 — Knowledge */}
         {step === 2 && (
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">Knowledge & awareness</h3>
@@ -368,7 +365,6 @@ export function ResponseForm({
           </div>
         )}
 
-        {/* STEP 3 — Barriers */}
         {step === 3 && (
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">Main barriers</h3>
@@ -382,7 +378,6 @@ export function ResponseForm({
           </div>
         )}
 
-        {/* STEP 4 — Support */}
         {step === 4 && (
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">What support would be most useful?</h3>
@@ -396,18 +391,13 @@ export function ResponseForm({
           </div>
         )}
 
-        {/* STEP 5 — Consent */}
         {step === 5 && (
           <div className="space-y-4">
-            <h3 className="text-sm font-extrabold text-desk-ink">Consent & submit</h3>
-            <p className="text-sm leading-6 text-desk-ink/65">
-              ISEYC and Tirngan collect this information to understand community barriers and improve
-              programmes. We do not collect medical diagnoses. Responses are analysed mainly in
-              aggregate. You may skip individual questions.
-            </p>
+            <h3 className="text-sm font-extrabold text-desk-ink">Before we begin</h3>
+            <p className="text-sm leading-6 text-desk-ink/65">{COPY.consentIntro}</p>
             <Checkbox
               id="consent"
-              label="I understand and agree that these responses may be kept for programme analysis."
+              label="I understand and agree"
               checked={form.consent}
               onChange={(v) => update("consent", v)}
             />
@@ -446,7 +436,6 @@ export function ResponseForm({
           <p className="mt-4 rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-700">{serverError}</p>
         )}
 
-        {/* Navigation */}
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
           {step > 0 && (
             <SecondaryButton type="button" onClick={() => setStep((s) => s - 1)}>
@@ -459,7 +448,7 @@ export function ResponseForm({
             </PrimaryButton>
           ) : (
             <PrimaryButton type="submit" disabled={submitting || !form.consent}>
-              {submitting ? "Saving…" : "Save & add next person"}
+              {submitting ? "Saving…" : "Save & Add Next Person"}
             </PrimaryButton>
           )}
         </div>

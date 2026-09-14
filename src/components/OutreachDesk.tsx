@@ -6,6 +6,7 @@ import { SessionSetup } from "@/components/SessionSetup";
 import { ResponseForm } from "@/components/ResponseForm";
 import { InsightsDashboard } from "@/components/InsightsDashboard";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/inputs";
+import { COPY } from "@/lib/constants";
 
 type SessionListItem = {
   id: string;
@@ -101,7 +102,6 @@ function DeskInner({ passcode }: { passcode: string }) {
 
   return (
     <div className="space-y-5">
-      {/* Home tabs */}
       <div className="flex rounded-xl border border-desk-line bg-white p-1">
         <button
           type="button"
@@ -166,9 +166,7 @@ function DeskInner({ passcode }: { passcode: string }) {
             )}
 
             {!loading && !loadError && sessions.length === 0 && (
-              <p className="py-6 text-center text-sm text-desk-ink/45">
-                No outreach sessions yet. Start one above.
-              </p>
+              <p className="py-6 text-center text-sm text-desk-ink/45">{COPY.emptySessionsBody}</p>
             )}
 
             {!loading && sessions.length > 0 && (

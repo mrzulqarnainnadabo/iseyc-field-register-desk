@@ -63,9 +63,12 @@ function buildBriefText(data: InsightsData): string {
     `   Share travelling one hour or more to reach their usual health facility.`,
     ``,
     `HOW TO USE THIS BRIEF`,
-    `• Prioritise programmes where the highest percentages appear.`,
-    `• Share with government agencies, healthcare partners and donors as evidence of need.`,
-    `• Combine with qualitative field notes for proposals and advocacy.`,
+    `• Review the key indicators and reported community barriers.`,
+    `• Print / PDF for meetings, programme records and formal briefings.`,
+    `• Copy the summary into proposals, emails and partner communications.`,
+    `• Use the figures with their stated sample size and location to provide appropriate context.`,
+    `• Share aggregate evidence when engaging government, healthcare providers, donors and other partners.`,
+    `• Update the brief regularly as additional outreach evidence becomes available.`,
     ``,
     `DATA STEWARDSHIP`,
     `This evidence is generated from community outreach responses collected under the`,
@@ -73,6 +76,7 @@ function buildBriefText(data: InsightsData): string {
     `Data owner: ${STEWARDSHIP.dataOwner}`,
     `Platform partnership: ISEYC × TIRNGAN Community Outreach Intelligence Desk`,
     ``,
+    `Evidence reflects responses recorded through the Community Outreach Intelligence Desk during the stated reporting period.`,
     `Confidentiality: Programme intelligence only. No medical diagnoses or clinical records.`,
   ]
     .filter((line) => line !== undefined)
@@ -113,7 +117,6 @@ export function FounderBrief({ passcode }: { passcode: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback: open print view which includes the same text
       window.print();
     }
   }
@@ -139,7 +142,6 @@ export function FounderBrief({ passcode }: { passcode: string }) {
 
   return (
     <div className="space-y-4">
-      {/* Ownership banner */}
       <div className="rounded-2xl border border-desk-green/25 bg-desk-green/5 p-4 sm:p-5">
         <p className="text-[0.65rem] font-bold uppercase tracking-[0.14em] text-desk-green">
           Founder evidence brief
@@ -151,7 +153,6 @@ export function FounderBrief({ passcode }: { passcode: string }) {
         <p className="mt-3 text-xs leading-5 text-desk-ink/55">{STEWARDSHIP.purpose}</p>
       </div>
 
-      {/* Printable brief body */}
       <div
         id="founder-brief"
         className="rounded-2xl border border-desk-line bg-white p-5 sm:p-6 print:border-0 print:p-0"
@@ -209,18 +210,24 @@ export function FounderBrief({ passcode }: { passcode: string }) {
         <div className="mt-6 rounded-xl bg-desk-paper/60 p-4 text-xs leading-5 text-desk-ink/60">
           <p className="font-semibold text-desk-ink/80">How to use this brief</p>
           <ul className="mt-2 list-disc space-y-1 pl-4">
-            <li>Prioritise programmes where the highest percentages appear.</li>
-            <li>Share with government, healthcare partners and donors as evidence of need.</li>
-            <li>Combine with field notes for proposals and advocacy.</li>
+            <li>Review the key indicators and reported community barriers.</li>
+            <li>Print / PDF for meetings, programme records and formal briefings.</li>
+            <li>Copy the summary into proposals, emails and partner communications.</li>
+            <li>Use the figures with their stated sample size to provide appropriate context.</li>
+            <li>Share aggregate evidence with government, healthcare providers and donors.</li>
+            <li>Update the brief regularly as additional outreach evidence becomes available.</li>
           </ul>
           <p className="mt-3 text-desk-ink/50">
+            Evidence reflects responses recorded through the Community Outreach Intelligence Desk
+            during the stated reporting period.
+          </p>
+          <p className="mt-1 text-desk-ink/50">
             Data owner: {STEWARDSHIP.dataOwner} · Stewardship: {STEWARDSHIP.dataSteward} ·
             Platform: ISEYC × TIRNGAN
           </p>
         </div>
       </div>
 
-      {/* Actions */}
       <div className="flex flex-col gap-2 sm:flex-row print:hidden">
         <PrimaryButton type="button" onClick={printBrief}>
           Print / Save as PDF
