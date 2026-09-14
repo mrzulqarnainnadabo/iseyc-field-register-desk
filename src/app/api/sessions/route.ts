@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { outreachSessionSchema } from "@/lib/validation";
 import { createOutreachSession, listRecentSessions } from "@/lib/notion";
-import { passcodeRequired, verifyPasscode } from "@/lib/passcode";
+import { passcodeRequired, checkPasscode } from "@/lib/passcode";
 
 export const runtime = "nodejs";
 
@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   try {
     if (passcodeRequired()) {
       const passcode = req.nextUrl.searchParams.get("passcode") ?? "";
-      if (!verifyPasscode(passcode)) {
+      if (!checkPasscode(passcode)) {
         return NextResponse.json({ error: "Invalid or missing passcode" }, { status: 401 });
       }
     }
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     if (passcodeRequired()) {
-      if (!verifyPasscode(body.passcode ?? "")) {
+      if (!checkPasscode(body.passcode ?? "")) {
         return NextResponse.json({ error: "Invalid or missing passcode" }, { status: 401 });
       }
     }
