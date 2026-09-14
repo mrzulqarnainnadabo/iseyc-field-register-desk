@@ -17,18 +17,31 @@ export const PARTNER = {
   name: "Tirngan Sickle Cell Foundation",
   shortName: "TIRNGAN",
   tagline: "Breaking Cycles",
+  founder: "Miracle Sim Danjuma",
+  founderTitle: "Founder",
+} as const;
+
+export const STEWARDSHIP = {
+  dataOwner: "Tirngan Sickle Cell Foundation",
+  dataSteward: "Miracle Sim Danjuma",
+  stewardTitle: "Founder, Tirngan Sickle Cell Foundation",
+  purpose:
+    "Community responses collected through this desk are programme intelligence for Tirngan Sickle Cell Foundation and its partners. They exist to guide priorities, strengthen proposals, and improve support for warriors and caregivers.",
+  accessNote:
+    "Founder-level access is provided through the Evidence Brief. Operational field collection is managed by trained staff under institutional oversight.",
 } as const;
 
 export const SITE = {
   productName: "ISEYC × TIRNGAN Community Outreach Intelligence Desk",
   title: "ISEYC × TIRNGAN · Community Outreach Intelligence Desk",
   description:
-    "Privacy-first field data platform for capturing structured community outreach information and generating programme intelligence for ISEYC × Tirngan Sickle Cell Foundation.",
+    "Privacy-first field data platform for capturing structured community outreach information and generating programme intelligence for ISEYC × Tirngan Sickle Cell Foundation under the leadership of Miracle Sim Danjuma.",
   shortDescription:
     "Capture structured community barriers, knowledge and support needs during outreach. Generate evidence for programme priorities.",
   keywords: [
     "ISEYC",
     "Tirngan Sickle Cell Foundation",
+    "Miracle Sim Danjuma",
     "ISEYC × TIRNGAN",
     "Community Outreach Intelligence",
     "sickle cell Nigeria",
@@ -47,7 +60,7 @@ export const COPY = {
   configBanner:
     "The desk is temporarily unavailable because the programme database is not connected. Please complete the system setup before accepting live responses.",
   footerOwner:
-    "ISEYC × TIRNGAN presents this Community Outreach Intelligence Desk for structured field data collection and programme evidence.",
+    "Programme intelligence under the stewardship of Miracle Sim Danjuma, Founder, Tirngan Sickle Cell Foundation · Built in partnership with ISEYC.",
   footerPrivacy: "Programme records only · No medical diagnoses or clinical information is requested",
   offlineBanner: "Offline · Responses are being saved securely on this device",
   syncingBanner: "Syncing responses…",
