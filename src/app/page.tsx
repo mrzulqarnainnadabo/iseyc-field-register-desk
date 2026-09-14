@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { TrustStrip } from "@/components/TrustStrip";
-import { ParticipationForm } from "@/components/ParticipationForm";
+import { OutreachDesk } from "@/components/OutreachDesk";
 import { COPY } from "@/lib/constants";
 
 export default function Page() {
@@ -34,24 +34,9 @@ export default function Page() {
           </div>
         )}
 
-        <div className="mx-auto max-w-4xl">
-          {/* Temporary transitional surface while full Session + Response UI is built */}
-          <div className="mb-6 space-y-3">
-            <h1 className="text-xl font-semibold tracking-tight text-desk-ink sm:text-2xl">
-              Community Outreach Desk
-            </h1>
-            <p className="max-w-2xl text-sm leading-6 text-desk-ink/65 sm:text-[0.95rem]">
-              Capture structured community information securely and consistently.
-              This desk collects programme-relevant barriers, knowledge and support
-              needs — not medical diagnoses.
-            </p>
-          </div>
-
+        <div className="mx-auto max-w-4xl space-y-6">
           <TrustStrip />
-
-          <div className="mt-6">
-            <ParticipationForm passcodeRequired={passcodeRequired} />
-          </div>
+          <OutreachDesk passcodeRequired={passcodeRequired} />
         </div>
       </main>
       <Footer />
