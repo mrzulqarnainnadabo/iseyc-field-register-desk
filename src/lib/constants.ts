@@ -1,6 +1,5 @@
 // ISEYC × TIRNGAN Community Outreach Intelligence Desk
 // Institutional brand language + programme data dictionaries.
-// Keep select option names in sync with Notion databases.
 
 export const ORG = {
   name: "ISEYC × TIRNGAN",
@@ -35,11 +34,11 @@ export const STEWARDSHIP = {
 
 export const SITE = {
   productName: "ISEYC × TIRNGAN Community Outreach Intelligence Desk",
-  title: "ISEYC × TIRNGAN · Community Outreach Intelligence Desk",
+  title: "ISEYC × TIRNGAN Community Outreach Desk | Nigeria",
   description:
-    "Privacy-first field data platform for capturing structured community outreach information and generating programme intelligence for ISEYC × Tirngan Sickle Cell Foundation under the leadership of Miracle Sim Danjuma.",
+    "Privacy-first field tool for capturing community barriers and support needs during outreach in Nigeria, generating evidence for programme decisions.",
   shortDescription:
-    "Capture structured community barriers, knowledge and support needs during outreach. Generate evidence for programme priorities.",
+    "Privacy-first field evidence for community outreach in Nigeria.",
   keywords: [
     "ISEYC",
     "Tirngan Sickle Cell Foundation",
@@ -58,7 +57,7 @@ export const COPY = {
   trustStrip:
     "ISEYC × Tirngan · Purpose-led data collection · Privacy-conscious · Community-focused",
   consentIntro:
-    "We are collecting this information to understand community barriers and improve future programmes. You may choose not to answer any question. This desk does not collect clinical diagnoses or create medical records.",
+    "We collect limited information about community experiences, barriers and support needs to help plan and improve programmes. Participation is voluntary. This desk is not a medical record and does not collect medical diagnoses. Prefer not to enter names or phone numbers unless a separate follow-up step specifically asks for them.",
   configBanner:
     "The desk is temporarily unavailable because the programme database is not connected. Please complete the system setup before accepting live responses.",
   footerOwner:
@@ -73,8 +72,6 @@ export const COPY = {
     "Insights will appear here once community responses have been collected. Start an outreach session to begin building the evidence base.",
   emptySessionsBody: "No outreach sessions yet. Start one above to begin collecting community evidence.",
 } as const;
-
-// ---------- Outreach Session dictionaries ----------
 
 export const PROGRAMMES = [
   "SCD Outreach",
@@ -96,216 +93,89 @@ export const OUTREACH_TYPES = [
 ] as const;
 
 export const NIGERIAN_STATES = [
-  "Abia",
-  "Adamawa",
-  "Akwa Ibom",
-  "Anambra",
-  "Bauchi",
-  "Bayelsa",
-  "Benue",
-  "Borno",
-  "Cross River",
-  "Delta",
-  "Ebonyi",
-  "Edo",
-  "Ekiti",
-  "Enugu",
-  "FCT",
-  "Gombe",
-  "Imo",
-  "Jigawa",
-  "Kaduna",
-  "Kano",
-  "Katsina",
-  "Kebbi",
-  "Kogi",
-  "Kwara",
-  "Lagos",
-  "Nasarawa",
-  "Niger",
-  "Ogun",
-  "Ondo",
-  "Osun",
-  "Oyo",
-  "Plateau",
-  "Rivers",
-  "Sokoto",
-  "Taraba",
-  "Yobe",
-  "Zamfara",
+  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+  "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo",
+  "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
+  "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
+  "Sokoto", "Taraba", "Yobe", "Zamfara",
 ] as const;
 
-// ---------- Community Response dictionaries ----------
-
 export const PARTICIPANT_GROUPS = [
-  "Warrior",
-  "Caregiver",
-  "Family member",
-  "Community member",
-  "Health worker",
-  "Other",
+  "Warrior", "Caregiver", "Family member", "Community member", "Health worker", "Other",
 ] as const;
 
 export const AGE_BANDS = [
-  "Under 12",
-  "12–17",
-  "18–24",
-  "25–34",
-  "35–44",
-  "45+",
-  "Prefer not to say",
+  "Under 12", "12–17", "18–24", "25–34", "35–44", "45+", "Prefer not to say",
 ] as const;
 
-export const SEX_OPTIONS = [
-  "Female",
-  "Male",
-  "Other",
-  "Prefer not to say",
-] as const;
+export const SEX_OPTIONS = ["Female", "Male", "Other", "Prefer not to say"] as const;
 
-export const RESIDENCE_OPTIONS = [
-  "Same community",
-  "Other community",
-] as const;
+export const RESIDENCE_OPTIONS = ["Same community", "Other community"] as const;
 
 export const MEDICATION_ACCESS = [
-  "Usually easy",
-  "Sometimes difficult",
-  "Often difficult",
-  "Very difficult / unavailable",
-  "Not applicable",
-  "Prefer not to answer",
+  "Usually easy", "Sometimes difficult", "Often difficult", "Very difficult / unavailable",
+  "Not applicable", "Prefer not to answer",
 ] as const;
 
 export const MEDICATION_AFFORDABILITY = [
-  "Affordable",
-  "Sometimes difficult to afford",
-  "Usually unaffordable",
-  "Completely unaffordable",
-  "Not applicable",
-  "Prefer not to answer",
+  "Affordable", "Sometimes difficult to afford", "Usually unaffordable", "Completely unaffordable",
+  "Not applicable", "Prefer not to answer",
 ] as const;
 
 export const INVESTIGATION_ACCESS = [
-  "Easy",
-  "Some difficulty",
-  "Difficult",
-  "Very difficult",
-  "Not applicable",
-  "Prefer not to answer",
+  "Easy", "Some difficulty", "Difficult", "Very difficult", "Not applicable", "Prefer not to answer",
 ] as const;
 
 export const INVESTIGATION_AFFORDABILITY = [
-  "Affordable",
-  "Sometimes difficult",
-  "Usually unaffordable",
-  "Completely unaffordable",
-  "Not applicable",
-  "Prefer not to answer",
+  "Affordable", "Sometimes difficult", "Usually unaffordable", "Completely unaffordable",
+  "Not applicable", "Prefer not to answer",
 ] as const;
 
 export const TRAVEL_TIME = [
-  "Under 30 minutes",
-  "30–60 minutes",
-  "1–2 hours",
-  "More than 2 hours",
-  "No regular facility",
+  "Under 30 minutes", "30–60 minutes", "1–2 hours", "More than 2 hours", "No regular facility",
 ] as const;
 
 export const TRANSPORT_BARRIER = [
-  "No significant barrier",
-  "Minor barrier",
-  "Major barrier",
+  "No significant barrier", "Minor barrier", "Major barrier",
 ] as const;
 
 export const FACILITY_AVAILABILITY = [
-  "Usually",
-  "Sometimes",
-  "Rarely",
-  "Don’t know",
-  "Not applicable",
+  "Usually", "Sometimes", "Rarely", "Don’t know", "Not applicable",
 ] as const;
 
 export const GENOTYPE_KNOWLEDGE = [
-  "Yes",
-  "No",
-  "Not sure",
-  "Prefer not to answer",
+  "Yes", "No", "Not sure", "Prefer not to answer",
 ] as const;
 
-export const UNDERSTANDING_OPTIONS = [
-  "Yes",
-  "Partly",
-  "No",
-  "Not sure",
-] as const;
+export const UNDERSTANDING_OPTIONS = ["Yes", "Partly", "No", "Not sure"] as const;
 
-export const YES_NO_NOTSURE = [
-  "Yes",
-  "No",
-  "Not sure",
-] as const;
+export const YES_NO_NOTSURE = ["Yes", "No", "Not sure"] as const;
 
 export const MAIN_BARRIERS = [
-  "Cost of medication",
-  "Medication unavailable",
-  "Cost of investigations",
-  "Investigation unavailable",
-  "Distance to facility",
-  "Transport cost",
-  "Long waiting time",
-  "Lack of information",
-  "Lack of awareness",
-  "Stigma",
-  "Caregiver constraints",
-  "Work/school constraints",
-  "Lack of insurance/support",
-  "Communication problems",
-  "Other",
+  "Cost of medication", "Medication unavailable", "Cost of investigations", "Investigation unavailable",
+  "Distance to facility", "Transport cost", "Long waiting time", "Lack of information",
+  "Lack of awareness", "Stigma", "Caregiver constraints", "Work/school constraints",
+  "Lack of insurance/support", "Communication problems", "Other",
 ] as const;
 
 export const SUPPORT_NEEDED = [
-  "Health education",
-  "Genotype education/testing referral",
-  "Medication-access support",
-  "Investigation support",
-  "Facility navigation",
-  "Counselling/psychosocial support",
-  "Caregiver support",
-  "Peer/community support",
-  "Government programme information",
-  "Insurance/financial support information",
-  "Other",
-  "No immediate support requested",
+  "Health education", "Genotype education/testing referral", "Medication-access support",
+  "Investigation support", "Facility navigation", "Counselling/psychosocial support",
+  "Caregiver support", "Peer/community support", "Government programme information",
+  "Insurance/financial support information", "Other", "No immediate support requested",
 ] as const;
 
-// Legacy (migration safety)
 export const ACTIVITY_TYPES = [
-  "Genotype testing",
-  "Medication support",
-  "Counseling",
-  "Community outreach",
-  "School/hospital visit",
-  "Caregiver session",
-  "Other",
+  "Genotype testing", "Medication support", "Counseling", "Community outreach",
+  "School/hospital visit", "Caregiver session", "Other",
 ] as const;
 
 export const PARTICIPANT_ROLES = [
-  "Warrior (living with SCD)",
-  "Caregiver",
-  "Volunteer",
-  "Staff",
-  "Partner",
-  "Community member",
-  "Other",
+  "Warrior (living with SCD)", "Caregiver", "Volunteer", "Staff", "Partner", "Community member", "Other",
 ] as const;
 
 export const AGE_GROUPS = ["Child", "Youth", "Adult", "Prefer not to say"] as const;
 
 export const SUPPORT_RECEIVED = [
-  "Genotype test",
-  "Medication",
-  "Counseling",
-  "Education only",
-  "Other",
+  "Genotype test", "Medication", "Counseling", "Education only", "Other",
 ] as const;

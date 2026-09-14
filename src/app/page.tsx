@@ -12,11 +12,16 @@ export default function Page() {
   const [notionConfigured, setNotionConfigured] = useState(true);
 
   useEffect(() => {
-    fetch("/api/health")
+    // detail=1 only after unlock cookie exists; public health stays minimal
+    fetch("/api/health?detail=1", { credentials: "include" })
       .then((r) => r.json())
       .then((d) => {
-        setPasscodeRequired(Boolean(d.staffPasscodeEnabled));
-        setNotionConfigured(Boolean(d.notionConfigured));
+        if (typeof d.staffPasscodeEnabled === "boolean") {
+          setPasscodeRequired(d.staffPasscodeEnabled);
+        }
+        if (typeof d.notionConfigured === "boolean") {
+          setNotionConfigured(d.notionConfigured);
+        }
       })
       .catch(() => {});
   }, []);

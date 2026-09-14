@@ -1,12 +1,9 @@
 /**
- * Offline response queue — stores pending community responses in localStorage
- * and flushes them when connectivity returns.
- *
- * Idempotency: each item keeps clientSubmissionId so the API can dedupe.
+ * Offline response queue — localStorage with explicit persistence failure.
  */
 
 export type QueuedResponse = {
-  id: string; // local queue id
+  id: string;
   payload: Record<string, unknown>;
   createdAt: string;
   attempts: number;
@@ -26,12 +23,14 @@ function readQueue(): QueuedResponse[] {
   }
 }
 
-function writeQueue(items: QueuedResponse[]) {
-  if (typeof window === "undefined") return;
+function writeQueue(items: QueuedResponse[]): void {
+  if (typeof window === "undefined") {
+    throw new Error("Storage unavailable");
+  }
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
   } catch {
-    // Quota exceeded or private mode — fail silently; caller still gets local success UX
+    throw new Error("Could not save on this device. Storage may be full or blocked.");
   }
 }
 
@@ -48,7 +47,7 @@ export function enqueueResponse(payload: Record<string, unknown>): QueuedRespons
   };
   const queue = readQueue();
   queue.push(item);
-  writeQueue(queue);
+  writeQueue(queue); // throws on failure — caller must handle
   return item;
 }
 
@@ -62,10 +61,6 @@ export type SyncResult = {
   remaining: number;
 };
 
-/**
- * Attempt to POST every queued item. Successful items are removed.
- * Failed items stay and increment attempts.
- */
 export async function flushQueue(): Promise<SyncResult> {
   const queue = readQueue();
   if (queue.length === 0) {
@@ -84,7 +79,6 @@ export async function flushQueue(): Promise<SyncResult> {
         body: JSON.stringify(item.payload),
       });
 
-      // 200 / 201 success; 409 conflict (duplicate clientSubmissionId) also counts as done
       if (res.ok || res.status === 409) {
         synced += 1;
       } else {
@@ -97,7 +91,11 @@ export async function flushQueue(): Promise<SyncResult> {
     }
   }
 
-  writeQueue(remaining);
+  try {
+    writeQueue(remaining);
+  } catch {
+    // Keep in-memory attempt; next load may re-read old queue
+  }
   return { synced, failed, remaining: remaining.length };
 }
 

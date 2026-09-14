@@ -51,10 +51,8 @@ function DeskInner({ passcode }: { passcode: string }) {
     setLoading(true);
     setLoadError(null);
     try {
-      const url = passcode
-        ? `/api/sessions?passcode=${encodeURIComponent(passcode)}`
-        : "/api/sessions";
-      const res = await fetch(url);
+      // Cookie-based session — credentials include HttpOnly staff cookie
+      const res = await fetch("/api/sessions", { credentials: "include" });
       const data = await res.json();
       if (res.ok) {
         setSessions(data.sessions ?? []);

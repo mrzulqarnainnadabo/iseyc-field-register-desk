@@ -23,14 +23,17 @@ export function PasscodeGate({
     setChecking(true);
     setError(null);
     try {
-      // Validate against the new sessions endpoint (falls back gracefully if DBs not yet shared)
-      const res = await fetch(`/api/sessions?passcode=${encodeURIComponent(passcode)}`);
+      // POST only — never put passcode in the URL
+      const res = await fetch("/api/auth/unlock", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode }),
+      });
       const data = await res.json();
-      if (res.status === 401) {
+      if (!res.ok) {
         setError(data.error ?? "Incorrect passcode");
         return;
       }
-      // 200 or even 500 (DB not configured) still means passcode was accepted
       setUnlocked(true);
       onUnlocked(passcode);
     } catch {
@@ -56,6 +59,7 @@ export function PasscodeGate({
             value={passcode}
             onChange={(e) => setPasscode(e.target.value)}
             autoFocus
+            autoComplete="current-password"
           />
         </Field>
         <PrimaryButton type="submit" disabled={checking || !passcode}>
