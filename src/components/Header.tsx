@@ -25,7 +25,7 @@ export function Header() {
             </div>
             <div className="min-w-0">
               <p className="text-[0.66rem] font-extrabold uppercase tracking-[0.2em] text-desk-green">ISEYC × TIRNGAN</p>
-              <p className="mt-0.5 truncate text-sm font-semibold tracking-[-0.01em] text-desk-ink sm:text-[0.92rem]">Joint Registration Desk</p>
+              <p className="mt-0.5 truncate text-sm font-semibold tracking-[-0.01em] text-desk-ink sm:text-[0.92rem]">Community Outreach Intelligence Desk</p>
             </div>
           </div>
 
@@ -42,7 +42,7 @@ export function Header() {
             <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-desk-green text-[10px] font-black text-white">✓</span>
             <span className="truncate">{ORG.partnershipLine}</span>
           </div>
-          <span className="hidden shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-desk-ink/35 sm:block">Official registration</span>
+          <span className="hidden shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-desk-ink/35 sm:block">Field data · Programme evidence</span>
         </div>
       </div>
     </header>
