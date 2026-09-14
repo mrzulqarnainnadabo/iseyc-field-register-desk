@@ -20,6 +20,8 @@ import {
   SUPPORT_NEEDED,
   COPY,
 } from "@/lib/constants";
+import { enqueueResponse, isOnline } from "@/lib/offlineQueue";
+import { useOffline } from "@/components/OfflineProvider";
 import { Field } from "@/components/ui/Field";
 import { ChoiceGrid } from "@/components/ui/ChoiceCard";
 import {
@@ -113,6 +115,8 @@ export function ResponseForm({
   const [serverError, setServerError] = useState<string | null>(null);
   const [savedCount, setSavedCount] = useState(0);
   const [lastSaved, setLastSaved] = useState(false);
+  const [savedOffline, setSavedOffline] = useState(false);
+  const { refreshPending, triggerSync } = useOffline();
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -120,14 +124,10 @@ export function ResponseForm({
 
   const progress = useMemo(() => ((step + 1) / STEPS.length) * 100, [step]);
 
-  async function submitResponse() {
-    setSubmitting(true);
-    setServerError(null);
-    setLastSaved(false);
-
-    const payload = {
+  function buildPayload(submissionIndex: number) {
+    return {
       sessionId,
-      clientSubmissionId: clientId + `-` + savedCount,
+      clientSubmissionId: `${clientId}-${submissionIndex}`,
       participantGroup: form.participantGroup || undefined,
       ageBand: form.ageBand || undefined,
       sex: form.sex || undefined,
@@ -152,6 +152,28 @@ export function ResponseForm({
       contact: form.contact || undefined,
       passcode,
     };
+  }
+
+  async function submitResponse() {
+    setSubmitting(true);
+    setServerError(null);
+    setLastSaved(false);
+    setSavedOffline(false);
+
+    const payload = buildPayload(savedCount);
+
+    // Offline or network failure → queue locally and continue field work
+    if (!isOnline()) {
+      enqueueResponse(payload);
+      refreshPending();
+      setSavedCount((c) => c + 1);
+      setLastSaved(true);
+      setSavedOffline(true);
+      setForm(initial);
+      setStep(0);
+      setSubmitting(false);
+      return true;
+    }
 
     try {
       const res = await fetch("/api/responses", {
@@ -162,18 +184,38 @@ export function ResponseForm({
       const data = await res.json();
 
       if (!res.ok) {
-        setServerError(data.error ?? "Could not save response.");
-        return false;
+        // Server error — still queue so field worker is not blocked
+        enqueueResponse(payload);
+        refreshPending();
+        setSavedCount((c) => c + 1);
+        setLastSaved(true);
+        setSavedOffline(true);
+        setForm(initial);
+        setStep(0);
+        setServerError(
+          data.error
+            ? `Saved on device (will sync). Server said: ${data.error}`
+            : "Saved on device. Will sync when connection is stable."
+        );
+        return true;
       }
 
       setSavedCount((c) => c + 1);
       setLastSaved(true);
       setForm(initial);
       setStep(0);
+      // In case older items are pending, try a background flush
+      void triggerSync();
       return true;
     } catch {
-      setServerError("Network error. Please try again.");
-      return false;
+      enqueueResponse(payload);
+      refreshPending();
+      setSavedCount((c) => c + 1);
+      setLastSaved(true);
+      setSavedOffline(true);
+      setForm(initial);
+      setStep(0);
+      return true;
     } finally {
       setSubmitting(false);
     }
@@ -212,9 +254,17 @@ export function ResponseForm({
       </div>
 
       {savedCount > 0 && (
-        <p className="rounded-xl bg-desk-green/10 px-3.5 py-2.5 text-sm font-medium text-desk-green">
+        <p
+          className={`rounded-xl px-3.5 py-2.5 text-sm font-medium ${
+            savedOffline
+              ? "bg-amber-50 text-amber-900"
+              : "bg-desk-green/10 text-desk-green"
+          }`}
+        >
           {lastSaved
-            ? COPY.saveSuccess
+            ? savedOffline
+              ? `Saved on this device · ${savedCount} this session (will sync when online)`
+              : COPY.saveSuccess
             : `${savedCount} response${savedCount === 1 ? "" : "s"} saved this session`}
         </p>
       )}
@@ -433,7 +483,7 @@ export function ResponseForm({
         )}
 
         {serverError && (
-          <p className="mt-4 rounded-xl bg-red-50 px-3.5 py-3 text-sm text-red-700">{serverError}</p>
+          <p className="mt-4 rounded-xl bg-amber-50 px-3.5 py-3 text-sm text-amber-900">{serverError}</p>
         )}
 
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
