@@ -1,17 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { outreachSessionSchema } from "@/lib/validation";
 import { createOutreachSession, listRecentSessions } from "@/lib/notion";
-import { passcodeRequired, checkPasscode } from "@/lib/passcode";
+import { authorizeRequest } from "@/lib/passcode";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    if (passcodeRequired()) {
-      const passcode = req.nextUrl.searchParams.get("passcode") ?? "";
-      if (!checkPasscode(passcode)) {
-        return NextResponse.json({ error: "Invalid or missing passcode" }, { status: 401 });
-      }
+    // Prefer session cookie; no passcode in query string
+    if (!authorizeRequest(null)) {
+      return NextResponse.json({ error: "Staff session required" }, { status: 401 });
     }
 
     const sessions = await listRecentSessions(40);
@@ -19,7 +17,11 @@ export async function GET(req: NextRequest) {
   } catch (err: any) {
     console.error("[sessions GET]", err);
     return NextResponse.json(
-      { error: err?.message?.includes("not set") ? "Outreach Sessions database not configured yet" : "Could not load sessions" },
+      {
+        error: err?.message?.includes("not set")
+          ? "Outreach Sessions database not configured yet"
+          : "Could not load sessions",
+      },
       { status: 500 }
     );
   }
@@ -29,10 +31,8 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    if (passcodeRequired()) {
-      if (!checkPasscode(body.passcode ?? "")) {
-        return NextResponse.json({ error: "Invalid or missing passcode" }, { status: 401 });
-      }
+    if (!authorizeRequest(body.passcode ?? null)) {
+      return NextResponse.json({ error: "Staff session required" }, { status: 401 });
     }
 
     const parsed = outreachSessionSchema.safeParse(body);

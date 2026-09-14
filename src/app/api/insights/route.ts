@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { Client } from "@notionhq/client";
-import { passcodeRequired, checkPasscode } from "@/lib/passcode";
+import { authorizeRequest } from "@/lib/passcode";
 
 export const runtime = "nodejs";
 
@@ -21,44 +21,28 @@ function rate(
   };
 }
 
-const DIFFICULT_MED = new Set([
-  "Often difficult",
-  "Very difficult / unavailable",
-]);
-const UNAFFORDABLE_INV = new Set([
-  "Usually unaffordable",
-  "Completely unaffordable",
-]);
+const DIFFICULT_MED = new Set(["Often difficult", "Very difficult / unavailable"]);
+const UNAFFORDABLE_INV = new Set(["Usually unaffordable", "Completely unaffordable"]);
 const GENOTYPE_GAP = new Set(["No", "Not sure"]);
 const LONG_TRAVEL = new Set(["1–2 hours", "More than 2 hours"]);
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    if (passcodeRequired()) {
-      const passcode = req.nextUrl.searchParams.get("passcode") ?? "";
-      if (!checkPasscode(passcode)) {
-        return NextResponse.json({ error: "Invalid or missing passcode" }, { status: 401 });
-      }
+    if (!authorizeRequest(null)) {
+      return NextResponse.json({ error: "Staff session required" }, { status: 401 });
     }
 
     const apiKey = getEnv("NOTION_API_KEY");
     const responsesDb = getEnv("NOTION_RESPONSES_DB_ID");
     if (!apiKey || !responsesDb) {
-      return NextResponse.json(
-        {
-          error: "Community Responses database not configured",
-          sampleSize: 0,
-          indicators: null,
-        },
-        { status: 200 }
-      );
+      return NextResponse.json({
+        error: "Community Responses database not configured",
+        sampleSize: 0,
+        indicators: null,
+      });
     }
 
     const notion = new Client({ auth: apiKey });
-    const stateFilter = req.nextUrl.searchParams.get("state");
-    const lgaFilter = req.nextUrl.searchParams.get("lga");
-
-    // Fetch up to 100 recent responses (MVP aggregation)
     const res = await notion.databases.query({
       database_id: responsesDb,
       page_size: 100,
@@ -79,9 +63,6 @@ export async function GET(req: NextRequest) {
     for (const page of res.results) {
       if (!("properties" in page)) continue;
       const props = page.properties as Record<string, any>;
-
-      // Optional geography filter would require Session relation expansion;
-      // for MVP we aggregate all recent responses.
       sampleSize += 1;
 
       const group = props["Participant Group"]?.select?.name;
@@ -115,7 +96,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       sampleSize,
       warriors,
-      filters: { state: stateFilter, lga: lgaFilter },
       indicators: {
         medicationAccessDifficulty: rate(medAccessDiff, medAccessTotal),
         investigationAffordability: rate(invAffordDiff, invAffordTotal),
