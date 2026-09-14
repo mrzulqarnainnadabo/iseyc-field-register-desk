@@ -24,7 +24,10 @@ export default function Page() {
   return (
     <div className="flex min-h-screen flex-col bg-desk-paper">
       <Header />
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-7 sm:py-10">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 sm:px-7 sm:py-10"
+      >
         {!notionConfigured && (
           <div
             className="mx-auto mb-6 max-w-4xl rounded-2xl border border-amber-300/80 bg-amber-50 px-4 py-3.5 text-sm leading-6 text-amber-950"

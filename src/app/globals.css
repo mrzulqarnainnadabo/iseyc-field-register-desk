@@ -48,9 +48,32 @@ textarea {
   -webkit-touch-callout: none;
 }
 
-/* Design system: 48px minimum touch targets */
 .tap-target {
   min-height: 48px;
+}
+
+/* Screen-reader only utility for skip link */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.focus\:not-sr-only:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
 }
 
 h1,
@@ -77,7 +100,6 @@ h4 {
   }
 }
 
-/* Print styles for Founder Evidence Brief */
 @media print {
   body {
     background: white;
