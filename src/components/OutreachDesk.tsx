@@ -5,6 +5,7 @@ import { PasscodeGate } from "@/components/PasscodeGate";
 import { SessionSetup } from "@/components/SessionSetup";
 import { ResponseForm } from "@/components/ResponseForm";
 import { InsightsDashboard } from "@/components/InsightsDashboard";
+import { OfflineProvider } from "@/components/OfflineProvider";
 import { PrimaryButton, SecondaryButton } from "@/components/ui/inputs";
 import { COPY } from "@/lib/constants";
 
@@ -25,7 +26,9 @@ export function OutreachDesk({ passcodeRequired }: { passcodeRequired: boolean }
 
   return (
     <PasscodeGate required={passcodeRequired} onUnlocked={setPasscode}>
-      <DeskInner passcode={passcode} />
+      <OfflineProvider>
+        <DeskInner passcode={passcode} />
+      </OfflineProvider>
     </PasscodeGate>
   );
 }
