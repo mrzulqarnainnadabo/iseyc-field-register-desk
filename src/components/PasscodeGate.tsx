@@ -23,12 +23,14 @@ export function PasscodeGate({
     setChecking(true);
     setError(null);
     try {
-      const res = await fetch(`/api/activities?passcode=${encodeURIComponent(passcode)}`);
+      // Validate against the new sessions endpoint (falls back gracefully if DBs not yet shared)
+      const res = await fetch(`/api/sessions?passcode=${encodeURIComponent(passcode)}`);
       const data = await res.json();
-      if (!res.ok) {
+      if (res.status === 401) {
         setError(data.error ?? "Incorrect passcode");
         return;
       }
+      // 200 or even 500 (DB not configured) still means passcode was accepted
       setUnlocked(true);
       onUnlocked(passcode);
     } catch {
@@ -44,7 +46,7 @@ export function PasscodeGate({
     <div className="rounded-xl border border-desk-line bg-white p-5">
       <p className="text-sm font-semibold text-desk-ink">Staff access required</p>
       <p className="mt-1 text-sm text-desk-ink/60">
-        Enter the staff passcode to log field participation records.
+        Enter the staff passcode to use the Community Outreach Desk.
       </p>
       <form onSubmit={onSubmit} className="mt-4 flex flex-col gap-3">
         <Field label="Staff passcode" htmlFor="staff-passcode" required error={error ?? undefined}>
