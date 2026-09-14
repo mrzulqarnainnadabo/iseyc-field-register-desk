@@ -14,7 +14,10 @@ export function Footer() {
         <p className="mt-3 text-desk-ink/50">
           Data stewardship: {STEWARDSHIP.dataSteward}, {PARTNER.founderTitle} · {PARTNER.name}
         </p>
-        <p className="mt-2 text-desk-ink/45">
+        <p className="mx-auto mt-4 max-w-xl text-[0.7rem] leading-5 text-desk-ink/40">
+          {STEWARDSHIP.formalStatement}
+        </p>
+        <p className="mt-4 text-desk-ink/45">
           {ORG.fullName}
           {ORG.web ? (
             <>
