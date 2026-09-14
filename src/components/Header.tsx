@@ -42,7 +42,9 @@ export function Header() {
             <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-desk-green text-[10px] font-black text-white">✓</span>
             <span className="truncate">{ORG.partnershipLine}</span>
           </div>
-          <span className="hidden shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-desk-ink/35 sm:block">Field data · Programme evidence</span>
+          <span className="hidden shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-desk-ink/35 sm:block">
+            Stewardship · {PARTNER.founder}
+          </span>
         </div>
       </div>
     </header>

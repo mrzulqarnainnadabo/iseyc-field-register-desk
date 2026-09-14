@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { FounderBrief } from "@/components/FounderBrief";
 
 type Indicator = {
   value: number;
@@ -52,6 +53,7 @@ function InsightCard({
 export function InsightsDashboard({ passcode }: { passcode: string }) {
   const [data, setData] = useState<InsightsData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState<"dashboard" | "brief">("dashboard");
 
   useEffect(() => {
     void load();
@@ -74,6 +76,21 @@ export function InsightsDashboard({ passcode }: { passcode: string }) {
     }
   }
 
+  if (view === "brief") {
+    return (
+      <div className="space-y-4">
+        <button
+          type="button"
+          onClick={() => setView("dashboard")}
+          className="text-xs font-semibold text-desk-ink/50 underline underline-offset-2 hover:text-desk-ink print:hidden"
+        >
+          ← Back to insights
+        </button>
+        <FounderBrief passcode={passcode} />
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="rounded-2xl border border-desk-line bg-white p-6 text-center text-sm text-desk-ink/45">
@@ -84,11 +101,20 @@ export function InsightsDashboard({ passcode }: { passcode: string }) {
 
   if (!data?.indicators) {
     return (
-      <div className="rounded-2xl border border-desk-line bg-white p-6 text-center">
-        <p className="text-sm font-semibold text-desk-ink">No insights yet</p>
-        <p className="mt-1 text-sm text-desk-ink/55">
-          {data?.note || data?.error || "Start collecting responses to generate programme evidence."}
-        </p>
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-desk-line bg-white p-6 text-center">
+          <p className="text-sm font-semibold text-desk-ink">No insights yet</p>
+          <p className="mt-1 text-sm text-desk-ink/55">
+            {data?.note || data?.error || "Start collecting responses to generate programme evidence."}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setView("brief")}
+          className="w-full rounded-xl border border-desk-green/30 bg-desk-green/5 px-4 py-3 text-sm font-bold text-desk-green transition hover:bg-desk-green/10"
+        >
+          Open founder evidence brief →
+        </button>
       </div>
     );
   }
@@ -110,6 +136,22 @@ export function InsightsDashboard({ passcode }: { passcode: string }) {
           Refresh
         </button>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setView("brief")}
+        className="w-full rounded-xl border border-desk-green/30 bg-desk-green/5 px-4 py-3.5 text-left transition hover:bg-desk-green/10"
+      >
+        <p className="text-[0.65rem] font-bold uppercase tracking-[0.12em] text-desk-green">
+          For the founder
+        </p>
+        <p className="mt-0.5 text-sm font-extrabold text-desk-ink">
+          Open evidence brief for Miracle Sim Danjuma
+        </p>
+        <p className="mt-1 text-xs text-desk-ink/55">
+          Printable summary · Copy for email · Share with partners and donors
+        </p>
+      </button>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="rounded-2xl border border-desk-line bg-white p-4 text-center">
