@@ -88,14 +88,7 @@ const initial: FormState = {
   contact: "",
 };
 
-const STEPS = [
-  "About",
-  "Access",
-  "Knowledge",
-  "Barriers",
-  "Support",
-  "Consent",
-] as const;
+const STEPS = ["About", "Access", "Knowledge", "Barriers", "Support", "Consent"] as const;
 
 export function ResponseForm({
   sessionId,
@@ -154,6 +147,20 @@ export function ResponseForm({
     };
   }
 
+  function tryQueueLocally(payload: Record<string, unknown>): boolean {
+    try {
+      enqueueResponse(payload);
+      refreshPending();
+      return true;
+    } catch (err: any) {
+      setServerError(
+        err?.message ||
+          "This response was not saved. Storage may be full or blocked. Please try again."
+      );
+      return false;
+    }
+  }
+
   async function submitResponse() {
     setSubmitting(true);
     setServerError(null);
@@ -162,60 +169,56 @@ export function ResponseForm({
 
     const payload = buildPayload(savedCount);
 
-    // Offline or network failure → queue locally and continue field work
     if (!isOnline()) {
-      enqueueResponse(payload);
-      refreshPending();
-      setSavedCount((c) => c + 1);
-      setLastSaved(true);
-      setSavedOffline(true);
-      setForm(initial);
-      setStep(0);
+      if (tryQueueLocally(payload)) {
+        setSavedCount((c) => c + 1);
+        setLastSaved(true);
+        setSavedOffline(true);
+        setForm(initial);
+        setStep(0);
+      }
       setSubmitting(false);
-      return true;
+      return;
     }
 
     try {
       const res = await fetch("/api/responses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
       const data = await res.json();
 
       if (!res.ok) {
-        // Server error — still queue so field worker is not blocked
-        enqueueResponse(payload);
-        refreshPending();
-        setSavedCount((c) => c + 1);
-        setLastSaved(true);
-        setSavedOffline(true);
-        setForm(initial);
-        setStep(0);
-        setServerError(
-          data.error
-            ? `Saved on device (will sync). Server said: ${data.error}`
-            : "Saved on device. Will sync when connection is stable."
-        );
-        return true;
+        if (tryQueueLocally(payload)) {
+          setSavedCount((c) => c + 1);
+          setLastSaved(true);
+          setSavedOffline(true);
+          setForm(initial);
+          setStep(0);
+          setServerError(
+            data.error
+              ? `Saved on device (will sync). Server said: ${data.error}`
+              : "Saved on device. Will sync when connection is stable."
+          );
+        }
+        return;
       }
 
       setSavedCount((c) => c + 1);
       setLastSaved(true);
       setForm(initial);
       setStep(0);
-      // In case older items are pending, try a background flush
       void triggerSync();
-      return true;
     } catch {
-      enqueueResponse(payload);
-      refreshPending();
-      setSavedCount((c) => c + 1);
-      setLastSaved(true);
-      setSavedOffline(true);
-      setForm(initial);
-      setStep(0);
-      return true;
+      if (tryQueueLocally(payload)) {
+        setSavedCount((c) => c + 1);
+        setLastSaved(true);
+        setSavedOffline(true);
+        setForm(initial);
+        setStep(0);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -256,10 +259,10 @@ export function ResponseForm({
       {savedCount > 0 && (
         <p
           className={`rounded-xl px-3.5 py-2.5 text-sm font-medium ${
-            savedOffline
-              ? "bg-amber-50 text-amber-900"
-              : "bg-desk-green/10 text-desk-green"
+            savedOffline ? "bg-amber-50 text-amber-900" : "bg-desk-green/10 text-desk-green"
           }`}
+          role="status"
+          aria-live="polite"
         >
           {lastSaved
             ? savedOffline
@@ -289,32 +292,16 @@ export function ResponseForm({
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">About the respondent</h3>
             <Field label="Participant group" required>
-              <ChoiceGrid
-                options={PARTICIPANT_GROUPS}
-                value={form.participantGroup}
-                onChange={(v) => update("participantGroup", v as string)}
-              />
+              <ChoiceGrid options={PARTICIPANT_GROUPS} value={form.participantGroup} onChange={(v) => update("participantGroup", v as string)} />
             </Field>
             <Field label="Age band" hint="Optional">
-              <ChoiceGrid
-                options={AGE_BANDS}
-                value={form.ageBand}
-                onChange={(v) => update("ageBand", v as string)}
-              />
+              <ChoiceGrid options={AGE_BANDS} value={form.ageBand} onChange={(v) => update("ageBand", v as string)} />
             </Field>
             <Field label="Sex" hint="Optional">
-              <ChoiceGrid
-                options={SEX_OPTIONS}
-                value={form.sex}
-                onChange={(v) => update("sex", v as string)}
-              />
+              <ChoiceGrid options={SEX_OPTIONS} value={form.sex} onChange={(v) => update("sex", v as string)} />
             </Field>
             <Field label="Residence" hint="Optional">
-              <ChoiceGrid
-                options={RESIDENCE_OPTIONS}
-                value={form.residence}
-                onChange={(v) => update("residence", v as string)}
-              />
+              <ChoiceGrid options={RESIDENCE_OPTIONS} value={form.residence} onChange={(v) => update("residence", v as string)} />
             </Field>
           </div>
         )}
@@ -323,53 +310,25 @@ export function ResponseForm({
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">Access & affordability</h3>
             <Field label="Medication access">
-              <ChoiceGrid
-                options={MEDICATION_ACCESS}
-                value={form.medicationAccess}
-                onChange={(v) => update("medicationAccess", v as string)}
-              />
+              <ChoiceGrid options={MEDICATION_ACCESS} value={form.medicationAccess} onChange={(v) => update("medicationAccess", v as string)} />
             </Field>
             <Field label="Medication affordability">
-              <ChoiceGrid
-                options={MEDICATION_AFFORDABILITY}
-                value={form.medicationAffordability}
-                onChange={(v) => update("medicationAffordability", v as string)}
-              />
+              <ChoiceGrid options={MEDICATION_AFFORDABILITY} value={form.medicationAffordability} onChange={(v) => update("medicationAffordability", v as string)} />
             </Field>
             <Field label="Investigation access">
-              <ChoiceGrid
-                options={INVESTIGATION_ACCESS}
-                value={form.investigationAccess}
-                onChange={(v) => update("investigationAccess", v as string)}
-              />
+              <ChoiceGrid options={INVESTIGATION_ACCESS} value={form.investigationAccess} onChange={(v) => update("investigationAccess", v as string)} />
             </Field>
             <Field label="Investigation affordability">
-              <ChoiceGrid
-                options={INVESTIGATION_AFFORDABILITY}
-                value={form.investigationAffordability}
-                onChange={(v) => update("investigationAffordability", v as string)}
-              />
+              <ChoiceGrid options={INVESTIGATION_AFFORDABILITY} value={form.investigationAffordability} onChange={(v) => update("investigationAffordability", v as string)} />
             </Field>
             <Field label="Travel time to usual facility">
-              <ChoiceGrid
-                options={TRAVEL_TIME}
-                value={form.travelTime}
-                onChange={(v) => update("travelTime", v as string)}
-              />
+              <ChoiceGrid options={TRAVEL_TIME} value={form.travelTime} onChange={(v) => update("travelTime", v as string)} />
             </Field>
             <Field label="Transport barrier">
-              <ChoiceGrid
-                options={TRANSPORT_BARRIER}
-                value={form.transportBarrier}
-                onChange={(v) => update("transportBarrier", v as string)}
-              />
+              <ChoiceGrid options={TRANSPORT_BARRIER} value={form.transportBarrier} onChange={(v) => update("transportBarrier", v as string)} />
             </Field>
             <Field label="Facility availability">
-              <ChoiceGrid
-                options={FACILITY_AVAILABILITY}
-                value={form.facilityAvailability}
-                onChange={(v) => update("facilityAvailability", v as string)}
-              />
+              <ChoiceGrid options={FACILITY_AVAILABILITY} value={form.facilityAvailability} onChange={(v) => update("facilityAvailability", v as string)} />
             </Field>
           </div>
         )}
@@ -378,39 +337,19 @@ export function ResponseForm({
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">Knowledge & awareness</h3>
             <Field label="Do you know your genotype?">
-              <ChoiceGrid
-                options={GENOTYPE_KNOWLEDGE}
-                value={form.knowsGenotype}
-                onChange={(v) => update("knowsGenotype", v as string)}
-              />
+              <ChoiceGrid options={GENOTYPE_KNOWLEDGE} value={form.knowsGenotype} onChange={(v) => update("knowsGenotype", v as string)} />
             </Field>
             <Field label="Do you understand what your genotype means?">
-              <ChoiceGrid
-                options={UNDERSTANDING_OPTIONS}
-                value={form.understandsGenotype}
-                onChange={(v) => update("understandsGenotype", v as string)}
-              />
+              <ChoiceGrid options={UNDERSTANDING_OPTIONS} value={form.understandsGenotype} onChange={(v) => update("understandsGenotype", v as string)} />
             </Field>
             <Field label="Do you know where to seek appropriate help?">
-              <ChoiceGrid
-                options={YES_NO_NOTSURE}
-                value={form.knowsWhereToSeekHelp}
-                onChange={(v) => update("knowsWhereToSeekHelp", v as string)}
-              />
+              <ChoiceGrid options={YES_NO_NOTSURE} value={form.knowsWhereToSeekHelp} onChange={(v) => update("knowsWhereToSeekHelp", v as string)} />
             </Field>
             <Field label="Do you know that regular care can help manage SCD?">
-              <ChoiceGrid
-                options={YES_NO_NOTSURE}
-                value={form.knowsRegularCareHelps}
-                onChange={(v) => update("knowsRegularCareHelps", v as string)}
-              />
+              <ChoiceGrid options={YES_NO_NOTSURE} value={form.knowsRegularCareHelps} onChange={(v) => update("knowsRegularCareHelps", v as string)} />
             </Field>
             <Field label="Do you know when urgent medical attention may be necessary?">
-              <ChoiceGrid
-                options={YES_NO_NOTSURE}
-                value={form.knowsWhenUrgent}
-                onChange={(v) => update("knowsWhenUrgent", v as string)}
-              />
+              <ChoiceGrid options={YES_NO_NOTSURE} value={form.knowsWhenUrgent} onChange={(v) => update("knowsWhenUrgent", v as string)} />
             </Field>
           </div>
         )}
@@ -419,12 +358,7 @@ export function ResponseForm({
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">Main barriers</h3>
             <p className="text-xs text-desk-ink/55">Select all that apply.</p>
-            <ChoiceGrid
-              options={MAIN_BARRIERS}
-              value={form.mainBarriers}
-              onChange={(v) => update("mainBarriers", v as string[])}
-              multi
-            />
+            <ChoiceGrid options={MAIN_BARRIERS} value={form.mainBarriers} onChange={(v) => update("mainBarriers", v as string[])} multi />
           </div>
         )}
 
@@ -432,12 +366,7 @@ export function ResponseForm({
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">What support would be most useful?</h3>
             <p className="text-xs text-desk-ink/55">Select all that apply.</p>
-            <ChoiceGrid
-              options={SUPPORT_NEEDED}
-              value={form.supportNeeded}
-              onChange={(v) => update("supportNeeded", v as string[])}
-              multi
-            />
+            <ChoiceGrid options={SUPPORT_NEEDED} value={form.supportNeeded} onChange={(v) => update("supportNeeded", v as string[])} multi />
           </div>
         )}
 
@@ -445,13 +374,7 @@ export function ResponseForm({
           <div className="space-y-4">
             <h3 className="text-sm font-extrabold text-desk-ink">Before we begin</h3>
             <p className="text-sm leading-6 text-desk-ink/65">{COPY.consentIntro}</p>
-            <Checkbox
-              id="consent"
-              label="I understand and agree"
-              checked={form.consent}
-              onChange={(v) => update("consent", v)}
-            />
-
+            <Checkbox id="consent" label="I understand and agree" checked={form.consent} onChange={(v) => update("consent", v)} />
             <div className="rounded-xl border border-desk-line bg-desk-paper/50 p-3.5">
               <Checkbox
                 id="followup"
@@ -462,19 +385,10 @@ export function ResponseForm({
               {form.followUpRequested && (
                 <div className="mt-3 space-y-3">
                   <Field label="Preferred channel">
-                    <ChoiceGrid
-                      options={["Phone", "WhatsApp", "Other"]}
-                      value={form.preferredChannel}
-                      onChange={(v) => update("preferredChannel", v as string)}
-                    />
+                    <ChoiceGrid options={["Phone", "WhatsApp", "Other"]} value={form.preferredChannel} onChange={(v) => update("preferredChannel", v as string)} />
                   </Field>
-                  <Field label="Contact number" hint="Optional">
-                    <TextInput
-                      value={form.contact}
-                      onChange={(e) => update("contact", e.target.value)}
-                      inputMode="tel"
-                      placeholder="Phone number"
-                    />
+                  <Field label="Contact number" hint="Optional — only if follow-up is requested">
+                    <TextInput value={form.contact} onChange={(e) => update("contact", e.target.value)} inputMode="tel" placeholder="Phone number" />
                   </Field>
                 </div>
               )}
@@ -483,7 +397,9 @@ export function ResponseForm({
         )}
 
         {serverError && (
-          <p className="mt-4 rounded-xl bg-amber-50 px-3.5 py-3 text-sm text-amber-900">{serverError}</p>
+          <p className="mt-4 rounded-xl bg-amber-50 px-3.5 py-3 text-sm text-amber-900" role="alert">
+            {serverError}
+          </p>
         )}
 
         <div className="mt-5 flex flex-col gap-2 sm:flex-row">
