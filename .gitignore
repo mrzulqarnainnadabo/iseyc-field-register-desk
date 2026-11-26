@@ -13,6 +13,11 @@
 .env.local
 .env.*.local
 
+# browser tests
+/playwright-report/
+/test-results/
+/blob-report/
+
 # misc
 .DS_Store
 *.pem
