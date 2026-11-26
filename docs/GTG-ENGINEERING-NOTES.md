@@ -1,40 +1,90 @@
 # From Girlhood to Greatness — Engineering Notes
 
 ## Source reconciliation
-The reviewed Claude archive was not present in the repository branch or its reachable Git history. This implementation is a documented reconstruction based on the committed handover, supplied visual preview, event facts and authoritative Notion schemas. It does not claim to reproduce missing source files or official logo artwork.
 
-The older ISEYC Field Register Desk components and unrelated API routes are retained. The public root route and metadata now serve the GTG event experience. The main branch is unchanged.
+The reviewed Claude archive was not present in this repository branch or its reachable Git history. The current application was therefore established from the committed handover, the supplied visual preview, the approved event facts and the connected Notion database schemas. This is a documented reconstruction, not a claim that the original archive's source files were recovered.
 
-## Visual direction
-The page uses the preview's warm ivory, deep plum and muted gold palette with an editorial serif/sans-serif pairing. No unverified photography, speaker names, testimonials or official logo files have been invented. The header uses a typographic organiser wordmark until the official asset is committed.
+The old ISEYC Field Register Desk source and its legacy API routes were retained rather than blindly deleting the previous application. The public root route now serves the GTG event experience. The main branch remains unchanged.
 
-## Notion integration
-The registration and feedback property names and select options were read from the connected Notion workspace:
-- Registrations database: 4245db88ef46817f8638f71e34d26205
-- Feedback database: 4245db88ef4681cc944af1cccceba720
+## Approved event information
 
-Required server-side variables: NOTION_API_KEY, NOTION_REGISTRATIONS_DB_ID, NOTION_FEEDBACK_DB_ID. The two database IDs already exist in the Vercel project environment. The existing API key is configured there but has not been read or exposed.
+- Event: From Girlhood to Greatness — Second Edition
+- Theme: Accepting My Greatness — From Becoming Her to Believing in Her.
+- Organiser: Empower with Hafsat
+- In partnership with: Baytal Rihaa
+- Systems and Documentation Partner: Initiative for Sustainable Evolution for Youth and Community (ISEYC)
+- Date: Sunday, 29 November 2026
+- Time: 1:00 PM
+- Venue: Yakubu Hub, Surami Road, U/Rimi, Kaduna, Nigeria
+- Audience: Women aged 20 and above
 
-The application returns success only after Notion confirms page creation. It does not create a test participant record. Duplicate checks use the client submission ID and exact name+phone pair. Notion does not enforce a unique constraint on those properties, so concurrent submissions with different client IDs could still race. This is a documented limitation without adding an external database or lock service.
+These details are centralised in `src/lib/gtg-config.ts` and are rendered on the public page and metadata.
 
-## Staff access
-Staff access requires REGISTER_PASSCODE and SESSION_SECRET. Session cookies are HttpOnly, Secure in production, SameSite=Strict and HMAC-signed with an expiry. The previous legacy ISEYC passcode helper was hardened to use HMAC and fail closed if required credentials are absent.
+## Visual and brand status
 
-## Safe validation
-Do not submit real guest data as a test. A successful end-to-end Notion write test requires an explicitly approved test database. A live registration test against the event's production database is intentionally not performed by this change. Rate limiting is process-local and not globally shared across serverless instances.
+The current page uses the preview's warm ivory, deep plum and restrained gold direction with an editorial serif/sans-serif pairing. It does not invent speakers, testimonials, programme activities, sponsors or attendance figures.
 
+The official Empower with Hafsat / From Girlhood to Greatness logo was not present in the reconciled repository. A typographic wordmark is used as a temporary fallback. The legacy ISEYC/Tirngan brand assets are retained but are not presented as the event's organiser logo or as unapproved partners. See `public/brand/README.md`.
 
-## Preview and production boundary
-Vercel environment inspection showed the Notion API key, database IDs, staff passcode and session secret are configured for the Production target only. They are not copied into Preview. The review deployment therefore disables guest registration and staff sign-in rather than risking writes to the live guest register from a public preview URL. Production credentials were not decrypted or exposed.
+## Technology and dependency security
 
-## Dependency security audit — 26 November 2026
-GitHub Actions ran npm audit against the committed lockfile:
-- Full dependency tree: 15 advisories — 1 critical, 7 high, 7 moderate.
-- Production dependencies: 4 advisories — 1 critical, 3 high.
-- Production-affected packages: Next.js 14.2.35 (critical), PostCSS (high), source-map-js (high), and Zod 3.x (high).
-- Development tooling also reports vulnerable versions of eslint-config-next / @next/eslint-plugin-next, glob, brace-expansion, minimatch, postcss-selector-parser and TypeScript ESLint dependencies.
+Current application stack:
+- Next.js 15.5.29
+- React 19.2.0
+- TypeScript 5.5.3
+- Tailwind CSS 3.4.4
+- Zod 4.6.7
+- Notion SDK `@notionhq/client` 2.2.15
 
-The current stack was retained to match the reviewed application's stated Next.js 14.2.35 / React 18.3.1 baseline. This is a production blocker, not an accepted long-term risk. Next.js 14.2.35 is within the affected range for the critical image-optimization RCE advisory; the Next.js maintainers list patched versions beginning at 15.5.28 or 16.4.1. Zod versions before 4.6.6 are affected by a high-severity memory-exhaustion advisory; the fixed release is 4.6.6 or later. A dependency migration to a patched supported Next.js release and Zod 4.6.7 must be completed and re-audited before production exposure.
+The framework and validation packages were moved off the vulnerable reviewed-archive versions. The CI dependency-audit step regenerates the lockfile, runs `npm audit` for the full dependency tree and production dependencies, and enforces the high-severity threshold. On the successful verification run, both audit reports contained zero advisories. The resulting patched lockfile was committed by CI as `17e0c70`.
 
-## Automated verification
-The CI workflow runs npm ci, the dependency audit, TypeScript, lint, production build, HTTP smoke checks and Playwright browser checks. Browser tests use a deliberately invalid Notion token and synthetic CI credentials. They verify that failed Notion persistence never produces a success message. No real guest or feedback records are created.
+## Notion registration and feedback
+
+The connected Notion schemas were inspected read-only. The registration and feedback property names, field types and select options match the application mapping.
+
+The production Vercel environment contains the required Notion credentials and database identifiers. Preview deployments do not receive those production secrets; registration and staff access therefore remain disabled on preview. The preview cannot create guest or feedback records.
+
+The application returns a successful registration response only after the Notion page-creation call succeeds. A failed write returns an error and does not show a success confirmation. No synthetic participant or feedback record has been written to the live databases.
+
+A real end-to-end write test remains unperformed because no approved test database has been supplied. Production environment-variable presence is not proof that the Notion API token can write to the configured database.
+
+Duplicate detection checks the client submission ID and exact name/phone pair before creating a record. Notion does not enforce a unique constraint on those properties, so concurrent requests can still race. This limitation is documented rather than hidden or masked by an unapproved external datastore.
+
+## Staff access and security boundaries
+
+Staff access requires `REGISTER_PASSCODE`, `SESSION_SECRET` (at least 32 characters) and the required Notion environment variables. Successful login creates an expiring HMAC-signed, HttpOnly cookie with Secure enabled in production and SameSite=Strict. Check-in verifies that the target record belongs to the configured registration database.
+
+The current staff desk uses a shared event-team passcode, not individual staff identities or role-based permissions. It therefore does not provide per-person check-in attribution. Login and registration rate limits are process-local in-memory controls; they are not shared across serverless instances and should not be described as globally enforced limits.
+
+## Verification evidence
+
+Successful GitHub Actions run: `45911986983` (26 November 2026), on the continuation branch before the CI-generated lockfile commit.
+
+- `npm ci`: passed
+- Full dependency audit: zero advisories
+- Production dependency audit: zero advisories
+- `npm run typecheck`: passed
+- `npm run lint`: passed
+- `npm run build`: passed
+- HTTP smoke checks for the home page, staff page, feedback page and registration/staff configuration endpoints: passed
+- Playwright browser tests: 6 passed, 0 failed
+
+The Playwright checks cover approved event facts, mobile horizontal overflow, registration persistence failure, anonymous feedback persistence failure, staff login/check-in access boundaries and invalid API payloads. They use a deliberately invalid Notion token and synthetic CI-only staff credentials; they do not write to production Notion.
+
+A Vercel preview deployment for the review branch completed successfully. No production deployment was triggered.
+
+## Remaining review blockers
+
+1. The organiser must supply the approved event logo before the final visual identity can be signed off.
+2. A real Notion write/readback test requires an explicitly approved test database shared with the existing integration.
+3. Duplicate detection is not atomic across concurrent serverless requests.
+4. Rate limiting is instance-local, not distributed.
+5. Staff access is shared-passcode based and does not identify individual officers.
+6. The venue text is preserved exactly as supplied; no unverified map pin or directions have been invented.
+
+## Git safeguards
+
+- Working branch: `feat/gtg-second-edition-review-build`
+- Intended PR base: `feat/gtg-second-edition-continuation`
+- Main branch at last check: `4eaa1d6e2f01e047337d1d67f60b9c352a4bc8e4` (unchanged)
+- No direct push to main, force-push, merge or production deployment.
