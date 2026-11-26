@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { FeedbackForm } from "@/components/FeedbackForm";
 
-export const metadata = { title: "Anonymous event feedback" };
+export const metadata = { title: "Anonymous event feedback", robots: { index: false, follow: false } };
 
 export default function FeedbackPage() {
   return (
