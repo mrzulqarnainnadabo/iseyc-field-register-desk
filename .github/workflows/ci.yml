@@ -23,7 +23,7 @@ jobs:
       - name: Regenerate dependency lockfile
         run: |
           npm install --package-lock-only --ignore-scripts
-          npm audit fix --package-lock-only --ignore-scripts || true
+          npm audit fix --ignore-scripts || true
       - run: npm ci
       - name: Report dependency audit
         continue-on-error: true
