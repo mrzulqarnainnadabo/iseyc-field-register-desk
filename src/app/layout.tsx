@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   authors: [{ name: GTG.organiser }],
   creator: GTG.organiser,
   publisher: GTG.organiser,
-  robots: { index: true, follow: true },
+  robots: process.env.VERCEL_ENV === "production" ? { index: true, follow: true } : { index: false, follow: false },
   alternates: { canonical: "/" },
   openGraph: { type: "website", locale: "en_NG", url: siteUrl, siteName: GTG.title, title: "From Girlhood to Greatness — Second Edition", description: GTG.theme },
   twitter: { card: "summary", title: "From Girlhood to Greatness — Second Edition", description: GTG.theme },
