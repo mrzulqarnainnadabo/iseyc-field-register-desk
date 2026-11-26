@@ -13,7 +13,7 @@ A responsive event website and registration/check-in system for From Girlhood to
 - Audience: Women aged 20 and above
 
 ## Stack
-Next.js 14.2.35, React 18, TypeScript, Tailwind CSS, Zod and the Notion SDK.
+Next.js 15.5.29, React 19.2.0, TypeScript 5.5.3, Tailwind CSS 3.4.4, Zod 4.6.7 and the Notion SDK.
 
 ## Local setup
 1. Use Node.js 20 or newer.
@@ -42,6 +42,8 @@ The Notion integration must be connected to both event databases. The applicatio
 - npm run typecheck
 - npm run lint
 - npm run build
+- npm audit --audit-level=high
+- Playwright browser QA (CI)
 
 ## Important
 The previously reviewed Claude archive was not available in repository history. The current GTG implementation is reconstructed from the committed engineering handover, supplied visual preview and connected Notion database schemas. Official logo assets were not present in the branch; the current design uses a typographic wordmark, not an invented official logo.
