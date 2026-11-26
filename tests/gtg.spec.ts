@@ -1,0 +1,66 @@
+import { test, expect } from "@playwright/test";
+
+test("public event page presents the approved event facts", async ({ page }) => {
+  await page.goto("/");
+  await expect(page).toHaveTitle(/From Girlhood to Greatness/);
+  await expect(page.getByRole("heading", { name: /From Girlhood.*to Greatness/i })).toBeVisible();
+  await expect(page.getByText(/Accepting My Greatness — From Becoming Her to Believing in Her/)).toBeVisible();
+  await expect(page.getByText("Sunday, 29 November 2026")).toBeVisible();
+  await expect(page.getByText("Yakubu Hub, Surami Road,")).toBeVisible();
+  await expect(page.getByText("Baytal Rihaa")).toBeVisible();
+  await expect(page.getByText(/Initiative for Sustainable Evolution for Youth and Community/)).toBeVisible();
+  await expect(page.locator('input[name="name"]')).toBeVisible();
+  await expect(page.locator('input[name="phone"]')).toBeVisible();
+});
+
+test("mobile layout has no horizontal overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const widths = await page.evaluate(() => ({
+    viewport: document.documentElement.clientWidth,
+    document: document.documentElement.scrollWidth,
+    body: document.body.scrollWidth,
+  }));
+  expect(widths.document).toBeLessThanOrEqual(widths.viewport);
+  expect(widths.body).toBeLessThanOrEqual(widths.viewport);
+  await expect(page.getByRole("link", { name: /Register/ }).first()).toBeVisible();
+});
+
+test("registration never reports success when Notion persistence fails", async ({ page }) => {
+  await page.goto("/");
+  await page.locator('input[name="name"]').fill("CI Test Guest");
+  await page.locator('input[name="phone"]').fill("+2348012345678");
+  await page.locator('select[name="ageBand"]').selectOption("20–25");
+  await page.locator('select[name="source"]').selectOption("Other");
+  await page.locator('input[name="ageConfirmed"]').check();
+  await page.locator('input[name="consent"]').check();
+  await page.getByRole("button", { name: /Complete registration/ }).click();
+  await expect(page.getByRole("alert")).toContainText("Registration could not be saved");
+  await expect(page.getByText("Registration recorded")).toHaveCount(0);
+});
+
+test("anonymous feedback form rejects persistence failure honestly", async ({ page }) => {
+  await page.goto("/feedback");
+  await page.locator('input[name="rating"][value="5"]').check();
+  await page.locator('input[name="whatLanded"][value="Sisterhood and connection"]').check();
+  await page.getByRole("button", { name: /Send anonymous feedback/ }).click();
+  await expect(page.getByRole("alert")).toContainText("could not be saved");
+  await expect(page.getByText("Feedback received")).toHaveCount(0);
+});
+
+test("staff access rejects bad credentials and protects check-in routes", async ({ page }) => {
+  const unauthorised = await page.request.post("/api/staff/check-in", { data: { id: "00000000-0000-4000-8000-000000000000" } });
+  expect(unauthorised.status()).toBe(401);
+
+  await page.goto("/staff");
+  await page.locator('input[type="password"]').fill("incorrect-ci-passcode");
+  await page.getByRole("button", { name: /Continue/ }).click();
+  await expect(page.getByRole("alert")).toContainText("Access code not recognised");
+});
+
+test("API validation rejects empty registration and feedback payloads", async ({ request }) => {
+  const registration = await request.post("/api/register", { data: {} });
+  expect(registration.status()).toBe(400);
+  const feedback = await request.post("/api/feedback", { data: {} });
+  expect(feedback.status()).toBe(400);
+});
