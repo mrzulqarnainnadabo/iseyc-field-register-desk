@@ -157,7 +157,7 @@ export async function createCommunityResponse(input: CommunityResponseInput) {
     Name: { title: [{ text: { content: title } }] },
     Session: { relation: [{ id: input.sessionId }] },
     "Participant Group": { select: { name: input.participantGroup } },
-    Consent: { checkbox: input.consent },
+    Consent: { checkbox: Boolean(input.consent) },
     "Client Submission ID": {
       rich_text: [{ text: { content: input.clientSubmissionId } }],
     },
