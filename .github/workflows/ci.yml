@@ -26,3 +26,15 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
+      - name: HTTP smoke test
+        run: |
+          npm run start -- --hostname 127.0.0.1 > /tmp/gtg-next.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3000/ > /tmp/gtg-home.html; then break; fi
+            sleep 2
+          done
+          grep -q "From Girlhood" /tmp/gtg-home.html
+          curl --fail --silent http://127.0.0.1:3000/staff | grep -q "Staff"
+          curl --fail --silent http://127.0.0.1:3000/feedback | grep -q "feedback"
+          curl --fail --silent http://127.0.0.1:3000/api/register | grep -q '"configured":false'
+          curl --fail --silent http://127.0.0.1:3000/api/staff/login | grep -q '"configured":false'
