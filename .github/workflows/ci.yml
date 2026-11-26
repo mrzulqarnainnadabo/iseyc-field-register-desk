@@ -23,18 +23,29 @@ jobs:
         run: |
           npm audit --json > npm-audit.json || true
           node -e 'const a = JSON.parse(require("fs").readFileSync("npm-audit.json", "utf8")); console.log("AUDIT_TOTALS", JSON.stringify(a.metadata && a.metadata.vulnerabilities)); for (const [name, item] of Object.entries(a.vulnerabilities || {})) console.log("AUDIT_PACKAGE", name, item.severity, "fixAvailable=" + JSON.stringify(item.fixAvailable));'
+      - name: Install browser test runner
+        run: |
+          npm install --no-save @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
-      - name: HTTP smoke test
+      - name: Start isolated test server
         run: |
+          export NOTION_API_KEY="ci-invalid-notion-token"
+          export NOTION_REGISTRATIONS_DB_ID="4245db88ef46817f8638f71e34d26205"
+          export NOTION_FEEDBACK_DB_ID="4245db88ef4681cc944af1cccceba720"
+          export REGISTER_PASSCODE="ci-test-passcode"
+          export SESSION_SECRET="ci-test-session-secret-0123456789-abcdefghijklmnopqrstuvwxyz"
           npm run start -- --hostname 127.0.0.1 > /tmp/gtg-next.log 2>&1 &
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:3000/ > /tmp/gtg-home.html; then break; fi
             sleep 2
           done
           grep -q "From Girlhood" /tmp/gtg-home.html
-          curl --fail --silent http://127.0.0.1:3000/staff | grep -q "Staff"
+          curl --fail --silent http://127.0.0.1:3000/staff | grep -q "From Girlhood"
           curl --fail --silent http://127.0.0.1:3000/feedback | grep -q "feedback"
-          curl --fail --silent http://127.0.0.1:3000/api/register | grep -q '"configured":false'
-          curl --fail --silent http://127.0.0.1:3000/api/staff/login | grep -q '"configured":false'
+          curl --fail --silent http://127.0.0.1:3000/api/register | grep -q '"configured":true'
+          curl --fail --silent http://127.0.0.1:3000/api/staff/login | grep -q '"configured":true'
+      - name: Browser QA
+        run: npx playwright test
