@@ -298,7 +298,7 @@ export async function createParticipantPage(input: ParticipantInput) {
       "Support received": {
         multi_select: input.supportReceived.map((name) => ({ name })),
       },
-      Consent: { checkbox: input.consent },
+      Consent: { checkbox: input.consent === true },
       ...(input.notes ? { Notes: { rich_text: [{ text: { content: input.notes } }] } } : {}),
       Activity: { relation: [{ id: input.activityId }] },
     },
