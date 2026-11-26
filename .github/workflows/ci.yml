@@ -22,7 +22,9 @@ jobs:
         continue-on-error: true
         run: |
           npm audit --json > npm-audit.json || true
-          node -e 'const a = JSON.parse(require("fs").readFileSync("npm-audit.json", "utf8")); console.log("AUDIT_TOTALS", JSON.stringify(a.metadata && a.metadata.vulnerabilities)); for (const [name, item] of Object.entries(a.vulnerabilities || {})) console.log("AUDIT_PACKAGE", name, item.severity, "fixAvailable=" + JSON.stringify(item.fixAvailable));'
+          node -e 'const a = JSON.parse(require("fs").readFileSync("npm-audit.json", "utf8")); console.log("AUDIT_TOTALS", JSON.stringify(a.metadata && a.metadata.vulnerabilities)); for (const [name, item] of Object.entries(a.vulnerabilities || {})) { console.log("AUDIT_PACKAGE", name, item.severity, "fixAvailable=" + JSON.stringify(item.fixAvailable)); console.log("AUDIT_DETAIL", name, JSON.stringify(item.via)); }'
+          npm audit --omit=dev --json > npm-audit-production.json || true
+          node -e 'const a = JSON.parse(require("fs").readFileSync("npm-audit-production.json", "utf8")); console.log("PRODUCTION_AUDIT_TOTALS", JSON.stringify(a.metadata && a.metadata.vulnerabilities)); for (const [name, item] of Object.entries(a.vulnerabilities || {})) console.log("PRODUCTION_AUDIT_PACKAGE", name, item.severity, "fixAvailable=" + JSON.stringify(item.fixAvailable));'
       - name: Install browser test runner
         run: |
           npm install --no-save @playwright/test@1.56.1
