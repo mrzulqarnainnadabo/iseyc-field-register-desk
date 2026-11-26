@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { AGE_BANDS, REGISTRATION_SOURCES } from "@/lib/gtg-config";
 
 type Status = { kind: "idle" | "loading" | "success" | "error"; message?: string; reference?: string };
@@ -11,6 +11,16 @@ function makeReference() {
 export function RegistrationForm() {
   const [status, setStatus] = useState<Status>({ kind: "idle" });
   const [reference, setReference] = useState(makeReference());
+  const [backendReady, setBackendReady] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/register", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((result) => { if (active) setBackendReady(Boolean(result.configured)); })
+      .catch(() => { if (active) setBackendReady(false); });
+    return () => { active = false; };
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,12 +54,12 @@ export function RegistrationForm() {
     }
   }
 
+  if (backendReady === null) return <div className="form-unavailable" role="status">Checking registration availability…</div>;
+  if (!backendReady) return <div className="form-unavailable" role="status"><p className="eyebrow">Registration service</p><h3>Registration is not enabled on this review preview.</h3><p>This preview is for reviewing the website experience. It is not accepting guest details or writing to the live event register.</p></div>;
+
   if (status.kind === "success") return (
     <div className="success-panel" role="status" aria-live="polite">
-      <span className="success-mark" aria-hidden="true">✓</span>
-      <p className="eyebrow">Registration recorded</p>
-      <h3>We look forward to welcoming you.</h3>
-      <p>Your registration has been saved. Keep this reference for event-day check-in.</p>
+      <span className="success-mark" aria-hidden="true">✓</span><p className="eyebrow">Registration recorded</p><h3>We look forward to welcoming you.</h3><p>Your registration has been saved. Keep this reference for event-day check-in.</p>
       <div className="reference-code"><span>YOUR REFERENCE</span><strong>{status.reference}</strong></div>
       <button className="text-button" type="button" onClick={() => { setReference(makeReference()); setStatus({ kind: "idle" }); }}>Register another guest</button>
     </div>
