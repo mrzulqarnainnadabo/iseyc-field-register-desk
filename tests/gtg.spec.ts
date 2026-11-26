@@ -6,10 +6,10 @@ test("public event page presents the approved event facts", async ({ page }) => 
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.getByRole("heading", { name: /From Girlhood.*to Greatness/i })).toBeVisible();
   await expect(page.getByText(/Accepting My Greatness — From Becoming Her to Believing in Her/)).toBeVisible();
-  await expect(page.getByText("Sunday, 29 November 2026")).toBeVisible();
+  await expect(page.getByText("Sunday, 29 November 2026").first()).toBeVisible();
   await expect(page.getByText("1:00 PM").first()).toBeVisible();
   await expect(page.getByText("Women aged 20 and above.").first()).toBeVisible();
-  await expect(page.getByText("Yakubu Hub, Surami Road,")).toBeVisible();
+  await expect(page.getByText("Yakubu Hub, Surami Road,").first()).toBeVisible();
   await expect(page.locator(".partner-lockups").getByText("Baytal Rihaa")).toBeVisible();
   await expect(page.getByText(/Initiative for Sustainable Evolution for Youth and Community/)).toBeVisible();
   await expect(page.locator('input[name="name"]')).toBeVisible();
