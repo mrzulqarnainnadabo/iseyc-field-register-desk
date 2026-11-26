@@ -6,6 +6,17 @@ export const runtime = "nodejs";
 
 const requests = new Map<string, { count: number; resetAt: number }>();
 
+function registrationConfigured() {
+  return Boolean(
+    process.env.NOTION_API_KEY &&
+    process.env.NOTION_REGISTRATIONS_DB_ID
+  );
+}
+
+export async function GET() {
+  return NextResponse.json({ configured: registrationConfigured() });
+}
+
 function rateLimited(ip: string) {
   const now = Date.now();
   const current = requests.get(ip);
@@ -19,17 +30,18 @@ function rateLimited(ip: string) {
 }
 
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (!registrationConfigured()) {
+    return NextResponse.json({ ok: false, error: "Registration is not enabled on this preview. Please use the official event registration link when it is announced." }, { status: 503 });
+  }
+  const ip = request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",").pop()?.trim() || "unknown";
   if (rateLimited(ip)) {
     return NextResponse.json({ ok: false, error: "Too many attempts. Please wait a little and try again." }, { status: 429 });
   }
-
   const body = await request.json().catch(() => null);
   const parsed = registrationSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ ok: false, error: parsed.error.issues[0]?.message || "Check the form and try again." }, { status: 400 });
   }
-
   try {
     const result = await createRegistration(parsed.data);
     if (result.duplicate === "same_submission") {
