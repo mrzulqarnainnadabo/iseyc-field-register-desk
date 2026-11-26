@@ -62,8 +62,15 @@ test("staff access rejects bad credentials and protects check-in routes", async 
   await expect(page.getByRole("heading", { name: "Guest check-in" })).toBeVisible();
   await expect(page.locator(".staff-message")).toContainText("registration list is temporarily unavailable");
 
-  const authorisedCheckIn = await page.request.post("/api/staff/check-in", { data: { id: "00000000-0000-4000-8000-000000000000" } });
-  expect(authorisedCheckIn.status()).toBe(503);
+  const authorisedCheckInStatus = await page.evaluate(async () => {
+    const response = await fetch("/api/staff/check-in", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: "00000000-0000-4000-8000-000000000000" }),
+    });
+    return response.status;
+  });
+  expect(authorisedCheckInStatus).toBe(503);
 
   await page.getByRole("button", { name: "Sign out" }).click();
   await expect(page.getByRole("heading", { name: "Staff access" })).toBeVisible();
