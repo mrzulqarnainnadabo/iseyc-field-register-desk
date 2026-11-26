@@ -24,7 +24,8 @@ export async function createRegistration(input: RegistrationInput, channel: "Onl
     filter: { property: "Client Submission ID", rich_text: { equals: input.clientSubmissionId } },
     page_size: 1,
   });
-  if (bySubmission.results.length) return { duplicate: "same_submission" as const, pageId: bySubmission.results[0].id };
+  const existingSubmission = bySubmission.results[0];
+  if (existingSubmission) return { duplicate: "same_submission" as const, pageId: existingSubmission.id };
 
   const byPerson = await api.databases.query({
     database_id: databaseId,
