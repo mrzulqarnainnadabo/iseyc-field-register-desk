@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 test("public event page presents the approved event facts", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveTitle(/From Girlhood to Greatness/);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.getByRole("heading", { name: /From Girlhood.*to Greatness/i })).toBeVisible();
   await expect(page.getByText(/Accepting My Greatness — From Becoming Her to Believing in Her/)).toBeVisible();
   await expect(page.getByText("Sunday, 29 November 2026")).toBeVisible();
