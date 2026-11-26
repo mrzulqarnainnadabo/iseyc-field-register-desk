@@ -39,13 +39,21 @@ test("registration never reports success when Notion persistence fails", async (
   await expect(page.getByText("Registration recorded")).toHaveCount(0);
 });
 
-test("anonymous feedback form rejects persistence failure honestly", async ({ page }) => {
+test("anonymous feedback rejects persistence failure and rate-limits repeated submissions", async ({ page }) => {
   await page.goto("/feedback");
   await page.locator('input[name="rating"][value="5"]').check();
   await page.locator('input[name="whatLanded"][value="Sisterhood and connection"]').check();
   await page.getByRole("button", { name: /Send anonymous feedback/ }).click();
   await expect(page.locator(".form-error[role=alert]")).toContainText("could not be saved");
   await expect(page.getByText("Feedback received")).toHaveCount(0);
+
+  const payload = { rating: 5, whatLanded: ["Sisterhood and connection"], whatNext: [], clientSubmissionId: "GTG-CI-ANONYMOUS-FEEDBACK" };
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    const response = await page.request.post("/api/feedback", { data: payload });
+    expect(response.status()).toBe(503);
+  }
+  const limited = await page.request.post("/api/feedback", { data: payload });
+  expect(limited.status()).toBe(429);
 });
 
 test("staff access rejects bad credentials and protects check-in routes", async ({ page }) => {
