@@ -7,7 +7,7 @@ test("public event page presents the approved event facts", async ({ page }) => 
   await expect(page.getByText(/Accepting My Greatness — From Becoming Her to Believing in Her/)).toBeVisible();
   await expect(page.getByText("Sunday, 29 November 2026")).toBeVisible();
   await expect(page.getByText("Yakubu Hub, Surami Road,")).toBeVisible();
-  await expect(page.getByText("Baytal Rihaa").first()).toBeVisible();
+  await expect(page.locator(".partner-lockups").getByText("Baytal Rihaa")).toBeVisible();
   await expect(page.getByText(/Initiative for Sustainable Evolution for Youth and Community/)).toBeVisible();
   await expect(page.locator('input[name="name"]')).toBeVisible();
   await expect(page.locator('input[name="phone"]')).toBeVisible();
@@ -56,6 +56,17 @@ test("staff access rejects bad credentials and protects check-in routes", async 
   await page.locator('input[type="password"]').fill("incorrect-ci-passcode");
   await page.getByRole("button", { name: /Continue/ }).click();
   await expect(page.locator(".form-error[role=alert]")).toContainText("Access code not recognised");
+
+  await page.locator('input[type="password"]').fill("ci-test-passcode");
+  await page.getByRole("button", { name: /Continue/ }).click();
+  await expect(page.getByRole("heading", { name: "Guest check-in" })).toBeVisible();
+  await expect(page.locator(".staff-message")).toContainText("registration list is temporarily unavailable");
+
+  const authorisedCheckIn = await page.request.post("/api/staff/check-in", { data: { id: "00000000-0000-4000-8000-000000000000" } });
+  expect(authorisedCheckIn.status()).toBe(503);
+
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(page.getByRole("heading", { name: "Staff access" })).toBeVisible();
 });
 
 test("API validation rejects empty registration and feedback payloads", async ({ request }) => {
