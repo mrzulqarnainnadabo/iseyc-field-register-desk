@@ -2,7 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { allowLoginAttempt, checkStaffPasscode, createStaffToken, STAFF_COOKIE_NAME, staffCookieOptions } from "@/lib/gtg-security";
 
 export const runtime = "nodejs";
+
+function staffConfigured() {
+  return Boolean(
+    process.env.REGISTER_PASSCODE &&
+    process.env.SESSION_SECRET &&
+    process.env.SESSION_SECRET.length >= 32 &&
+    process.env.NOTION_API_KEY &&
+    process.env.NOTION_REGISTRATIONS_DB_ID
+  );
+}
+
+export async function GET() {
+  return NextResponse.json({ configured: staffConfigured() });
+}
+
 export async function POST(request: NextRequest) {
+  if (!staffConfigured()) return NextResponse.json({ ok: false, error: "Staff access is not enabled in this preview environment." }, { status: 503 });
   const ip = request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",").pop()?.trim() || "unknown";
   if (!allowLoginAttempt(ip)) return NextResponse.json({ ok: false, error: "Too many attempts. Try again later." }, { status: 429 });
   const body = await request.json().catch(() => ({}));
