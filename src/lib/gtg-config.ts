@@ -15,7 +15,10 @@ export const REGISTRATION_SOURCES = ["Instagram", "WhatsApp", "Facebook", "Frien
 export const AGE_BANDS = ["20–25", "26–35", "36–45", "46+", "Prefer not to say"] as const;
 export const WHAT_LANDED = ["Sisterhood and connection", "The speakers' stories", "Practical tools I can use", "Space to be heard", "Mental wellbeing conversations", "The atmosphere", "Other"] as const;
 export const WHAT_NEXT = ["Follow-up gatherings", "A sisterhood / peer circle", "Practical skills workshops", "Mentorship", "Information on counselling services", "Other"] as const;
+
 export function getPublicSiteUrl() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured) return configured.replace(/\/$/, "");
   if (process.env.VERCEL_URL) return "https://" + process.env.VERCEL_URL;
-  return (process.env.NEXT_PUBLIC_SITE_URL || "https://girlhood-greatness-visual-preview.vercel.app").replace(/\/$/, "");
+  return "https://girlhood-greatness-visual-preview.vercel.app";
 }

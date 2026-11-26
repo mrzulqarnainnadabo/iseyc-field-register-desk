@@ -1,19 +1,11 @@
 {
-  "name": "ISEYC × TIRNGAN Community Outreach Intelligence Desk",
-  "short_name": "Outreach Desk",
-  "description": "Privacy-first field data platform for community outreach evidence. Stewardship: Miracle Sim Danjuma, Tirngan Sickle Cell Foundation.",
+  "name": "From Girlhood to Greatness — Second Edition",
+  "short_name": "Girlhood to Greatness",
+  "description": "Accepting My Greatness — From Becoming Her to Believing in Her. Sunday, 29 November 2026 in Kaduna, Nigeria.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#F7F8F5",
-  "theme_color": "#245B43",
+  "background_color": "#FBF7F4",
+  "theme_color": "#5B2A4E",
   "lang": "en-NG",
-  "categories": ["health", "productivity", "utilities"],
-  "icons": [
-    {
-      "src": "/brand/iseyc-mark.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+  "categories": ["events", "lifestyle"]
 }

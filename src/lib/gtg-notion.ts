@@ -13,6 +13,7 @@ function notion() {
   if (!notionClient) notionClient = new Client({ auth: env("NOTION_API_KEY") });
   return notionClient;
 }
+function normalizeId(value: string) { return value.replace(/-/g, "").toLowerCase(); }
 export function registrationDbId() { return env("NOTION_REGISTRATIONS_DB_ID"); }
 export function feedbackDbId() { return env("NOTION_FEEDBACK_DB_ID"); }
 
@@ -124,7 +125,9 @@ export async function markRegistrationCheckedIn(pageId: string) {
   const current = await api.pages.retrieve({ page_id: pageId });
   if (!("properties" in current)) throw new Error("Registration record not found");
   const parent = current.parent;
-  if (parent.type !== "database_id" || parent.database_id !== registrationDbId()) throw new Error("Record does not belong to the registration database");
+  if (parent.type !== "database_id" || normalizeId(parent.database_id) !== normalizeId(registrationDbId())) {
+    throw new Error("Record does not belong to the registration database");
+  }
   const properties = current.properties as Record<string, any>;
   if (properties["Attendance Status"]?.select?.name === "Checked in") {
     return { alreadyCheckedIn: true, checkedInAt: properties["Checked In At"]?.date?.start || null };
