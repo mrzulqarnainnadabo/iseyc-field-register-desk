@@ -6,7 +6,7 @@ import { z } from "zod";
 export const runtime = "nodejs";
 const schema = z.object({ id: z.string().uuid() });
 export async function POST(request: NextRequest) {
-  if (!isStaffAuthenticated()) return NextResponse.json({ ok: false, error: "Sign in required." }, { status: 401 });
+  if (!(await isStaffAuthenticated())) return NextResponse.json({ ok: false, error: "Sign in required." }, { status: 401 });
   const body = await request.json().catch(() => null);
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ ok: false, error: "Select a valid registration." }, { status: 400 });

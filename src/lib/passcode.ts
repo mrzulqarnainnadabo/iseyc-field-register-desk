@@ -32,11 +32,14 @@ export function verifySessionToken(token: string | undefined | null): boolean {
   const expected = createHmac("sha256", secret).update(expires).digest("base64url");
   return safeEqual(signature, expected);
 }
-export function getSessionFromCookies(): boolean {
-  try { return verifySessionToken(cookies().get(COOKIE_NAME)?.value); } catch { return false; }
+export async function getSessionFromCookies(): Promise<boolean> {
+  try {
+    const cookieStore = await cookies();
+    return verifySessionToken(cookieStore.get(COOKIE_NAME)?.value);
+  } catch { return false; }
 }
-export function authorizeRequest(bodyPasscode?: string | null): boolean {
-  return getSessionFromCookies() || checkPasscode(bodyPasscode);
+export async function authorizeRequest(bodyPasscode?: string | null): Promise<boolean> {
+  return (await getSessionFromCookies()) || checkPasscode(bodyPasscode);
 }
 export const STAFF_COOKIE = {
   name: COOKIE_NAME,

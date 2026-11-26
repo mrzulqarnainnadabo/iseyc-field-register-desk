@@ -5,7 +5,7 @@ import { registrationSchema } from "@/lib/gtg-validation";
 
 export const runtime = "nodejs";
 export async function POST(request: NextRequest) {
-  if (!isStaffAuthenticated()) return NextResponse.json({ ok: false, error: "Sign in required." }, { status: 401 });
+  if (!(await isStaffAuthenticated())) return NextResponse.json({ ok: false, error: "Sign in required." }, { status: 401 });
   const body = await request.json().catch(() => null);
   const parsed = registrationSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ ok: false, error: parsed.error.issues[0]?.message || "Check the guest details." }, { status: 400 });

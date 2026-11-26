@@ -4,7 +4,7 @@ import { searchRegistrations } from "@/lib/gtg-notion";
 
 export const runtime = "nodejs";
 export async function GET(request: NextRequest) {
-  if (!isStaffAuthenticated()) return NextResponse.json({ ok: false, error: "Sign in required." }, { status: 401 });
+  if (!(await isStaffAuthenticated())) return NextResponse.json({ ok: false, error: "Sign in required." }, { status: 401 });
   try {
     const query = request.nextUrl.searchParams.get("q") || "";
     const registrations = await searchRegistrations(query);

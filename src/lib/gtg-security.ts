@@ -42,8 +42,9 @@ export function verifyStaffToken(token?: string) {
   if (!expires || !signature || Number(expires) <= Date.now()) return false;
   try { return safeEqual(signature, sign(expires)); } catch { return false; }
 }
-export function isStaffAuthenticated() {
-  return verifyStaffToken(cookies().get(STAFF_COOKIE_NAME)?.value);
+export async function isStaffAuthenticated() {
+  const cookieStore = await cookies();
+  return verifyStaffToken(cookieStore.get(STAFF_COOKIE_NAME)?.value);
 }
 export const staffCookieOptions = {
   httpOnly: true,
