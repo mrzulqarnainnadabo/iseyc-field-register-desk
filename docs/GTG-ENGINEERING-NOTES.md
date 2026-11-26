@@ -4,6 +4,10 @@
 
 The reviewed Claude archive was not present in this repository branch or its reachable Git history. The current application was therefore established from the committed handover, the supplied visual preview, the approved event facts and the connected Notion database schemas. This is a documented reconstruction, not a claim that the original archive's source files were recovered.
 
+The expected archive files `Hero.tsx`, `Story.tsx`, `RegistrationForm.tsx`, `Details.tsx` and `src/config/event.ts` were not present in the checked-out branch or recoverable from the inspected Git history. The public page and configuration were reconstructed in the current App Router structure (`src/app/page.tsx` and `src/lib/gtg-config.ts`) rather than pretending those archive files had been recovered.
+
+The handover describes an offline registration queue in the reviewed archive, but its implementation and retry/sync behavior could not be recovered from Git history or the static visual preview. Offline submission is therefore **not implemented or claimed**. It needs a confirmed specification or the original source before it can be safely added.
+
 The old ISEYC Field Register Desk source and its legacy API routes were retained rather than blindly deleting the previous application. The public root route now serves the GTG event experience. The main branch remains unchanged.
 
 ## Approved event information
@@ -88,7 +92,8 @@ The current Production deployment remains the older ISEYC Field Register Desk fr
 5. Staff access is shared-passcode based and does not identify individual officers.
 6. Vercel flags `NOTION_API_KEY` and `SESSION_SECRET` with a readable-secret warning; owner review and safe rotation/write-only storage are required before production.
 7. The current preview URL is one build behind the latest branch head because the Vercel deployment quota is exhausted; a fresh preview is required after the quota resets.
-8. The venue text is preserved exactly as supplied; no unverified map pin or directions have been invented.
+8. Offline registration queue behavior from the reviewed archive remains unrecovered and is not supported by this reconstruction.
+9. The venue text is preserved exactly as supplied; no unverified map pin or directions have been invented.
 
 ## Git safeguards
 
