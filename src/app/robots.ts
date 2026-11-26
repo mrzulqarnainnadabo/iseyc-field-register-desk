@@ -1,17 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://iseyc-field-register-desk.vercel.app";
-
+import { getPublicSiteUrl } from "@/lib/gtg-config";
 export default function robots(): MetadataRoute.Robots {
-  return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/api/"],
-    },
-    sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
-  };
+  return { rules: [{ userAgent: "*", allow: "/", disallow: ["/staff", "/api/"] }], sitemap: getPublicSiteUrl() + "/sitemap.xml" };
 }

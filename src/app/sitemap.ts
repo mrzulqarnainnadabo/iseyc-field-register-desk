@@ -1,16 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://iseyc-field-register-desk.vercel.app";
-
+import { getPublicSiteUrl } from "@/lib/gtg-config";
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    {
-      url: siteUrl,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-  ];
+  return [{ url: getPublicSiteUrl(), lastModified: new Date("2026-11-27"), changeFrequency: "weekly", priority: 1 }];
 }
