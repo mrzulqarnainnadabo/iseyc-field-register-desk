@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { allowLoginAttempt, checkStaffPasscode, createStaffToken, STAFF_COOKIE_NAME, staffCookieOptions } from "@/lib/gtg-security";
+import { canAccessRegistrationDatabase } from "@/lib/gtg-notion";
 
 export const runtime = "nodejs";
 
@@ -14,11 +15,12 @@ function staffConfigured() {
 }
 
 export async function GET() {
-  return NextResponse.json({ configured: staffConfigured() });
+  const configured = staffConfigured() && await canAccessRegistrationDatabase();
+  return NextResponse.json({ configured }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(request: NextRequest) {
-  if (!staffConfigured()) return NextResponse.json({ ok: false, error: "Staff access is not enabled in this preview environment." }, { status: 503 });
+  if (!staffConfigured() || !(await canAccessRegistrationDatabase())) return NextResponse.json({ ok: false, error: "Staff access is unavailable because the registration database is not connected." }, { status: 503 });
   const ip = request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",").pop()?.trim() || "unknown";
   if (!allowLoginAttempt(ip)) return NextResponse.json({ ok: false, error: "Too many attempts. Try again later." }, { status: 429 });
   const body = await request.json().catch(() => ({}));
