@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 test("public event page presents the approved event facts", async ({ page }) => {
-  await page.goto("/");
+  const response = await page.goto("/");
+  const contentSecurityPolicy = response?.headers()["content-security-policy"] || "";
+  expect(contentSecurityPolicy).toContain("https://d8j0ntlcm91z4.cloudfront.net");
   await expect(page).toHaveTitle(/From Girlhood to Greatness/);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.getByRole("heading", { name: /From Girlhood.*to Greatness/i })).toBeVisible();
