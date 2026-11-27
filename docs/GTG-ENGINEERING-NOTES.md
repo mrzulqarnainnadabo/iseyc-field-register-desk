@@ -35,13 +35,19 @@ The supplied Empower with Hafsat logo asset is `public/brand/empower-with-hafsat
 - Registration reports success only after the Notion write succeeds. A network interruption does not imply a successful registration.
 - Offline registration/check-in queueing is not implemented. Do not claim offline support.
 
-## QA integration verification
+## Notion workspaces and QA
 
-The review deployment used isolated Notion QA databases:
+The dedicated Notion page `From Girlhood to Greatness — Event Operations` contains the live event databases:
+- `GTG 2026 — Registrations`
+- `GTG 2026 — Feedback`
+
+Both production data sources were fetched and their schemas match the application's expected properties. Both were queried and confirmed to contain zero active records at the time of verification.
+
+Separate test-only databases remain isolated:
 - `GTG 2026 — QA Sandbox Registrations`
 - `GTG 2026 — QA Sandbox Feedback`
 
-Real HTTP requests through the review application were independently read back from Notion:
+Real HTTP requests through the earlier review application were independently read back from the QA databases:
 - Registration creation passed.
 - Replaying the same client submission was recognised as a repeated request.
 - Reusing the same name and phone with a new submission ID was rejected as a duplicate (HTTP 409).
@@ -51,48 +57,59 @@ Real HTTP requests through the review application were independently read back f
 
 Both QA records created for those tests were moved to Notion Trash after verification. The active QA views were checked again and returned zero active records. No production event records were created, updated or deleted.
 
-This verifies public registration and feedback writes against QA databases. It does **not** verify successful authenticated staff operations against the live Notion integration.
+The Notion API token has **not** been configured in the standalone Vercel project. The production databases still need to be shared with the dedicated Notion integration whose token is used by the app. The prior QA integration tests do not prove that the new project's integration has access.
 
 ## Repository and CI
 
 - Repository: `mrzulqarnainnadabo/iseyc-field-register-desk` (public, as requested).
 - Review branch: `feat/gtg-second-edition-review-build`.
+- Current head: `6acb7f06ee795b506ac5cb300c29afb88f4e233f`.
 - Pull request: #2, open and unmerged; base `feat/gtg-second-edition-continuation`.
-- Last fully verified code/documentation head before the current release-preparation edits: `b871635fa51107dd5d44c8063d809c631af2620f`.
-- GitHub Actions run `46042285531` (run 155) passed all 12 steps: dependency audit/security threshold, typecheck, lint, production build and Playwright browser QA.
-- Subsequent changes update the canonical event URL fallback and remove legacy ISEYC database IDs from the event environment template. The latest head must pass CI before acceptance.
+- GitHub Actions run `46061121717` (run 161) passed all 12 workflow steps: dependency audit/security threshold, typecheck, lint, production build and Playwright browser QA.
+- The latest code and documentation changes include the canonical event URL fallback and an environment template with no legacy ISEYC database IDs.
 
-## Dedicated Vercel project and domain
+## Dedicated Vercel project
 
 The event has its own Vercel project, separate from the existing ISEYC × TIRNGAN Community Outreach Desk:
 
 - Project: `from-girlhood-to-greatness`
 - Project ID: `prj_vt3luqUQ02mwu8vQIvx6aNAuMsGy`
 - Git source: `mrzulqarnainnadabo/iseyc-field-register-desk`
-- Primary event address: `https://fromgirlhoodtogreatness.vercel.app`
-- Alternate hyphenated address: `https://from-girlhood-to-greatness.vercel.app`
-- Both Vercel project domains were returned as verified.
-- Project currently has zero deployments and zero environment variables.
+- Canonical event address: `https://fromgirlhoodtogreatness.vercel.app`
+- Alternate address: `https://from-girlhood-to-greatness.vercel.app`
+- Both domains are verified and attached to this separate project.
+- Project Node.js runtime is set to 22.x.
 
-The canonical fallback in `src/lib/gtg-config.ts` now points to the dedicated primary event address. `.env.example` no longer contains the legacy ISEYC/TIRNGAN database IDs; it contains blank placeholders for event-specific credentials and database IDs.
+Vercel environment configuration is partially complete:
+- `NOTION_REGISTRATIONS_DB_ID` — configured to the dedicated live registrations database.
+- `NOTION_FEEDBACK_DB_ID` — configured to the dedicated live feedback database.
+- `REGISTER_PASSCODE` — configured as a sensitive variable for Preview and Production.
+- `SESSION_SECRET` — generated independently and configured as a sensitive variable for Preview and Production.
+- `NEXT_PUBLIC_SITE_URL` — configured to the canonical event domain.
+- `NOTION_API_KEY` — **missing**. This is the remaining required application credential.
 
-The old Vercel project and its production domain remain untouched. Do not connect the event's production domain to that old project or deploy the event branch to its production target.
+A preview deployment and a production-target deployment were automatically created by the Git-linked project. The production-target deployment was paused after it was detected serving the incomplete application. The standalone project's custom domains are therefore not currently serving the site. The ISEYC × TIRNGAN project and its production domain were not changed.
+
+The most recent READY preview deployment was built from the current review branch head before the latest environment variables were added. Its Notion health endpoint correctly returned HTTP 503 because `NOTION_API_KEY` is absent. It must be redeployed after the token is configured so the new environment is loaded.
+
+The Vercel deployment API returned HTTP 402 with the `api-deployments-free-per-day` limit (retry after 86,400 seconds). Do not retry deployment creation through the same API before the limit resets or the team resolves the quota. The production project remains paused while release prerequisites are incomplete.
 
 ## Remaining release acceptance requirements
 
-1. Configure the dedicated project's event-only environment variables: `NOTION_API_KEY`, `NOTION_REGISTRATIONS_DB_ID`, `NOTION_FEEDBACK_DB_ID`, `REGISTER_PASSCODE`, `SESSION_SECRET` (32+ characters) and `NEXT_PUBLIC_SITE_URL`.
-2. Create dedicated event registration and feedback databases in Notion and share both with the dedicated integration. Do not reuse the ISEYC × TIRNGAN production databases or credentials.
-3. Create a preview deployment from the review branch and verify the public, staff and feedback routes plus `/api/health/notion`.
+1. Create or select a dedicated Notion integration for the event, share both live event databases with it, and add its API token directly to the standalone Vercel project's `NOTION_API_KEY` environment variable. Do not paste the token into chat or reuse the ISEYC × TIRNGAN production integration.
+2. After the Vercel deployment quota resets or is resolved, create a fresh preview deployment so it loads all configured environment variables.
+3. Verify `/api/health/notion` reports both databases connected; verify the public registration and anonymous feedback routes without leaving test records in the live databases.
 4. Complete a controlled successful staff acceptance test: login, guest search/pagination, walk-in creation, check-in update and sign-out. Do not expose the passcode in logs or chat.
 5. Complete manual visual review on real mobile and desktop devices.
-6. Before production release, confirm the production branch/commit and ensure the new domain maps only to this standalone event project.
+6. Confirm the release commit and unpause the standalone project only when the public form, backend and staff desk pass acceptance.
 7. Decide whether offline queueing is required; if so, obtain the original implementation/specification or approve a safe, explicit retry/queue design.
 8. Consider distributed rate limiting and atomic duplicate protection before relying on this system for high-concurrency event-day traffic.
 
-## Git safeguards
+## Git and production safeguards
 
 - Repository visibility remains public as explicitly requested.
 - Review branch: `feat/gtg-second-edition-review-build`.
 - PR base: `feat/gtg-second-edition-continuation`.
 - PR remains open and unmerged; main remains untouched.
-- No production event deployment or production data mutation has been made.
+- Existing ISEYC × TIRNGAN production project and its data remain untouched.
+- The new standalone event project is paused until the Notion integration and acceptance checks are complete.
