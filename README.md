@@ -30,7 +30,7 @@ Next.js 15, React 19, TypeScript, Tailwind CSS, Zod and the Notion SDK.
 
 1. Use Node.js 20 or newer.
 2. Copy `.env.example` to `.env.local`.
-3. Create two dedicated event databases in Notion (registrations and feedback) and share both with a dedicated Notion integration.
+3. Create or select a dedicated Notion integration and share the two live event databases with it.
 4. Configure `NOTION_API_KEY`, `NOTION_REGISTRATIONS_DB_ID`, `NOTION_FEEDBACK_DB_ID`, `REGISTER_PASSCODE`, `SESSION_SECRET` (32+ characters) and `NEXT_PUBLIC_SITE_URL`.
 5. Run `npm ci`.
 6. Run `npm run dev`.
@@ -46,7 +46,7 @@ Do not reuse the ISEYC × TIRNGAN production databases or credentials. Never com
 - Dependency security audit
 - Playwright browser QA (CI)
 
-The review branch has a successful CI run. Isolated QA registration and feedback writes were independently read back from Notion and then removed from the active QA views. Successful authenticated staff operations still require a controlled acceptance test.
+The latest review-branch GitHub Actions run passed all 12 steps. Isolated QA registration and feedback writes were independently read back from Notion and then removed from the active QA views. Successful authenticated staff operations against the standalone production databases still require a controlled acceptance test.
 
 ## Known limitations
 
@@ -55,8 +55,10 @@ The review branch has a successful CI run. Isolated QA registration and feedback
 - Rate limiting is bounded but process-local, not distributed.
 - Staff access uses a shared passcode and does not provide individual staff identities.
 
-## Deployment boundary
+## Deployment status
 
-The event is deployed separately from the existing ISEYC × TIRNGAN Community Outreach Desk. The dedicated Vercel project and event domains have been created and verified, but the project has no deployment or environment variables yet. Production release remains blocked until the event-specific Notion integration, database IDs, staff passcode and session secret are configured and the authenticated staff acceptance test passes.
+The event has its own Vercel project and verified event domains, separate from the existing ISEYC × TIRNGAN Community Outreach Desk. The project has its database IDs, staff passcode, session secret and canonical URL configured. The dedicated Notion API token is still missing, so the backend is not ready. The project is paused and must remain paused until the Notion integration is shared with both live event databases, the API token is configured, and the full acceptance checks pass.
 
-See [docs/GTG-ENGINEERING-NOTES.md](docs/GTG-ENGINEERING-NOTES.md) for release evidence and the remaining acceptance checklist.
+The Vercel deployment API has also returned its daily deployment quota limit; a fresh preview build must wait until that limit resets or the team resolves the quota. No production release should be declared until the backend and staff operations have passed live acceptance.
+
+See [docs/GTG-ENGINEERING-NOTES.md](docs/GTG-ENGINEERING-NOTES.md) for the current evidence and release checklist.
