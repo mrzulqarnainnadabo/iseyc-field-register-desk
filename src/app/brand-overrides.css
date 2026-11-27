@@ -1,35 +1,136 @@
-/* Empower with Hafsat official mark — added without altering the supplied artwork */
-.site-header { min-height: 104px; align-items: center; }
-.site-header .wordmark { flex-direction: row; align-items: center; gap: 14px; }
-.site-header .wordmark::before {
-  content: ""; display: block; flex: 0 0 64px; width: 64px; height: 64px;
-  border-radius: 50%; background: #f8e5e9 url("/brand/empower-with-hafsat.jpg") center / cover no-repeat;
-  box-shadow: 0 0 0 1px rgba(91,42,78,.10);
+/* From Girlhood to Greatness — editorial design system
+   The official Empower with Hafsat artwork is rendered as a real image in the page.
+   Campaign photography is a separately generated event visual, never a logo substitute. */
+:root {
+  --plum: #713B52;
+  --plum-dark: #492638;
+  --paper: #FFF9F7;
+  --ink: #2D2528;
+  --gold: #B89459;
+  --muted: #75666C;
+  --line: #E9DDE0;
+  --rose-wash: #F8E8EB;
+  --rose-deep: #EBCBD3;
+  --serif: "Bodoni 72", "Didot", "Iowan Old Style", Georgia, serif;
+  --sans: "Avenir Next", Avenir, "Segoe UI", sans-serif;
 }
-.hero-card { background: #f8e5e9; }
-.hero-card-art::before {
-  content: ""; position: absolute; z-index: 1; width: clamp(170px, 19vw, 218px);
-  aspect-ratio: 1; border-radius: 50%;
-  background: #f8e5e9 url("/brand/empower-with-hafsat.jpg") center / cover no-repeat;
-  box-shadow: 0 18px 48px rgba(53,23,47,.13);
+html { background: var(--paper); }
+body { background: var(--paper); color: var(--ink); }
+.site-header {
+  max-width: none; min-height: 98px; padding: 12px max(5.5%, calc((100vw - 1320px)/2));
+  border-bottom: 1px solid var(--line); background: rgba(255,249,247,.96);
 }
-.hero-card-art .art-disc { visibility: hidden; }
-.hero-card-art .art-side-note { z-index: 2; padding: 7px 9px; background: rgba(248,229,233,.9); }
-.partner-lockups > div:first-child::before {
-  content: ""; display: block; width: 78px; height: 78px; margin: 0 auto 8px;
-  border-radius: 50%; background: #f8e5e9 url("/brand/empower-with-hafsat.jpg") center / cover no-repeat;
+.brand-lockup { display:flex; align-items:center; gap:14px; min-width:0; }
+.brand-logo { width:68px; height:68px; object-fit:contain; border-radius:50%; flex:0 0 auto; }
+.brand-wording { display:flex; flex-direction:column; gap:5px; line-height:1.1; }
+.brand-name { font-family:var(--serif); font-size:clamp(17px,1.6vw,22px); letter-spacing:-.035em; color:var(--ink); }
+.brand-caption { color:var(--muted); font-size:9px; letter-spacing:.16em; text-transform:uppercase; }
+.desktop-nav { gap:34px; color:var(--ink); font-size:12px; }
+.nav-register { padding:13px 18px; border-color:var(--plum); color:var(--plum)!important; }
+.nav-register:hover { background:var(--plum); color:#fff!important; }
+.editorial-hero {
+  max-width:1500px; min-height:700px; margin:0 auto; padding:72px 8.5% 86px;
+  display:grid; grid-template-columns:minmax(0, .94fr) minmax(420px, 1.06fr);
+  gap:6.5%; align-items:center; position:relative;
 }
-.site-footer .footer-wordmark { display: inline-flex; align-items: center; gap: 10px; }
-.site-footer .footer-wordmark::before {
-  content: ""; display: inline-block; width: 38px; height: 38px; flex: 0 0 38px;
-  border-radius: 50%; background: #f8e5e9 url("/brand/empower-with-hafsat.jpg") center / cover no-repeat;
+.editorial-copy { position:relative; z-index:2; padding:16px 0 22px; }
+.eyebrow { color:var(--plum); font-size:10px; letter-spacing:.14em; font-weight:650; }
+.eyebrow-line { background:var(--gold); }
+.editorial-copy h1 { margin:0; max-width:660px; font-family:var(--serif); font-size:clamp(66px,7.1vw,112px); line-height:.91; letter-spacing:-.075em; font-weight:400; }
+.editorial-copy h1 em { color:var(--plum); font-weight:400; }
+.hero-theme { max-width:470px; margin:26px 0 12px; font-family:var(--serif); font-size:clamp(19px,2vw,25px); line-height:1.3; }
+.hero-description { max-width:420px; font-size:13px; line-height:1.85; color:var(--muted); }
+.hero-actions { gap:24px; margin-top:28px; }
+.button { min-height:52px; padding:0 21px; font-size:11px; letter-spacing:.015em; }
+.button-primary { background:var(--plum); }
+.button-primary:hover:not(:disabled) { background:var(--plum-dark); }
+.quiet-link { font-size:11px; }
+.hero-facts { display:flex; flex-wrap:wrap; gap:22px 30px; margin-top:48px; padding-top:19px; border-top:1px solid var(--line); }
+.hero-facts div { display:flex; flex-direction:column; gap:5px; }
+.hero-facts span { color:var(--muted); font-size:8px; letter-spacing:.16em; }
+.hero-facts strong { color:var(--ink); font-size:11px; font-weight:600; }
+.hero-image-wrap {
+  min-width:0; height:clamp(480px,54vw,650px); margin:0; position:relative; overflow:hidden;
+  background:var(--rose-wash); isolation:isolate;
 }
-@media (max-width: 680px) {
-  .site-header { min-height: 78px; }
-  .site-header .wordmark { gap: 9px; }
-  .site-header .wordmark::before { flex-basis: 46px; width: 46px; height: 46px; }
-  .site-header .wordmark-name { font-size: 16px; }
-  .site-header .wordmark-caption { font-size: 8px; letter-spacing: .08em; }
-  .hero-card-art::before { width: 166px; }
-  .partner-lockups > div:first-child::before { width: 70px; height: 70px; }
+.hero-image { display:block; width:100%; height:100%; object-fit:cover; object-position:center 38%; }
+.hero-image-wrap::after { content:""; position:absolute; inset:45% 0 0; z-index:1; background:linear-gradient(180deg,transparent,rgba(43,26,34,.26)); pointer-events:none; }
+.hero-image-note { position:absolute; z-index:2; left:22px; right:22px; bottom:20px; display:flex; justify-content:space-between; color:#fff; font-size:9px; letter-spacing:.16em; }
+.hero-image-stamp { position:absolute; z-index:2; top:24px; right:24px; width:112px; height:112px; display:grid; place-items:center; border-radius:50%; background:var(--rose-wash); color:var(--plum); text-align:center; font-family:var(--serif); font-size:20px; font-style:italic; line-height:1.05; transform:rotate(7deg); }
+.hero-side-note { position:absolute; right:2.1%; bottom:22%; writing-mode:vertical-rl; color:#9A858D; font-size:8px; letter-spacing:.17em; text-transform:uppercase; }
+.intro-band { padding:94px 13%; grid-template-columns:.52fr 1.48fr; background:var(--rose-wash); }
+.intro-band h2, .section-heading h2, .registration-aside h2 { font-family:var(--serif); }
+.intro-band h2 { font-size:clamp(38px,4vw,58px); }
+.intro-band h2 em { color:var(--plum); }
+.details-section { max-width:1280px; padding:100px 8%; }
+.section-heading { align-items:end; margin-bottom:38px; }
+.section-heading h2 { font-size:clamp(40px,4.4vw,58px); }
+.details-intro { max-width:280px; margin:0 0 8px; color:var(--muted); font-size:12px; line-height:1.8; }
+.details-grid { border-color:var(--line); }
+.details-grid article { min-height:225px; padding-top:24px; }
+.details-grid article + article { border-color:var(--line); }
+.detail-number { color:var(--gold); }
+.details-grid h3 { font-family:var(--serif); font-size:clamp(24px,2.4vw,31px); }
+.registration-section { background:var(--rose-wash); grid-template-columns:.82fr 1.18fr; gap:7%; padding-top:104px; padding-bottom:104px; }
+.registration-aside h2 { font-size:clamp(56px,6vw,82px); }
+.registration-card { padding:clamp(24px,4vw,46px); box-shadow:0 22px 64px rgba(73,38,56,.07); }
+.registration-brand { display:block; width:82px; height:82px; margin-top:32px; border-radius:50%; object-fit:contain; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color:var(--plum); outline:2px solid rgba(113,59,82,.14); outline-offset:1px; }
+.partners-section { padding:76px 8% 82px; }
+.partner-lockups { gap:54px; }
+.partner-lockups strong { font-family:var(--serif); }
+.organiser-lockup { align-items:center; }
+.organiser-lockup img { display:block; width:82px; height:82px; object-fit:contain; border-radius:50%; margin-bottom:4px; }
+.partner-divider { background:var(--rose-deep); }
+.systems-credit strong { letter-spacing:0; }
+.site-footer { padding:22px max(5.5%, calc((100vw - 1320px)/2)); background:#F6ECEE; border-color:var(--line); }
+.footer-brand { display:inline-flex; align-items:center; gap:10px; font-family:var(--serif); font-size:17px; color:var(--ink); }
+.footer-brand img { width:40px; height:40px; border-radius:50%; object-fit:contain; }
+.footer-brand em { color:var(--plum); font-weight:400; }
+@media (max-width:1100px) {
+  .editorial-hero { padding-left:6%; padding-right:6%; grid-template-columns:minmax(0,.95fr) minmax(350px,1.05fr); gap:5%; }
+  .editorial-copy h1 { font-size:clamp(62px,7.5vw,88px); }
+  .hero-side-note { display:none; }
+}
+@media (max-width:760px) {
+  .site-header { min-height:76px; padding:9px 18px; }
+  .brand-logo { width:52px; height:52px; }
+  .brand-lockup { gap:10px; }
+  .brand-name { font-size:17px; }
+  .brand-caption { font-size:8px; letter-spacing:.11em; }
+  .mobile-register { border-color:var(--plum); color:var(--plum); padding:10px 12px; }
+  .editorial-hero { display:flex; flex-direction:column; align-items:stretch; gap:28px; padding:48px 20px 60px; }
+  .editorial-copy { padding:0; }
+  .editorial-copy h1 { font-size:clamp(60px,14.8vw,82px); }
+  .hero-theme { font-size:20px; margin-top:20px; }
+  .hero-description { font-size:13px; }
+  .hero-actions { gap:18px; }
+  .hero-facts { gap:16px 22px; margin-top:30px; }
+  .hero-image-wrap { height:clamp(360px,112vw,520px); }
+  .hero-image-stamp { width:86px; height:86px; top:15px; right:15px; font-size:16px; }
+  .hero-image-note { left:15px; right:15px; bottom:14px; font-size:8px; }
+  .intro-band { display:block; padding:62px 24px; }
+  .intro-band .eyebrow { margin-bottom:20px; }
+  .intro-band h2 { font-size:clamp(34px,9vw,43px); }
+  .details-section { padding:66px 24px; }
+  .section-heading { display:block; }
+  .details-intro { margin-top:14px; }
+  .details-grid { display:block; }
+  .details-grid article, .details-grid article + article { min-height:0; padding:23px 0; border-left:0; }
+  .details-grid article + article { border-top:1px solid var(--line); }
+  .detail-number { margin-bottom:13px; }
+  .registration-section { display:flex; flex-direction:column; padding:66px 18px; gap:30px; }
+  .registration-aside { padding:0 6px; }
+  .registration-aside h2 { font-size:62px; }
+  .registration-meta { flex-direction:row; flex-wrap:wrap; gap:8px 18px; }
+  .registration-card { width:100%; padding:24px 18px; }
+  .partner-lockups { flex-direction:column; gap:24px; }
+  .partner-divider { width:48px; height:1px; }
+  .partners-section { padding:58px 24px; }
+  .site-footer { padding:20px 18px; flex-wrap:wrap; gap:12px; }
+  .site-footer p { order:3; width:100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior:auto; }
+  *, *::before, *::after { transition-duration:.01ms!important; animation-duration:.01ms!important; }
 }
