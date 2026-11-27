@@ -88,6 +88,7 @@ export default function HomePage() {
             <article><span className="detail-number">02</span><span className="detail-label">WHERE</span><h3>{GTG.venue}</h3><p>Yakubu Hub, Surami Road, U/Rimi, Kaduna.</p></article>
             <article><span className="detail-number">03</span><span className="detail-label">WHO</span><h3>{GTG.audience}.</h3><p>Registration is required to attend.</p></article>
           </div>
+          <a className="venue-directions" href="https://www.google.com/maps/search/?api=1&query=Yakubu%20Hub%2C%20Surami%20Road%2C%20U%2FRimi%2C%20Kaduna%2C%20Nigeria" target="_blank" rel="noreferrer">Get directions to Yakubu Hub <span aria-hidden="true">↗</span></a>
         </section>
 
         <section className="gathering-values" aria-labelledby="gathering-values-title">
