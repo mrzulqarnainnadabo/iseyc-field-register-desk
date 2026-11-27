@@ -33,7 +33,7 @@ The Notion integration must be connected to both event databases. The applicatio
 
 ## Routes
 - / public event site and registration.
-- /staff restricted staff sign-in, registration search, check-in and walk-in capture.
+- /staff restricted staff sign-in, paginated registration search, check-in, walk-in capture and CSV export of loaded results.
 - /feedback anonymous post-event feedback.
 - /api/register, /api/feedback and /api/staff/* server routes.
 
