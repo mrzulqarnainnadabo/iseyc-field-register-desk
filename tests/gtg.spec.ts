@@ -15,7 +15,7 @@ test("public event page presents the approved event facts", async ({ page }) => 
   await expect(page.getByRole("heading", { name: /A space to meet.*the woman within/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /A few useful.*details/i })).toBeVisible();
   await expect(page.getByText("Do I need to register?")).toBeVisible();
-  await expect(page.locator('a[href*="google.com/maps"]')).toBeVisible();
+  await expect(page.getByRole("link", { name: /Get directions to Yakubu Hub/ })).toBeVisible();
   await expect(page.locator('input[name="name"]')).toBeVisible();
   await expect(page.locator('input[name="phone"]')).toBeVisible();
 });
