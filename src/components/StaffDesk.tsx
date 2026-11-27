@@ -150,9 +150,9 @@ export function StaffDesk() {
     <div className="staff-workspace">
       <div className="staff-topline"><div><p className="eyebrow">Event operations · Second Edition</p><h1>Guest check-in</h1><p>Find a registered guest, confirm attendance or add a walk-in.</p></div><button className="text-button" onClick={logout}>Sign out</button></div>
       <div className="staff-metrics" aria-label="Guest list summary">
-        <article><span>LOADED GUESTS</span><strong>{registrations.length}</strong><small>Latest 30 records or search results</small></article>
-        <article><span>CHECKED IN</span><strong>{checkedIn}</strong><small>Attendance confirmed</small></article>
-        <article><span>AWAITING ARRIVAL</span><strong>{pending}</strong><small>Not yet checked in</small></article>
+        <article><span>LOADED GUESTS</span><strong>{registrations.length}</strong><small>{hasMore ? "More records available" : "All matching records loaded"}</small></article>
+        <article><span>CHECKED IN</span><strong>{checkedIn}</strong><small>Within loaded records</small></article>
+        <article><span>AWAITING ARRIVAL</span><strong>{pending}</strong><small>Within loaded records</small></article>
       </div>
       <div className="staff-toolbar">
         <form className="staff-search" onSubmit={(event) => { event.preventDefault(); loadRegistrations(query); }}>
@@ -214,7 +214,7 @@ function WalkInForm({ onSaved }: { onSaved: (reference: string) => void }) {
         <label className="field"><span>Age range *</span><select name="ageBand" defaultValue="" required><option value="" disabled>Select range</option>{AGE_BANDS.map((item) => <option key={item}>{item}</option>)}</select></label>
         <label className="field"><span>Source *</span><select name="source" defaultValue="" required><option value="" disabled>Select source</option>{REGISTRATION_SOURCES.map((item) => <option key={item}>{item}</option>)}</select></label>
       </div>
-      <label className="check-row"><input type="checkbox" name="ageConfirmed" required /><span>Guest confirms she is a woman aged 20 or above. *</span></label>
+      <label className="check-row"><input type="checkbox" name="returningGuest" /><span>Returning guest</span></label>\n      <label className="check-row"><input type="checkbox" name="ageConfirmed" required /><span>Guest confirms she is a woman aged 20 or above. *</span></label>
       <label className="check-row"><input type="checkbox" name="consent" required /><span>Guest consents to registration and attendance record. *</span></label>
       {error && <p className="form-error" role="alert">{error}</p>}
       <button className="button button-primary" disabled={saving}>{saving ? "Saving…" : "Save walk-in"}</button>
