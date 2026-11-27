@@ -94,7 +94,7 @@ export default function HomePage() {
           <div className="gathering-values-heading">
             <p className="eyebrow">More than a moment</p>
             <h2 id="gathering-values-title">A space to meet<br /><em>the woman within.</em></h2>
-            <p>An afternoon shaped around the heart of this year's theme: accepting your greatness, and believing in the person you are becoming.</p>
+            <p>An afternoon shaped around the heart of this edition: accepting your greatness, and believing in the person you are becoming.</p>
           </div>
           <div className="gathering-values-list">
             <article><span>01</span><div><h3>Pause and reflect</h3><p>Make room to recognise your journey, your growth and the strength it has taken to arrive here.</p></div></article>
