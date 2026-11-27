@@ -1,103 +1,101 @@
 # From Girlhood to Greatness — Engineering Notes
 
-## Source reconciliation
-
-The reviewed Claude archive was not present in this repository branch or its reachable Git history. The current application was therefore established from the committed handover, the supplied visual preview, the approved event facts and the connected Notion database schemas. This is a documented reconstruction, not a claim that the original archive's source files were recovered.
-
-The expected archive files `Hero.tsx`, `Story.tsx`, `RegistrationForm.tsx`, `Details.tsx` and `src/config/event.ts` were not present in the checked-out branch or recoverable from the inspected Git history. The public page and configuration were reconstructed in the current App Router structure (`src/app/page.tsx` and `src/lib/gtg-config.ts`) rather than pretending those archive files had been recovered.
-
-The handover describes an offline registration queue in the reviewed archive, but its implementation and retry/sync behavior could not be recovered from Git history or the static visual preview. Offline submission is therefore **not implemented or claimed**. It needs a confirmed specification or the original source before it can be safely added.
-
-The old ISEYC Field Register Desk source and its legacy API routes were retained rather than blindly deleting the previous application. The public root route now serves the GTG event experience. The main branch remains unchanged.
-
 ## Approved event information
 
 - Event: From Girlhood to Greatness — Second Edition
 - Theme: Accepting My Greatness — From Becoming Her to Believing in Her.
 - Organiser: Empower with Hafsat
-- In partnership with: Baytal Rihaa
-- Systems and Documentation Partner: Initiative for Sustainable Evolution for Youth and Community (ISEYC)
+- Partner: Baytal Rihaa
+- Systems partner: Initiative for Sustainable Evolution for Youth and Community (ISEYC)
 - Date: Sunday, 29 November 2026
 - Time: 1:00 PM
 - Venue: Yakubu Hub, Surami Road, U/Rimi, Kaduna, Nigeria
 - Audience: Women aged 20 and above
 
-These details are centralised in `src/lib/gtg-config.ts` and are rendered on the public page and metadata.
+No speaker names, programme details, attendance figures or endorsements are invented.
 
-## Visual and brand status
+## Current implementation
 
-The current page uses the preview's warm ivory, deep plum and restrained gold direction with an editorial serif/sans-serif pairing. The public experience includes the event story, an editorial reflection/connection/growth section, approved event facts, practical attendee FAQs, a venue directions link and registration. It does not invent speakers, testimonials, programme activities, sponsors or attendance figures.
+The public event experience is implemented in `src/app/page.tsx`, with styling in `src/app/globals.css` and `src/app/brand-overrides.css`. It includes the organiser identity, event story, attendee guidance, event facts, FAQs, venue directions and registration.
 
-The supplied Empower with Hafsat logo is stored at `public/brand/empower-with-hafsat.jpg` and is used in the public, staff and feedback surfaces. The campaign photograph is separate event imagery and does not replace or modify the logo. The legacy ISEYC/Tirngan brand assets are retained but are not presented as the event's organiser logo or as unapproved partners. See `public/brand/README.md`.
+The staff desk in `src/components/StaffDesk.tsx` and `src/app/staff/staff.css` supports staff sign-in, guest search, cursor-based pagination, status filters, check-in, walk-in registration, loaded-record metrics, CSV export and sign-out. The interface distinguishes loaded records from total register counts.
 
-## Technology and dependency security
+Server routes include `/api/staff/login`, `/api/staff/registrations`, `/api/staff/check-in`, `/api/staff/walk-in`, `/api/staff/logout`, public registration and anonymous feedback. Notion is the persistence layer.
 
-Current application stack:
-- Next.js 15.5.29
-- React 19.2.0
-- TypeScript 5.5.3
-- Tailwind CSS 3.4.4
-- Zod 4.6.7
-- Notion SDK `@notionhq/client` 2.2.15
+The supplied Empower with Hafsat logo asset is `public/brand/empower-with-hafsat.jpg`. No unapproved speakers or programme items are displayed.
 
-The framework and validation packages were moved off the vulnerable reviewed-archive versions. The CI dependency-audit step regenerates the lockfile, runs `npm audit` for the full dependency tree and production dependencies, and enforces the high-severity threshold. On the successful verification run, both audit reports contained zero advisories. The resulting patched lockfile was committed by CI as `17e0c70`.
+## Data and security behavior
 
-## Notion registration and feedback
+- Registration checks client submission IDs and exact name/phone pairs before creating a Notion record. This query-before-create protection is not atomic under concurrent requests.
+- Walk-in registration creates a checked-in record with a check-in timestamp.
+- Feedback persistence supports idempotent submission handling.
+- Staff routes require a signed session; unauthenticated list, check-in and walk-in requests are rejected.
+- Login, registration and feedback rate limits use bounded process-local in-memory tracking. They are not distributed across serverless instances.
+- Staff access uses a shared passcode, not individual officer accounts or per-person attribution.
+- Registration reports success only after the Notion write succeeds. A network interruption does not imply a successful registration.
+- Offline registration/check-in queueing is not implemented. The earlier archive's queue behavior could not be recovered or verified; do not claim offline support.
 
-The connected Notion schemas were inspected read-only. The registration and feedback property names, field types and select options match the application mapping.
+## QA databases and integration verification
 
-The Vercel environment inventory confirms that the registration/feedback database IDs, Notion API key, staff passcode and session secret are configured for **Production only**. Preview deployments do not receive those production variables; registration and staff access are therefore disabled on the review preview. The preview cannot create guest or feedback records.
+The review deployment uses isolated Notion QA databases:
+- `GTG 2026 — QA Sandbox Registrations`
+- `GTG 2026 — QA Sandbox Feedback`
 
-The environment inventory also reports a `readable-secret` security warning for `NOTION_API_KEY` and `SESSION_SECRET`. Their values were not decrypted or displayed. Before production launch, the project owner should verify that both are stored as write-only Secret variables and rotate them if their current visibility permits readback. This was not changed automatically because it affects production credentials.
+The integration health endpoint on the current exact-head preview returned HTTP 200 and reported both QA databases connected.
 
-The application returns a successful registration response only after the Notion page-creation call succeeds. A failed write returns an error and does not show a success confirmation. No synthetic participant or feedback record has been written to the live databases.
+Real HTTP requests through the application were independently read back from Notion:
+- Registration creation passed.
+- Replaying the same client submission was recognised as a repeated request.
+- Reusing the same name and phone with a new submission ID was rejected as a duplicate (HTTP 409).
+- Anonymous feedback creation passed.
+- Feedback replay was recognised as repeated.
+- Invalid staff passcode and unauthenticated guest-list, check-in and walk-in requests were rejected (HTTP 401).
 
-A real end-to-end write test remains unperformed because no approved test database has been supplied. Production environment-variable presence is not proof that the Notion API token can write to the configured database.
+Both QA records created for those tests were moved to Notion Trash after verification. The active QA views were checked again and returned zero active records. No production event records were created, updated or deleted.
 
-Duplicate detection checks the client submission ID and exact name/phone pair before creating a record. Notion does not enforce a unique constraint on those properties, so concurrent requests can still race. This limitation is documented rather than hidden or masked by an unapproved external datastore.
+This verifies public registration and feedback writes against QA databases. It does **not** verify successful authenticated staff operations against the live Notion integration.
 
-## Staff access and security boundaries
+## Current branch and CI evidence
 
-Staff access requires `REGISTER_PASSCODE`, `SESSION_SECRET` (at least 32 characters) and the required Notion environment variables. Successful login creates an expiring HMAC-signed, HttpOnly cookie with Secure enabled in production and SameSite=Strict. Check-in verifies that the target record belongs to the configured registration database.
+- Review branch: `feat/gtg-second-edition-review-build`
+- Current head: `3609b46d9a7960c554e6755f62dfcd7a03305d03`
+- Pull request: #2, open and unmerged; base `feat/gtg-second-edition-continuation`
+- Latest GitHub Actions run: `46036133472` (run 151), successful.
+- CI includes dependency security checks, TypeScript, ESLint, production build and Playwright browser QA.
+- All 12 workflow steps passed; browser QA includes seven tests.
 
-The staff desk provides guest search, cursor-based pagination, attendance filters, check-in, walk-in registration and CSV export of currently loaded records. It displays loaded-record counts rather than claiming full-database totals. The current staff desk uses a shared event-team passcode, not individual staff identities or role-based permissions. It therefore does not provide per-person check-in attribution. Login, registration and anonymous-feedback rate limits are process-local in-memory controls; they are not shared across serverless instances and should not be described as globally enforced limits. The feedback endpoint now allows five valid submissions per IP in a ten-minute process window before returning HTTP 429.
+The latest exact-head Vercel review deployment is READY:
+- Deployment ID: `dpl_BEBndCvphV3jWxWV1QyL72uadHi7`
+- Commit: `3609b46d9a7960c554e6755f62dfcd7a03305d03`
+- Public page, staff page and feedback page returned HTTP 200.
+- `/api/health/notion` returned HTTP 200 and confirmed both preview QA databases connected.
+- `/api/staff/login` and `/api/register` GET configuration checks returned HTTP 200 with configured status.
+- CSP includes the approved campaign image host and `frame-ancestors 'none'`.
 
-## Verification evidence
+A local screenshot attempt could not launch Chromium in the Vercel sandbox. CI browser tests passed, but this is not a substitute for a manual physical-device visual review.
 
-Successful GitHub Actions run: `45911986983` (26 November 2026), on the continuation branch before the CI-generated lockfile commit.
+## Environment and deployment boundary
 
-- `npm ci`: passed
-- Full dependency audit: zero advisories
-- Production dependency audit: zero advisories
-- `npm run typecheck`: passed
-- `npm run lint`: passed
-- `npm run build`: passed
-- HTTP smoke checks for the home page, staff page, feedback page and registration/staff configuration endpoints: passed
-- Playwright browser tests: 6 passed, 0 failed
+The review project's preview environment has QA Notion configuration. A new 32-character staff passcode was configured as a sensitive Vercel environment variable for the review branch and for the existing project's Production environment. The passcode is not retrieved or echoed by tooling.
 
-The Playwright checks cover approved event facts, preview noindex metadata, mobile horizontal overflow, registration persistence failure, anonymous feedback persistence failure and rate limiting, staff login/check-in access boundaries and invalid API payloads. They use a deliberately invalid Notion token and synthetic CI-only staff credentials; they do not write to production Notion.
+The current project’s production domain `iseyc-field-register-desk.vercel.app` is still mapped to the older ISEYC × TIRNGAN Community Outreach Desk. Deploying the GTG branch to that project's Production target would replace that older application. The owner has not authorised that replacement. Preserve the existing production deployment.
 
-The CI workflow now uses the committed lockfile with `npm ci`, read-only repository permissions and same-branch concurrency cancellation. It no longer repairs dependencies or pushes lockfile changes during a verification run.
+A separate production destination is the recommended path. A separate Vercel project still requires its own safely configured Notion credentials, database IDs, staff passcode and session secret; write-only secrets must not be decrypted or copied through unsafe channels. No separate production project is yet configured.
 
-A Vercel preview deployment completed successfully at `iseyc-field-register-desk-fk2qui600.vercel.app`, but it is built from commit `17e0c7036f9da9857145bd0481956d77339068d0`, not the latest branch head. The visual page and event copy are available for review; the later changes are limited to metadata, feedback throttling, CI and documentation. A new exact-head preview deployment was blocked by Vercel's daily API deployment quota (more than 100 deployments in 24 hours). No production deployment was triggered.
+## Remaining acceptance requirements
 
-The current Production deployment remains the older ISEYC Field Register Desk from `main` at `4eaa1d6e2f01e047337d1d67f60b9c352a4bc8e4`. The GTG branch has not replaced it.
-
-## Remaining review blockers
-
-1. The organiser must supply the approved event logo before the final visual identity can be signed off.
-2. A real Notion write/readback test requires an explicitly approved test database shared with the existing integration.
-3. Duplicate detection is not atomic across concurrent serverless requests.
-4. Rate limiting is instance-local, not distributed.
-5. Staff access is shared-passcode based and does not identify individual officers.
-6. Vercel flags `NOTION_API_KEY` and `SESSION_SECRET` with a readable-secret warning; owner review and safe rotation/write-only storage are required before production.
-7. The current preview URL is one build behind the latest branch head because the Vercel deployment quota is exhausted; a fresh preview is required after the quota resets.
-8. Offline registration queue behavior from the reviewed archive remains unrecovered and is not supported by this reconstruction.
-9. The venue text is preserved exactly as supplied; no unverified map pin or directions have been invented.
+1. Confirm a separate production destination (or explicitly authorise replacement of the existing production app; replacement is not assumed).
+2. Configure the separate project's Notion integration and secrets securely.
+3. Complete a controlled successful staff acceptance test: login, guest search/pagination, walk-in creation, check-in update and sign-out. Do not expose the passcode in logs or chat.
+4. Re-run production smoke tests after deployment and confirm the correct application is served without disturbing the older ISEYC service.
+5. Complete manual visual review on real mobile and desktop devices.
+6. Decide whether offline queueing is required; if so, obtain the original implementation/specification or approve a safe, explicit retry/queue design.
+7. Consider distributed rate limiting and atomic duplicate protection before relying on this system for high-concurrency event-day traffic.
 
 ## Git safeguards
 
+- Repository visibility: public, as explicitly requested by the owner.
 - Working branch: `feat/gtg-second-edition-review-build`
-- Intended PR base: `feat/gtg-second-edition-continuation`
-- Main branch at last check: `4eaa1d6e2f01e047337d1d67f60b9c352a4bc8e4` (unchanged)
-- No direct push to main, force-push, merge or production deployment.
+- PR base: `feat/gtg-second-edition-continuation`
+- Main branch last verified at `4eaa1d6e2f01e047337d1d67f60b9c352a4bc8e4`.
+- Review work remains unmerged; no direct main change or production deployment has been made.
