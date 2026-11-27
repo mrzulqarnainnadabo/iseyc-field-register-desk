@@ -108,23 +108,35 @@ test("walk-in registration is staff-only and never confirms an unsaved guest", a
   await page.getByRole("button", { name: /Continue/ }).click();
   await expect(page.getByRole("heading", { name: "Guest check-in" })).toBeVisible();
 
-  const invalid = await page.request.post("/api/staff/walk-in", { data: {} });
-  expect(invalid.status()).toBe(400);
-
-  const unsaved = await page.request.post("/api/staff/walk-in", {
-    data: {
-      name: "CI Walk-in Guest",
-      phone: "+2348012345678",
-      ageBand: "20–25",
-      source: "Other",
-      returningGuest: false,
-      supportNeeds: "",
-      ageConfirmed: true,
-      consent: true,
-      clientSubmissionId: "GTG-CI-WALK-IN-UNSAVED",
-      website: "",
-    },
+  const invalidStatus = await page.evaluate(async () => {
+    const response = await fetch("/api/staff/walk-in", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+    return response.status;
   });
-  expect(unsaved.status()).toBe(503);
-  expect((await unsaved.json()).ok).toBe(false);
+  expect(invalidStatus).toBe(400);
+
+  const unsaved = await page.evaluate(async () => {
+    const response = await fetch("/api/staff/walk-in", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "CI Walk-in Guest",
+        phone: "+2348012345678",
+        ageBand: "20–25",
+        source: "Other",
+        returningGuest: false,
+        supportNeeds: "",
+        ageConfirmed: true,
+        consent: true,
+        clientSubmissionId: "GTG-CI-WALK-IN-UNSAVED",
+        website: "",
+      }),
+    });
+    return { status: response.status, body: await response.json() };
+  });
+  expect(unsaved.status).toBe(503);
+  expect(unsaved.body.ok).toBe(false);
 });
