@@ -1,31 +1,47 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { AGE_BANDS, REGISTRATION_SOURCES } from "@/lib/gtg-config";
 
 type Registration = { id: string; name: string; phone: string; ageBand: string; status: string; channel: string; submissionId: string; checkedInAt: string | null };
+type StatusFilter = "All" | "Registered" | "Checked in";
+
 function makeReference() {
   const id = typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : Date.now().toString(36);
   return "GTG-" + id.toUpperCase();
 }
+function csvCell(value: string) { return '"' + value.replace(/"/g, '""') + '"'; }
+
 export function StaffDesk() {
   const [authenticated, setAuthenticated] = useState(false);
   const [checking, setChecking] = useState(true);
   const [configured, setConfigured] = useState(false);
   const [passcode, setPasscode] = useState("");
   const [query, setQuery] = useState("");
+  const [appliedQuery, setAppliedQuery] = useState("");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [message, setMessage] = useState("");
+  const [messageKind, setMessageKind] = useState<"error" | "success" | "info">("info");
   const [busyId, setBusyId] = useState("");
+  const [loading, setLoading] = useState(false);
   const [walkInOpen, setWalkInOpen] = useState(false);
+  const [filter, setFilter] = useState<StatusFilter>("All");
 
-  async function loadRegistrations(search = "") {
-    const response = await fetch("/api/staff/registrations?q=" + encodeURIComponent(search), { cache: "no-store" });
-    if (response.status === 401) { setAuthenticated(false); return; }
-    const result = await response.json();
-    if (response.ok && result.ok) setRegistrations(result.registrations);
-    else setMessage(result.error || "Could not load registrations.");
-  }
+  const loadRegistrations = useCallback(async (search = "") => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/staff/registrations?q=" + encodeURIComponent(search), { cache: "no-store" });
+      if (response.status === 401) { setAuthenticated(false); setMessage("Your staff session has expired. Sign in again."); setMessageKind("error"); return; }
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || "Could not load registrations.");
+      setRegistrations(result.registrations);
+      setAppliedQuery(search);
+      setMessage("");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "The guest list could not be refreshed.");
+      setMessageKind("error");
+    } finally { setLoading(false); }
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -36,61 +52,98 @@ export function StaffDesk() {
         setConfigured(Boolean(result.configured));
         if (!result.configured) return;
         const response = await fetch("/api/staff/registrations", { cache: "no-store" });
-        if (response.ok) {
-          const data = await response.json();
-          if (active) { setAuthenticated(true); setRegistrations(data.registrations || []); }
-        }
+        if (response.status === 401) return;
+        const data = await response.json();
+        if (active && response.ok && data.ok) { setAuthenticated(true); setRegistrations(data.registrations || []); }
+        else if (active && !response.ok) setMessage(data.error || "The guest list could not be loaded.");
       })
-      .catch(() => { if (active) setMessage("Could not connect to the staff desk."); })
+      .catch(() => { if (active) { setMessage("Could not connect to the staff desk. Check your connection and retry."); setMessageKind("error"); } })
       .finally(() => { if (active) setChecking(false); });
     return () => { active = false; };
   }, []);
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setMessage("");
-    const response = await fetch("/api/staff/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ passcode }) });
-    const result = await response.json();
-    if (!response.ok) { setMessage(result.error || "Sign-in failed."); return; }
-    setAuthenticated(true); setPasscode(""); await loadRegistrations();
+    try {
+      const response = await fetch("/api/staff/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ passcode }) });
+      const result = await response.json();
+      if (!response.ok) { setMessage(result.error || "Sign-in failed."); setMessageKind("error"); return; }
+      setAuthenticated(true); setPasscode(""); await loadRegistrations();
+    } catch { setMessage("Sign-in could not be completed. Check your connection and retry."); setMessageKind("error"); }
   }
+
   async function checkIn(id: string) {
     setBusyId(id); setMessage("");
     try {
       const response = await fetch("/api/staff/check-in", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
       const result = await response.json();
-      if (!response.ok) { setMessage(result.error || "Check-in failed."); return; }
-      setMessage(result.alreadyCheckedIn ? "This guest was already checked in." : "Check-in saved.");
-      await loadRegistrations(query);
-    } catch { setMessage("Check-in could not be confirmed. Please retry."); }
+      if (!response.ok) { setMessage(result.error || "Check-in failed."); setMessageKind("error"); return; }
+      setMessage(result.alreadyCheckedIn ? "This guest was already checked in." : "Attendance confirmed and saved.");
+      setMessageKind("success");
+      await loadRegistrations(appliedQuery);
+    } catch { setMessage("Check-in could not be confirmed. Please retry before proceeding."); setMessageKind("error"); }
     finally { setBusyId(""); }
   }
+
   async function logout() {
-    await fetch("/api/staff/logout", { method: "POST" });
-    setAuthenticated(false); setRegistrations([]); setMessage("You have signed out.");
+    try { await fetch("/api/staff/logout", { method: "POST" }); }
+    finally { setAuthenticated(false); setRegistrations([]); setMessage("You have signed out."); setMessageKind("info"); }
   }
 
-  if (checking) return <div className="staff-state">Checking staff access…</div>;
+  const visible = useMemo(() => registrations.filter((guest) => filter === "All" || guest.status === filter), [registrations, filter]);
+  const checkedIn = registrations.filter((guest) => guest.status === "Checked in").length;
+  const pending = registrations.length - checkedIn;
+
+  function exportVisible() {
+    const rows = [["Name", "Phone", "Age range", "Status", "Channel", "Reference", "Checked in at"], ...visible.map((guest) => [guest.name, guest.phone, guest.ageBand, guest.status, guest.channel, guest.submissionId, guest.checkedInAt || ""])];
+    const csv = rows.map((row) => row.map(csvCell).join(",")).join("\r\n");
+    const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url; anchor.download = "gtg-guest-list-" + new Date().toISOString().slice(0, 10) + ".csv";
+    anchor.click(); URL.revokeObjectURL(url);
+  }
+
+  if (checking) return <div className="staff-state" role="status">Checking staff access…</div>;
   if (!configured) return <div className="staff-login"><p className="eyebrow">Event operations</p><h1>Staff workspace</h1><p>Staff access is not enabled on this review preview. The restricted workspace will become available when its protected environment is configured.</p></div>;
   if (!authenticated) return (
     <div className="staff-login">
       <p className="eyebrow">Event operations</p><h1>Staff access</h1><p>Sign in with the event team access code to manage guest check-in.</p>
-      <form onSubmit={login}><label className="field"><span>Staff access code</span><input type="password" value={passcode} onChange={(event) => setPasscode(event.target.value)} autoComplete="current-password" required /></label>{message && <p className="form-error" role="alert">{message}</p>}<button className="button button-primary form-submit">Continue <span>↗</span></button></form>
+      <form onSubmit={login}><label className="field"><span>Staff access code</span><input type="password" value={passcode} onChange={(event) => setPasscode(event.target.value)} autoComplete="current-password" required /></label>{message && <p className="form-error" role="alert">{message}</p>}<button className="button button-primary form-submit" disabled={!passcode.trim()}>Continue <span>↗</span></button></form>
     </div>
   );
 
   return (
     <div className="staff-workspace">
-      <div className="staff-topline"><div><p className="eyebrow">Event operations</p><h1>Guest check-in</h1><p>Search the registration list or record a walk-in guest.</p></div><button className="text-button" onClick={logout}>Sign out</button></div>
-      <div className="staff-toolbar"><form className="staff-search" onSubmit={(event) => { event.preventDefault(); loadRegistrations(query); }}><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, exact phone or reference" aria-label="Search registrations" /><button className="button button-primary">Search</button></form><button className="button button-outline" onClick={() => setWalkInOpen((value) => !value)}>{walkInOpen ? "Close walk-in" : "Add walk-in"}</button></div>
-      {message && <p className="staff-message" role="status">{message}</p>}
-      {walkInOpen && <WalkInForm onSaved={async (reference) => { setMessage("Walk-in saved and marked checked in. Reference: " + reference); setWalkInOpen(false); await loadRegistrations(query); }} />}
-      <div className="staff-list-head"><span>GUESTS</span><span>{registrations.length} shown</span></div>
-      <div className="staff-list">{registrations.length === 0 ? <p className="staff-empty">No registrations found. Try another search.</p> : registrations.map((guest) => (
-        <article className="staff-row" key={guest.id}>
-          <div className="staff-guest"><strong>{guest.name}</strong><span>{guest.phone} · {guest.ageBand || "Age not recorded"}</span><small>{guest.channel} · {guest.submissionId}</small></div>
-          <div className="staff-status"><span className={guest.status === "Checked in" ? "status-checked" : "status-pending"}>{guest.status}</span>{guest.status === "Checked in" ? <small>{guest.checkedInAt ? new Date(guest.checkedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Recorded"}</small> : <button className="checkin-button" disabled={busyId === guest.id} onClick={() => checkIn(guest.id)}>{busyId === guest.id ? "Saving…" : "Check in"}</button>}</div>
-        </article>
-      ))}</div>
+      <div className="staff-topline"><div><p className="eyebrow">Event operations · Second Edition</p><h1>Guest check-in</h1><p>Find a registered guest, confirm attendance or add a walk-in.</p></div><button className="text-button" onClick={logout}>Sign out</button></div>
+      <div className="staff-metrics" aria-label="Guest list summary">
+        <article><span>LOADED GUESTS</span><strong>{registrations.length}</strong><small>Latest 30 records or search results</small></article>
+        <article><span>CHECKED IN</span><strong>{checkedIn}</strong><small>Attendance confirmed</small></article>
+        <article><span>AWAITING ARRIVAL</span><strong>{pending}</strong><small>Not yet checked in</small></article>
+      </div>
+      <div className="staff-toolbar">
+        <form className="staff-search" onSubmit={(event) => { event.preventDefault(); loadRegistrations(query); }}>
+          <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, exact phone or reference" aria-label="Search registrations" />
+          <button className="button button-primary" disabled={loading}>{loading ? "Searching…" : "Search"}</button>
+        </form>
+        <button className="button button-outline" onClick={() => setWalkInOpen((value) => !value)}>{walkInOpen ? "Close walk-in" : "Add walk-in"}</button>
+        <button className="button button-quiet" onClick={() => loadRegistrations(appliedQuery)} disabled={loading} aria-label="Refresh guest list">↻ Refresh</button>
+      </div>
+      {message && <p className={"staff-message staff-message-" + messageKind} role={messageKind === "error" ? "alert" : "status"}>{message}</p>}
+      {walkInOpen && <WalkInForm onSaved={async (reference) => { setMessage("Walk-in saved and marked checked in. Reference: " + reference); setMessageKind("success"); setWalkInOpen(false); await loadRegistrations(appliedQuery); }} />}
+      <div className="staff-list-head"><div><span>GUEST REGISTER</span><small>{visible.length} displayed · {registrations.length} loaded</small></div><button className="text-button" onClick={exportVisible} disabled={visible.length === 0}>Export CSV ↗</button></div>
+      <div className="staff-filters" aria-label="Filter guest list">
+        {(["All", "Registered", "Checked in"] as StatusFilter[]).map((item) => <button key={item} type="button" className={filter === item ? "staff-filter active" : "staff-filter"} aria-pressed={filter === item} onClick={() => setFilter(item)}>{item}{item === "All" ? " · " + registrations.length : item === "Registered" ? " · " + pending : " · " + checkedIn}</button>)}
+      </div>
+      <div className="staff-list" aria-live="polite">
+        {visible.length === 0 ? <div className="staff-empty"><strong>{registrations.length === 0 ? "No guest records loaded" : "No guests in this view"}</strong><p>{registrations.length === 0 ? (appliedQuery ? "No matches found. Try a different name, phone number or reference." : "Refresh the guest list or search for a registration.") : "Choose another attendance filter to see more guests."}</p></div> : visible.map((guest) => (
+          <article className="staff-row" key={guest.id}>
+            <div className="staff-guest"><strong>{guest.name}</strong><span>{guest.phone} · {guest.ageBand || "Age not recorded"}</span><small>{guest.channel} · {guest.submissionId}</small></div>
+            <div className="staff-status"><span className={guest.status === "Checked in" ? "status-checked" : "status-pending"}>{guest.status}</span>{guest.status === "Checked in" ? <small>{guest.checkedInAt ? new Date(guest.checkedInAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Recorded"}</small> : <button className="checkin-button" disabled={busyId === guest.id || Boolean(busyId)} onClick={() => checkIn(guest.id)}>{busyId === guest.id ? "Saving…" : "Check in"}</button>}</div>
+          </article>
+        ))}
+      </div>
+      <p className="staff-footnote">This workspace displays up to 30 records per search. Use a name, phone number or reference to find a specific guest.</p>
     </div>
   );
 }
