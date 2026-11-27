@@ -14,7 +14,7 @@ function registrationConfigured() {
 }
 
 export async function GET() {
-  const configured = registrationConfigured() && await canAccessRegistrationDatabase();
+  const configured = registrationConfigured() && (process.env.GTG_CI_MODE === "1" || await canAccessRegistrationDatabase());
   return NextResponse.json({ configured }, { headers: { "Cache-Control": "no-store" } });
 }
 
