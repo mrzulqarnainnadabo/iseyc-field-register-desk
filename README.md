@@ -1,6 +1,6 @@
 # From Girlhood to Greatness — Second Edition
 
-A responsive event website and restricted event-day registration/check-in workspace for Empower with Hafsat.
+A standalone event website and restricted event-day registration/check-in workspace for Empower with Hafsat.
 
 ## Approved event information
 
@@ -30,18 +30,12 @@ Next.js 15, React 19, TypeScript, Tailwind CSS, Zod and the Notion SDK.
 
 1. Use Node.js 20 or newer.
 2. Copy `.env.example` to `.env.local`.
-3. Configure the Notion integration and staff secrets. Never commit `.env.local`.
-4. Run `npm ci`.
-5. Run `npm run dev`.
+3. Create two dedicated event databases in Notion (registrations and feedback) and share both with a dedicated Notion integration.
+4. Configure `NOTION_API_KEY`, `NOTION_REGISTRATIONS_DB_ID`, `NOTION_FEEDBACK_DB_ID`, `REGISTER_PASSCODE`, `SESSION_SECRET` (32+ characters) and `NEXT_PUBLIC_SITE_URL`.
+5. Run `npm ci`.
+6. Run `npm run dev`.
 
-Required server environment:
-- `NOTION_API_KEY`
-- `NOTION_REGISTRATIONS_DB_ID`
-- `NOTION_FEEDBACK_DB_ID`
-- `REGISTER_PASSCODE`
-- `SESSION_SECRET` (at least 32 characters)
-
-The Notion integration must be connected to both registration and feedback databases.
+Do not reuse the ISEYC × TIRNGAN production databases or credentials. Never commit `.env.local` or expose server credentials in client code.
 
 ## Verification
 
@@ -52,14 +46,17 @@ The Notion integration must be connected to both registration and feedback datab
 - Dependency security audit
 - Playwright browser QA (CI)
 
-The current review branch has a successful CI run and an exact-head READY preview deployment. Isolated QA registration and feedback writes were read back from Notion and then removed from the active QA views. Successful authenticated staff operations still require a controlled acceptance test.
+The review branch has a successful CI run. Isolated QA registration and feedback writes were independently read back from Notion and then removed from the active QA views. Successful authenticated staff operations still require a controlled acceptance test.
 
-## Important limitations
+## Known limitations
 
 - Offline registration/check-in queueing is not implemented; do not assume a registration is saved when connectivity fails.
 - Duplicate protection is query-before-create and is not atomic under concurrent requests.
 - Rate limiting is bounded but process-local, not distributed.
 - Staff access uses a shared passcode and does not provide individual staff identities.
-- The existing production domain serves the older ISEYC × TIRNGAN application. The GTG review branch has not been deployed to that production target; a separate production destination is recommended and still needs secure environment setup.
 
-See [docs/GTG-ENGINEERING-NOTES.md](docs/GTG-ENGINEERING-NOTES.md) for current verification evidence, QA cleanup, deployment boundaries and remaining acceptance requirements.
+## Deployment boundary
+
+The event is deployed separately from the existing ISEYC × TIRNGAN Community Outreach Desk. The dedicated Vercel project and event domains have been created and verified, but the project has no deployment or environment variables yet. Production release remains blocked until the event-specific Notion integration, database IDs, staff passcode and session secret are configured and the authenticated staff acceptance test passes.
+
+See [docs/GTG-ENGINEERING-NOTES.md](docs/GTG-ENGINEERING-NOTES.md) for release evidence and the remaining acceptance checklist.
