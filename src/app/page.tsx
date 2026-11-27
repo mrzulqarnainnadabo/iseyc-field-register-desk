@@ -90,6 +90,19 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section className="gathering-values" aria-labelledby="gathering-values-title">
+          <div className="gathering-values-heading">
+            <p className="eyebrow">More than a moment</p>
+            <h2 id="gathering-values-title">A space to meet<br /><em>the woman within.</em></h2>
+            <p>An afternoon shaped around the heart of this year's theme: accepting your greatness, and believing in the person you are becoming.</p>
+          </div>
+          <div className="gathering-values-list">
+            <article><span>01</span><div><h3>Pause and reflect</h3><p>Make room to recognise your journey, your growth and the strength it has taken to arrive here.</p></div></article>
+            <article><span>02</span><div><h3>Connect with others</h3><p>Share the room with women who are also making space for possibility, confidence and connection.</p></div></article>
+            <article><span>03</span><div><h3>Keep becoming</h3><p>Leave with the invitation to carry belief in yourself beyond this one afternoon.</p></div></article>
+          </div>
+        </section>
+
         <section className="registration-section" id="register">
           <div className="registration-aside">
             <p className="eyebrow">Your next chapter</p>
@@ -99,6 +112,19 @@ export default function HomePage() {
             <Image src="/brand/empower-with-hafsat.jpg" alt="Empower with Hafsat" width={92} height={92} className="registration-brand" />
           </div>
           <div className="registration-card"><RegistrationForm /></div>
+        </section>
+
+        <section className="event-answers" aria-labelledby="event-answers-title">
+          <div className="event-answers-heading">
+            <p className="eyebrow">Before you join us</p>
+            <h2 id="event-answers-title">A few useful<br /><em>details.</em></h2>
+          </div>
+          <div className="event-answers-list">
+            <details><summary>Who is the gathering for?</summary><p>Women aged 20 and above. Please confirm this when completing your registration.</p></details>
+            <details><summary>When should I arrive?</summary><p>The gathering begins at 1:00 PM on Sunday, 29 November 2026. Please plan your journey so you can arrive in good time.</p></details>
+            <details><summary>Where will it take place?</summary><p>{GTG.venue}. <a href="https://www.google.com/maps/search/?api=1&query=Yakubu%20Hub%2C%20Surami%20Road%2C%20U%2FRimi%2C%20Kaduna%2C%20Nigeria" target="_blank" rel="noreferrer">Open directions in Google Maps ↗</a></p></details>
+            <details><summary>Do I need to register?</summary><p>Yes. Please complete the registration form on this page. Keep the reference shown after a successful submission for event-day check-in.</p></details>
+          </div>
         </section>
 
         <section className="partners-section">
