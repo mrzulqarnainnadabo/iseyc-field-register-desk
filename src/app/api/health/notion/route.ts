@@ -15,7 +15,7 @@ export async function GET() {
 
   try {
     const notion = new Client({ auth: token });
-    const [registrations, feedback] = await Promise.all([
+    await Promise.all([
       notion.databases.query({ database_id: registrationDbId(), page_size: 1 }),
       notion.databases.query({ database_id: feedbackDbId(), page_size: 1 }),
     ]);
@@ -28,9 +28,6 @@ export async function GET() {
         feedback: "connected",
       },
       checkedAt: new Date().toISOString(),
-      // Deliberately omit record counts and all page data.
-      hasRegistrationRecords: registrations.results.length > 0 || registrations.has_more,
-      hasFeedbackRecords: feedback.results.length > 0 || feedback.has_more,
     }, { headers: { "Cache-Control": "no-store" } });
   } catch {
     return NextResponse.json({
