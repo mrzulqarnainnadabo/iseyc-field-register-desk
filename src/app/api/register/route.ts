@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { registrationSchema } from "@/lib/gtg-validation";
 import { canAccessRegistrationDatabase, createRegistration } from "@/lib/gtg-notion";
+import { isRateLimitedAttempt } from "@/lib/gtg-security";
 
 export const runtime = "nodejs";
 
@@ -18,24 +19,12 @@ export async function GET() {
   return NextResponse.json({ configured }, { headers: { "Cache-Control": "no-store" } });
 }
 
-function rateLimited(ip: string) {
-  const now = Date.now();
-  const current = requests.get(ip);
-  if (!current || current.resetAt <= now) {
-    requests.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
-    return false;
-  }
-  if (current.count >= 6) return true;
-  current.count += 1;
-  return false;
-}
-
 export async function POST(request: NextRequest) {
   if (!registrationConfigured()) {
     return NextResponse.json({ ok: false, error: "Registration is not enabled on this preview. Please use the official event registration link when it is announced." }, { status: 503 });
   }
   const ip = request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",").pop()?.trim() || "unknown";
-  if (rateLimited(ip)) {
+  if (isRateLimitedAttempt(requests, ip, 6, 10 * 60 * 1000)) {
     return NextResponse.json({ ok: false, error: "Too many attempts. Please wait a little and try again." }, { status: 429 });
   }
   const body = await request.json().catch(() => null);
