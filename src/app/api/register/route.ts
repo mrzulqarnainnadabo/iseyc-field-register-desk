@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { registrationSchema } from "@/lib/gtg-validation";
-import { createRegistration } from "@/lib/gtg-notion";
+import { canAccessRegistrationDatabase, createRegistration } from "@/lib/gtg-notion";
 
 export const runtime = "nodejs";
 
@@ -14,7 +14,8 @@ function registrationConfigured() {
 }
 
 export async function GET() {
-  return NextResponse.json({ configured: registrationConfigured() });
+  const configured = registrationConfigured() && await canAccessRegistrationDatabase();
+  return NextResponse.json({ configured }, { headers: { "Cache-Control": "no-store" } });
 }
 
 function rateLimited(ip: string) {
