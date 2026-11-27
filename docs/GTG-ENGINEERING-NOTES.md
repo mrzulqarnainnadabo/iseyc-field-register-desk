@@ -26,9 +26,9 @@ These details are centralised in `src/lib/gtg-config.ts` and are rendered on the
 
 ## Visual and brand status
 
-The current page uses the preview's warm ivory, deep plum and restrained gold direction with an editorial serif/sans-serif pairing. It does not invent speakers, testimonials, programme activities, sponsors or attendance figures.
+The current page uses the preview's warm ivory, deep plum and restrained gold direction with an editorial serif/sans-serif pairing. The public experience includes the event story, an editorial reflection/connection/growth section, approved event facts, practical attendee FAQs, a venue directions link and registration. It does not invent speakers, testimonials, programme activities, sponsors or attendance figures.
 
-The official Empower with Hafsat / From Girlhood to Greatness logo was not present in the reconciled repository. A typographic wordmark is used as a temporary fallback. The legacy ISEYC/Tirngan brand assets are retained but are not presented as the event's organiser logo or as unapproved partners. See `public/brand/README.md`.
+The supplied Empower with Hafsat logo is stored at `public/brand/empower-with-hafsat.jpg` and is used in the public, staff and feedback surfaces. The campaign photograph is separate event imagery and does not replace or modify the logo. The legacy ISEYC/Tirngan brand assets are retained but are not presented as the event's organiser logo or as unapproved partners. See `public/brand/README.md`.
 
 ## Technology and dependency security
 
@@ -60,7 +60,7 @@ Duplicate detection checks the client submission ID and exact name/phone pair be
 
 Staff access requires `REGISTER_PASSCODE`, `SESSION_SECRET` (at least 32 characters) and the required Notion environment variables. Successful login creates an expiring HMAC-signed, HttpOnly cookie with Secure enabled in production and SameSite=Strict. Check-in verifies that the target record belongs to the configured registration database.
 
-The current staff desk uses a shared event-team passcode, not individual staff identities or role-based permissions. It therefore does not provide per-person check-in attribution. Login, registration and anonymous-feedback rate limits are process-local in-memory controls; they are not shared across serverless instances and should not be described as globally enforced limits. The feedback endpoint now allows five valid submissions per IP in a ten-minute process window before returning HTTP 429.
+The staff desk provides guest search, cursor-based pagination, attendance filters, check-in, walk-in registration and CSV export of currently loaded records. It displays loaded-record counts rather than claiming full-database totals. The current staff desk uses a shared event-team passcode, not individual staff identities or role-based permissions. It therefore does not provide per-person check-in attribution. Login, registration and anonymous-feedback rate limits are process-local in-memory controls; they are not shared across serverless instances and should not be described as globally enforced limits. The feedback endpoint now allows five valid submissions per IP in a ten-minute process window before returning HTTP 429.
 
 ## Verification evidence
 
