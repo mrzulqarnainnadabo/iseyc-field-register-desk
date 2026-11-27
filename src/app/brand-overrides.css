@@ -213,3 +213,8 @@ body { background: var(--paper); color: var(--ink); }
   text-decoration:underline; text-underline-offset:4px;
 }
 .venue-directions span { color:var(--gold); text-decoration:none; }
+
+
+/* Keyboard users can bypass repeated navigation and reach the event content directly. */
+.skip-link { position:absolute; z-index:1000; top:-64px; left:16px; padding:11px 16px; background:var(--plum); color:#fff; font-size:12px; transition:top .18s ease; }
+.skip-link:focus { top:12px; outline:2px solid var(--gold); outline-offset:3px; }
