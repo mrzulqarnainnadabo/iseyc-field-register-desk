@@ -83,3 +83,7 @@
  .staff-list-head { align-items:flex-end; }
  .staff-filters { margin:0 -2px; }
 }
+
+.staff-load-more { display:flex; justify-content:center; padding:22px 0 8px; }
+.staff-load-more .button { min-width:190px; }
+@media (max-width:680px) { .staff-load-more .button { width:100%; } }
