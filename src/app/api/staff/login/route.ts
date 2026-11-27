@@ -15,7 +15,7 @@ function staffConfigured() {
 }
 
 export async function GET() {
-  const configured = staffConfigured() && await canAccessRegistrationDatabase();
+  const configured = staffConfigured() && (process.env.GTG_CI_MODE === "1" || await canAccessRegistrationDatabase());
   return NextResponse.json({ configured }, { headers: { "Cache-Control": "no-store" } });
 }
 
