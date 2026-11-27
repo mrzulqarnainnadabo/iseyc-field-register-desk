@@ -20,7 +20,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  if (!staffConfigured() || !(await canAccessRegistrationDatabase())) return NextResponse.json({ ok: false, error: "Staff access is unavailable because the registration database is not connected." }, { status: 503 });
+  if (!staffConfigured()) return NextResponse.json({ ok: false, error: "Staff access is not enabled in this preview environment." }, { status: 503 });
   const ip = request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",").pop()?.trim() || "unknown";
   if (!allowLoginAttempt(ip)) return NextResponse.json({ ok: false, error: "Too many attempts. Try again later." }, { status: 429 });
   const body = await request.json().catch(() => ({}));
