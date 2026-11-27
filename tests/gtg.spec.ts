@@ -97,3 +97,34 @@ test("API validation rejects empty registration and feedback payloads", async ({
   const feedback = await request.post("/api/feedback", { data: {} });
   expect(feedback.status()).toBe(400);
 });
+
+
+test("walk-in registration is staff-only and never confirms an unsaved guest", async ({ page }) => {
+  const unauthorised = await page.request.post("/api/staff/walk-in", { data: {} });
+  expect(unauthorised.status()).toBe(401);
+
+  await page.goto("/staff");
+  await page.locator('input[type="password"]').fill("ci-test-passcode");
+  await page.getByRole("button", { name: /Continue/ }).click();
+  await expect(page.getByRole("heading", { name: "Guest check-in" })).toBeVisible();
+
+  const invalid = await page.request.post("/api/staff/walk-in", { data: {} });
+  expect(invalid.status()).toBe(400);
+
+  const unsaved = await page.request.post("/api/staff/walk-in", {
+    data: {
+      name: "CI Walk-in Guest",
+      phone: "+2348012345678",
+      ageBand: "20–25",
+      source: "Other",
+      returningGuest: false,
+      supportNeeds: "",
+      ageConfirmed: true,
+      consent: true,
+      clientSubmissionId: "GTG-CI-WALK-IN-UNSAVED",
+      website: "",
+    },
+  });
+  expect(unsaved.status()).toBe(503);
+  expect((await unsaved.json()).ok).toBe(false);
+});
