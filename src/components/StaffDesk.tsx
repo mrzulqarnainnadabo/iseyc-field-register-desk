@@ -86,8 +86,17 @@ export function StaffDesk() {
   }
 
   async function logout() {
-    try { await fetch("/api/staff/logout", { method: "POST" }); }
-    finally { setAuthenticated(false); setRegistrations([]); setMessage("You have signed out."); setMessageKind("info"); }
+    try {
+      const response = await fetch("/api/staff/logout", { method: "POST" });
+      if (!response.ok) throw new Error("The session could not be closed securely. Please retry.");
+      setAuthenticated(false);
+      setRegistrations([]);
+      setMessage("You have signed out.");
+      setMessageKind("info");
+    } catch {
+      setMessage("Sign-out could not be confirmed. Check your connection and retry.");
+      setMessageKind("error");
+    }
   }
 
   const visible = useMemo(() => registrations.filter((guest) => filter === "All" || guest.status === filter), [registrations, filter]);
