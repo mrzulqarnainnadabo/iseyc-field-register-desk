@@ -8,6 +8,7 @@ const heroImage =
 export default function HomePage() {
   return (
     <>
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <header className="site-header">
         <a className="brand-lockup" href="#top" aria-label="Empower with Hafsat">
           <Image
@@ -32,7 +33,7 @@ export default function HomePage() {
       </header>
 
       <main id="top">
-        <section className="editorial-hero">
+        <section className="editorial-hero" id="main-content">
           <div className="editorial-copy">
             <p className="eyebrow"><span className="eyebrow-line" /> {GTG.edition} <span className="eyebrow-dot">/</span> Kaduna, Nigeria</p>
             <h1>From Girlhood<br /><em>to Greatness.</em></h1>
