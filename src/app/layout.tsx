@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import "./brand-overrides.css";
 import { GTG, getPublicSiteUrl } from "@/lib/gtg-config";
 
 const siteUrl = getPublicSiteUrl();
@@ -12,13 +13,14 @@ export const metadata: Metadata = {
   authors: [{ name: GTG.organiser }],
   creator: GTG.organiser,
   publisher: GTG.organiser,
+  icons: { icon: "/brand/empower-with-hafsat.jpg" },
   robots: process.env.VERCEL_ENV === "production" ? { index: true, follow: true } : { index: false, follow: false },
   alternates: { canonical: "/" },
   openGraph: { type: "website", locale: "en_NG", url: siteUrl, siteName: GTG.title, title: "From Girlhood to Greatness — Second Edition", description: GTG.theme },
   twitter: { card: "summary", title: "From Girlhood to Greatness — Second Edition", description: GTG.theme },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 5, themeColor: "#5B2A4E" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 5, themeColor: "#F8E5E9" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="en-NG"><body>{children}</body></html>;
