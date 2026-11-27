@@ -65,8 +65,8 @@ The Notion API token has **not** been configured in the standalone Vercel projec
 - Review branch: `feat/gtg-second-edition-review-build`.
 - Current head: `6acb7f06ee795b506ac5cb300c29afb88f4e233f`.
 - Pull request: #2, open and unmerged; base `feat/gtg-second-edition-continuation`.
-- GitHub Actions run `46061121717` (run 161) passed all 12 workflow steps: dependency audit/security threshold, typecheck, lint, production build and Playwright browser QA.
-- The latest code and documentation changes include the canonical event URL fallback and an environment template with no legacy ISEYC database IDs.
+- GitHub Actions run `46061696813` (run 164) passed all 12 workflow steps on application commit `d71bbc8acc2e59d95376569c2283dc4579f2e6f3`: dependency audit/security threshold, typecheck, lint, production build and Playwright browser QA.
+- The verified application changes include the canonical event URL fallback and an environment template with no legacy ISEYC database IDs. The later commit updating this engineering note is documentation-only and must retain a passing CI check.
 
 ## Dedicated Vercel project
 
