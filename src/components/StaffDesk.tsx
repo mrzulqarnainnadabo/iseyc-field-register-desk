@@ -20,6 +20,9 @@ export function StaffDesk() {
   const [query, setQuery] = useState("");
   const [appliedQuery, setAppliedQuery] = useState("");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [message, setMessage] = useState("");
   const [messageKind, setMessageKind] = useState<"error" | "success" | "info">("info");
   const [busyId, setBusyId] = useState("");
@@ -34,7 +37,9 @@ export function StaffDesk() {
       if (response.status === 401) { setAuthenticated(false); setMessage("Your staff session has expired. Sign in again."); setMessageKind("error"); return; }
       const result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.error || "Could not load registrations.");
-      setRegistrations(result.registrations);
+      setRegistrations(result.registrations || []);
+      setNextCursor(result.nextCursor || null);
+      setHasMore(Boolean(result.hasMore));
       setAppliedQuery(search);
       setMessage("");
     } catch (error) {
@@ -42,6 +47,25 @@ export function StaffDesk() {
       setMessageKind("error");
     } finally { setLoading(false); }
   }, []);
+
+  async function loadMore() {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const params = new URLSearchParams({ q: appliedQuery, cursor: nextCursor });
+      const response = await fetch("/api/staff/registrations?" + params.toString(), { cache: "no-store" });
+      if (response.status === 401) { setAuthenticated(false); setMessage("Your staff session has expired. Sign in again."); setMessageKind("error"); return; }
+      const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || "Could not load more registrations.");
+      setRegistrations((current) => [...current, ...(result.registrations || [])]);
+      setNextCursor(result.nextCursor || null);
+      setHasMore(Boolean(result.hasMore));
+      setMessage("");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "More registrations could not be loaded.");
+      setMessageKind("error");
+    } finally { setLoadingMore(false); }
+  }
 
   useEffect(() => {
     let active = true;
@@ -54,7 +78,7 @@ export function StaffDesk() {
         const response = await fetch("/api/staff/registrations", { cache: "no-store" });
         if (response.status === 401) return;
         const data = await response.json();
-        if (active && response.ok && data.ok) { setAuthenticated(true); setRegistrations(data.registrations || []); }
+        if (active && response.ok && data.ok) { setAuthenticated(true); setRegistrations(data.registrations || []); setNextCursor(data.nextCursor || null); setHasMore(Boolean(data.hasMore)); }
         else if (active && !response.ok) setMessage(data.error || "The guest list could not be loaded.");
       })
       .catch(() => { if (active) { setMessage("Could not connect to the staff desk. Check your connection and retry."); setMessageKind("error"); } })
@@ -152,7 +176,8 @@ export function StaffDesk() {
           </article>
         ))}
       </div>
-      <p className="staff-footnote">This workspace displays up to 30 records per search. Use a name, phone number or reference to find a specific guest.</p>
+      {hasMore && <div className="staff-load-more"><button className="button button-outline" onClick={loadMore} disabled={loadingMore}>{loadingMore ? "Loading more…" : "Load more guests"}</button></div>}
+      <p className="staff-footnote">Showing {registrations.length} loaded records. Use a name, phone number or reference to search the full register; load more to continue through the list.</p>
     </div>
   );
 }
