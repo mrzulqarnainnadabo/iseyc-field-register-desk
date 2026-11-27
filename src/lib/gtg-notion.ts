@@ -17,6 +17,15 @@ function normalizeId(value: string) { return value.replace(/-/g, "").toLowerCase
 export function registrationDbId() { return env("NOTION_REGISTRATIONS_DB_ID"); }
 export function feedbackDbId() { return env("NOTION_FEEDBACK_DB_ID"); }
 
+export async function canAccessRegistrationDatabase(): Promise<boolean> {
+  try {
+    await notion().databases.query({ database_id: registrationDbId(), page_size: 1 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function createRegistration(input: RegistrationInput, channel: "Online" | "Walk-in" = "Online") {
   const api = notion();
   const databaseId = registrationDbId();
