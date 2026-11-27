@@ -82,28 +82,23 @@ export async function createFeedback(input: FeedbackInput) {
   return { duplicate: false };
 }
 
-export async function searchRegistrations(query: string) {
+export async function searchRegistrations(query: string, cursor?: string) {
   const api = notion();
   const databaseId = registrationDbId();
   const clean = query.trim();
-  const response = clean
-    ? await api.databases.query({
-        database_id: databaseId,
-        filter: { or: [
-          { property: "Name", title: { contains: clean } },
-          { property: "Phone", phone_number: { equals: clean } },
-          { property: "Client Submission ID", rich_text: { contains: clean } },
-        ] },
-        page_size: 30,
-        sorts: [{ timestamp: "created_time", direction: "descending" }],
-      })
-    : await api.databases.query({
-        database_id: databaseId,
-        page_size: 30,
-        sorts: [{ timestamp: "created_time", direction: "descending" }],
-      });
+  const response = await api.databases.query({
+    database_id: databaseId,
+    ...(clean ? { filter: { or: [
+      { property: "Name", title: { contains: clean } },
+      { property: "Phone", phone_number: { equals: clean } },
+      { property: "Client Submission ID", rich_text: { contains: clean } },
+    ] } } : {}),
+    page_size: 30,
+    ...(cursor ? { start_cursor: cursor } : {}),
+    sorts: [{ timestamp: "created_time", direction: "descending" }],
+  });
 
-  return response.results.flatMap((page) => {
+  const registrations = response.results.flatMap((page) => {
     if (!("properties" in page)) return [];
     const properties = page.properties as Record<string, any>;
     const text = (value: any) => value?.map((part: any) => part.plain_text).join("") || "";
@@ -118,6 +113,7 @@ export async function searchRegistrations(query: string) {
       checkedInAt: properties["Checked In At"]?.date?.start || null,
     }];
   });
+  return { registrations, hasMore: response.has_more, nextCursor: response.next_cursor };
 }
 
 export async function markRegistrationCheckedIn(pageId: string) {
