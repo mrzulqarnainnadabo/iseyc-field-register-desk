@@ -58,13 +58,13 @@ The preview acceptance report recorded successful creation, idempotent replay, d
 
 - Repository: `mrzulqarnainnadabo/iseyc-field-register-desk` (public).
 - Review branch: `feat/gtg-second-edition-review-build`.
-- Current head before this documentation reconciliation: `d7a3db8c989cc96e82fb0d11623f84c5a56ceb4b`.
+- The review branch includes documentation-only release reconciliation commits; consult PR #2 for the exact current head. Application source remains unchanged from the verified preview build.
 - Pull request: #2, open and unmerged; base `feat/gtg-second-edition-continuation`.
 - GitHub Actions run `46061984501` completed successfully on the stated head. All 12 steps passed: dependency audit/security threshold, typecheck, lint, production build, isolated test server and Playwright browser QA.
 - There are no outstanding inline review threads and no submitted PR reviews at the time of the latest check.
 - The preview deployment was built from `6acb7f06ee795b506ac5cb300c29afb88f4e233f`. The commits after that preview build are documentation-only; the application code matches the current review branch application code.
 
-A documentation-only reconciliation commit is being added to this branch to remove stale claims about the Notion token being absent and the preview being unconfigured. This does not change application code or deployment behavior. Re-run CI after the documentation commit.
+The README and engineering notes have been reconciled with the independently verified deployment and database state. These are documentation-only changes and do not alter application code or deployment behavior. Re-run CI after the final documentation commit.
 
 ## Dedicated Vercel project
 
