@@ -13,7 +13,7 @@ export default function StaffPage() {
           <Image src="/brand/empower-with-hafsat.jpg" alt="Empower with Hafsat" width={60} height={60} priority className="brand-logo" />
           <span className="brand-wording">
             <span className="brand-name">Empower with Hafsat</span>
-            <span className="brand-caption">From Girlhood to Greatness · Second Edition</span>
+            <span className="brand-caption">From girlhood to greatness</span>
           </span>
         </Link>
         <Link className="quiet-link" href="/">Return to event site <span aria-hidden="true">↗</span></Link>
