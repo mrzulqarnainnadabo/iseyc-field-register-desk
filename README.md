@@ -68,8 +68,9 @@ The `NOTION_API_KEY` environment variable exists in the standalone Vercel projec
 - Canonical domain: `https://fromgirlhoodtogreatness.vercel.app`.
 - Verified preview: `https://from-girlhood-to-greatness-rggjfcmkz.vercel.app`.
 - Preview deployment `dpl_8mUJRxYgWoDCr2UdjBtHBr13gN2F` is READY and was built from commit `6acb7f06ee795b506ac5cb300c29afb88f4e233f`.
-- Current review-branch head is `d7a3db8c989cc96e82fb0d11623f84c5a56ceb4b`. The commits after the preview build are documentation-only; application code matches the preview.
+- The review branch has advanced through documentation-only release reconciliation commits. The application code still matches the preview build; consult PR #2 for the exact current head.
 - Preview Notion health is connected. The canonical production domain currently returns HTTP 503 from `/api/health/notion` and `configured: false` from `/api/register`.
+- The canonical production homepage returns HTTP 200, but its canonical metadata, robots sitemap reference and sitemap URL still point to the old deployment hostname. A fresh production build must regenerate these values using the configured canonical `NEXT_PUBLIC_SITE_URL`.
 - The standalone Vercel project is paused (`live: false`). Do not unpause or promote it until the owner explicitly approves final deployment.
 - PR #2 remains open and unmerged. Main has not been changed.
 
