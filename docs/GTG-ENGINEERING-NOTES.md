@@ -101,6 +101,7 @@ Preview:
 Canonical production domain:
 - `/api/health/notion`: HTTP 503, `configured: false`.
 - `/api/register`: HTTP 200, `configured: false`.
+- Canonical production homepage: HTTP 200, but its canonical link, robots sitemap reference and sitemap location point to the old deployment hostname `from-girlhood-to-greatness-d466lffbo.vercel.app`, not `https://fromgirlhoodtogreatness.vercel.app`. The preview's canonical metadata correctly points to the canonical domain. This is consistent with the production deployment having been built before the canonical `NEXT_PUBLIC_SITE_URL` was applied; a fresh production build must regenerate and verify these metadata values.
 
 Production is therefore not operational for registrations or feedback. A working preview does not prove that production has loaded the same integration. Production environment loading and deployment must be resolved and re-tested before release.
 
