@@ -1,174 +1,82 @@
-# ISEYC Field Register Desk
+# From Girlhood to Greatness — Second Edition
 
-> Quick reference for this deployment (Notion DB IDs, links, deploy checklist):
-> see [SETUP.md](./SETUP.md).
+A standalone event website and restricted event-day registration/check-in workspace for **Empower with Hafsat**.
 
-An intake desk — not a public website — used to:
+## Approved event information
 
-1. **Before 18 September 2026:** collect RSVPs for the Tirngan Sickle Cell Foundation
-   5th Anniversary Dinner & Recognition Ceremony ("Five Years of Breaking Cycles and
-   Building Futures").
-2. **Ongoing:** keep a field/activity register of everyone who takes part in a
-   programme activity (outreach visits, counseling sessions, genotype testing days,
-   and the anniversary event itself).
+- **Theme:** Accepting My Greatness — From Becoming Her to Believing in Her.
+- **Organiser:** Empower with Hafsat
+- **Partner:** Baytal Rihaa
+- **Systems partner:** Initiative for Sustainable Evolution for Youth and Community (ISEYC)
+- **Date/time:** Sunday, 29 November 2026 · 1:00 PM
+- **Venue:** Yakubu Hub, Surami Road, U/Rimi, Kaduna, Nigeria
+- **Audience:** Women aged 20 and above
 
-Notion is the system of record. This app is the intake surface staff and invitees use
-on a phone; every submission writes straight into the relevant Notion database.
+This is an independent event platform. ISEYC is the systems partner, not the event organiser. Do not invent speakers, programme items, attendance figures or endorsements.
 
-**This is not a medical records system.** There are no diagnosis fields, no clinical
-notes, and no health data beyond a short, optional "support received" tag for programme
-reporting.
+## Application surfaces
 
----
+- `/` — public event information and registration.
+- `/feedback` — anonymous post-event feedback.
+- `/staff` — restricted staff access, guest search, filters, cursor pagination, check-in, walk-in capture, CSV export and sign-out.
+- `/api/health/notion` — Notion integration health.
+- `/api/register`, `/api/feedback`, `/api/staff/*` — server routes.
 
-## How it works
+## Design and performance
 
-- Two tabs, one desk: **Anniversary RSVP** and **Field participation**.
-- The RSVP tab defaults to open until the event date; after that the desk defaults to
-  the Field participation tab (staff can still switch tabs manually at any time).
-- All writes happen server-side, inside Next.js API routes. The Notion integration
-  token is never sent to the browser.
-- Field participation can optionally be locked behind a shared staff passcode
-  (`REGISTER_PASSCODE`). RSVP stays open to invitees regardless.
+- Next.js 15, React 19, TypeScript, Tailwind CSS, Zod and the Notion SDK.
+- Uses the original Empower with Hafsat brand asset and a restrained plum/rose/gold palette.
+- The hero is a lightweight typographic campaign composition; it does not load the retired generated campaign image or require its external image origin.
+- CSS-only entrance and micro-interactions respect `prefers-reduced-motion`.
+- No additional animation framework or heavy visual dependency.
 
-## Stack
+## Local setup
 
-- Next.js 14 (App Router) + TypeScript
-- Tailwind CSS
-- `@notionhq/client` (official Notion SDK)
-- Zod for server-side validation
+1. Use Node.js 20 or newer.
+2. Copy `.env.example` to `.env.local`.
+3. Use the dedicated GTG Notion integration and share the two GTG databases with it.
+4. Configure `NOTION_API_KEY`, `NOTION_REGISTRATIONS_DB_ID`, `NOTION_FEEDBACK_DB_ID`, `REGISTER_PASSCODE`, `SESSION_SECRET` (32+ characters) and `NEXT_PUBLIC_SITE_URL`.
+5. Run `npm ci`, then `npm run dev`.
 
----
+Do not reuse the ISEYC × TIRNGAN production databases or credentials. Never commit `.env.local` or expose server credentials in client code.
 
-## Notion setup
+## Verification and release candidate
 
-Create **three** databases in Notion and connect an internal integration to all three
-(Notion → Settings → Connections → your integration → share each database with it).
+The current review branch and exact release-candidate commit are tracked in [PR #2](https://github.com/mrzulqarnainnadabo/iseyc-field-register-desk/pull/2). The current preview URL and CI run are recorded there after each final candidate update.
 
-### Database A — Event RSVPs
+The current acceptance cycle includes:
+- Automated GitHub Actions checks: dependency/security threshold, typecheck, lint, production build, isolated server and Playwright browser QA.
+- Live preview checks: homepage, feedback, staff, registration configuration and Notion health.
+- Live API regression: registration write/replay, duplicate-person rejection, invalid registration, anonymous feedback write/replay, invalid staff login and unauthenticated staff-list rejection.
+- Synthetic registration and feedback records created for the regression were moved to Notion Trash. Follow-up Notion search returned no matches for those synthetic submission IDs. No genuine attendee records were touched.
 
-| Property | Type |
-|---|---|
-| `Name` | Title |
-| `Phone` | Phone number |
-| `Email` | Email (optional) |
-| `Role` | Select: Guest, Caregiver, Warrior, Volunteer, Staff, Partner, Media, Other |
-| `Organisation` | Text (optional) |
-| `Attendance` | Select: Will attend, Maybe, Cannot attend |
-| `Plus ones` | Number |
-| `Dietary or access note` | Text (optional) |
-| `Consent` | Checkbox |
-| `Source` | Select: Register Desk, WhatsApp, Referral, Other |
-| `Submitted at` | Created time |
+Automated browser QA includes a 360px mobile-width overflow check. Manual review on a physical mobile device and desktop remains an owner acceptance step.
 
-### Database B — Activities
+## Security and operational limitations
 
-| Property | Type |
-|---|---|
-| `Name` | Title |
-| `Date` | Date |
-| `Type` | Select: Genotype testing, Medication support, Counseling, Community outreach, School/hospital visit, Caregiver session, Anniversary event, Other |
-| `Location` | Text |
-| `Notes` | Text (optional) |
-| `Recorded by` | Text |
+- Registration and feedback use server-side validation and report success only after the Notion write succeeds.
+- Staff routes require signed sessions; cookies use `httpOnly`, `sameSite=strict` and `secure` in production.
+- Rate limiting is bounded but process-local, not distributed.
+- Duplicate name/phone protection is query-before-create and is not atomic under concurrent requests.
+- Staff access uses a shared passcode, not individual staff identities.
+- Offline registration/check-in queueing is not implemented.
+- CSV export covers the currently loaded page, not every database row.
 
-### Database C — Participants
+## Deployment status — 28 November 2026
 
-| Property | Type |
-|---|---|
-| `Name` | Title |
-| `Role` | Select: Warrior (living with SCD), Caregiver, Volunteer, Staff, Partner, Community member, Other |
-| `Phone` | Phone number (optional) |
-| `Age group` | Select: Child, Youth, Adult, Prefer not to say |
-| `Support received` | Multi-select: Genotype test, Medication, Counseling, Education only, Recognition, Anniversary attendance, Other |
-| `Consent` | Checkbox |
-| `Notes` | Text (optional) |
-| `Activity` | Relation → Activities database |
-| `Submitted at` | Created time |
+- Dedicated Vercel project: `from-girlhood-to-greatness`.
+- Canonical domain: `https://fromgirlhoodtogreatness.vercel.app`.
+- The production domain remains on the older deployment: `/api/register` reports `configured: false`; `/api/health/notion` returns HTTP 503 and Notion unconfigured.
+- The standalone Vercel project remains paused (`live: false`).
+- The existing `NOTION_API_KEY` is encrypted but still has `config` visibility and Vercel's `readable-secret` warning. Change its visibility to **Sensitive** in Vercel, preserving the existing value and Preview + Production targets. Do not rotate or expose it.
+- `REGISTER_PASSCODE` and `SESSION_SECRET` are already Sensitive.
+- PR #2 remains open and unmerged. The production domain has not been promoted, redeployed or unpaused.
 
-Property names must match **exactly** (including capitalisation and spacing) — the app
-writes to these by name.
+## Remaining owner-only release gates
 
----
+1. Change the existing `NOTION_API_KEY` to Sensitive visibility in Vercel without rotating or exposing its value.
+2. Complete authenticated staff acceptance using the owner-held passcode: login, search, filters, pagination, walk-in, check-in, CSV and sign-out. The passcode must not be shared in chat or logs.
+3. Complete manual visual review on a physical mobile device and desktop.
+4. After those gates, issue a separate explicit production deployment instruction.
 
-## Environment variables
-
-Copy `.env.example` to `.env.local` for local development:
-
-```
-NOTION_API_KEY=secret_xxx
-NOTION_RSVP_DB_ID=dcea4593a1054d5aab80ea06a38ef503
-NOTION_ACTIVITIES_DB_ID=d53844be1a8340eb8f60e54223fa4613
-NOTION_PARTICIPANTS_DB_ID=d156bdbc4f6d4650ae0be757fec0b002
-REGISTER_PASSCODE=
-```
-
-The three database IDs above are fixed for this programme's Notion workspace (see
-[SETUP.md](./SETUP.md) for the direct Notion links). Only `NOTION_API_KEY` — the
-integration secret — is yours to fill in.
-
-- `NOTION_API_KEY` — from an internal integration at notion.so/my-integrations.
-- The three DB IDs are already set in `.env.example`.
-- `REGISTER_PASSCODE` is optional. If set, staff must enter it before using the Field
-  participation tab. Leave blank to keep that tab open too.
-
----
-
-## Local development
-
-```bash
-npm install
-cp .env.example .env.local   # then fill in your values
-npm run dev
-```
-
-Visit `http://localhost:3000`. Check `/api/health` to confirm which env vars are
-detected (it never returns secret values, only booleans).
-
----
-
-## Deploying to Vercel
-
-1. Push this repo to GitHub.
-2. In Vercel, "Add New Project" → import the repo.
-3. Under **Settings → Environment Variables**, add the same variables as `.env.example`
-   for the Production (and Preview, if used) environment.
-4. Deploy. Vercel will run `next build` automatically.
-5. Visit `/api/health` on the deployed URL to confirm `notionConfigured: true`.
-
-No database, auth provider, or extra infrastructure is required — Notion is the only
-backing store.
-
----
-
-## What this app deliberately does not do
-
-- No user accounts or login system (only an optional shared staff passcode)
-- No PDF certificate generation
-- No admin analytics dashboard
-- No photo upload
-- No chat, blog, or multi-language support
-- No prices or donation checkout
-- No diagnosis, clinical notes, or other medical data
-
-## Project structure
-
-```
-src/
-  app/
-    page.tsx              Main Register Desk UI (both tabs)
-    layout.tsx
-    globals.css
-    api/
-      rsvp/route.ts        POST — create an RSVP record
-      activity/route.ts    POST — create an activity
-      participant/route.ts POST — create a participant, linked to an activity
-      activities/route.ts  GET  — list recent activities for the dropdown
-      health/route.ts      GET  — config status (no secrets)
-  components/              Header, Footer, EventStrip, Tabs, forms, UI primitives
-  lib/
-    constants.ts           Event facts + Notion select-option lists
-    validation.ts           Zod schemas
-    notion.ts               Server-only Notion client + page builders
-    passcode.ts             Server-only staff passcode check
-```
+The existing ISEYC × TIRNGAN application, data, credentials and domain must remain untouched.

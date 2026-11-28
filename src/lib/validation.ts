@@ -87,9 +87,7 @@ export const communityResponseSchema = z.object({
   supportNeeded: z.array(z.enum(SUPPORT_NEEDED)).default([]),
 
   // Consent
-  consent: z.literal(true, {
-    errorMap: () => ({ message: "Consent is required to save this record" }),
-  }),
+  consent: z.literal(true, { error: "Consent is required to save this record" }),
 
   // Optional follow-up pathway
   followUpRequested: z.boolean().default(false),
@@ -130,8 +128,6 @@ export const participantSchema = z.object({
   ageGroup: z.enum(AGE_GROUPS).optional(),
   supportReceived: z.array(z.enum(SUPPORT_RECEIVED)).min(1, "Select at least one"),
   notes: z.string().trim().max(300).optional().or(z.literal("")),
-  consent: z.literal(true, {
-    errorMap: () => ({ message: "Consent is required to save this record" }),
-  }),
+  consent: z.literal(true, { error: "Consent is required to save this record" }),
 });
 export type ParticipantInput = z.infer<typeof participantSchema>;
