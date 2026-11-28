@@ -3,7 +3,9 @@ import { test, expect } from "@playwright/test";
 test("public event page presents the approved event facts", async ({ page }) => {
   const response = await page.goto("/");
   const contentSecurityPolicy = response?.headers()["content-security-policy"] || "";
-  expect(contentSecurityPolicy).toContain("https://d8j0ntlcm91z4.cloudfront.net");
+  expect(contentSecurityPolicy).not.toContain("https://d8j0ntlcm91z4.cloudfront.net");
+  await expect(page.locator(".hero-artwork")).toBeVisible();
+  await expect(page.locator('img[src*="cloudfront.net"]')).toHaveCount(0);
   await expect(page).toHaveTitle(/From Girlhood to Greatness/);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.getByRole("heading", { name: /From Girlhood.*to Greatness/i })).toBeVisible();
@@ -23,8 +25,9 @@ test("public event page presents the approved event facts", async ({ page }) => 
 });
 
 test("mobile layout has no horizontal overflow", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+  await page.setViewportSize({ width: 360, height: 800 });
   await page.goto("/");
+  await expect(page.locator(".hero-artwork")).toBeVisible();
   const widths = await page.evaluate(() => ({
     viewport: document.documentElement.clientWidth,
     document: document.documentElement.scrollWidth,
