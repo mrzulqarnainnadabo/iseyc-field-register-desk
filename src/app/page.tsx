@@ -2,9 +2,6 @@ import Image from "next/image";
 import { RegistrationForm } from "@/components/RegistrationForm";
 import { GTG } from "@/lib/gtg-config";
 
-const heroImage =
-  "https://d8j0ntlcm91z4.cloudfront.net/user_3ECCa3WCGt9X7Z7sOvBpw2rTrQ1/hf_20261127_153730_07d9f3ce-7f31-4eee-af44-87abfd68a431.png";
-
 export default function HomePage() {
   return (
     <>
@@ -53,15 +50,19 @@ export default function HomePage() {
             </div>
           </div>
 
-          <figure className="hero-image-wrap">
-            {/* The commissioned campaign image is generated for this event; the organiser's logo remains a separate, original asset. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="hero-image" src={heroImage} alt="Three confident Nigerian women standing together in a warm, light-filled space." fetchPriority="high" />
-            <figcaption className="hero-image-note">
-              <span>THE SECOND EDITION</span>
-              <span>29.11.26</span>
+          <figure className="hero-image-wrap hero-artwork" aria-label="Typographic event artwork for the second edition">
+            <div className="artwork-topline"><span>FROM GIRLHOOD TO GREATNESS</span><span>02</span></div>
+            <div className="artwork-core">
+              <span className="artwork-kicker">THE SECOND EDITION</span>
+              <span className="artwork-number" aria-hidden="true">02</span>
+              <p className="artwork-statement">Accepting my<br /><em>greatness.</em></p>
+              <span className="artwork-rule" />
+              <p className="artwork-theme">From becoming her to believing in her.</p>
+            </div>
+            <figcaption className="artwork-bottomline">
+              <span>KADUNA, NIGERIA</span>
+              <span>29 NOVEMBER 2026 · 1 PM</span>
             </figcaption>
-            <div className="hero-image-stamp" aria-hidden="true">Her next<br />chapter.</div>
           </figure>
           <span className="hero-side-note" aria-hidden="true">A gathering for women aged 20 and above</span>
         </section>
@@ -147,7 +148,7 @@ export default function HomePage() {
       <footer className="site-footer">
         <a className="footer-brand" href="#top">
           <Image src="/brand/empower-with-hafsat.jpg" alt="" width={42} height={42} />
-          <span>From Girlhood <em>to Greatness</em></span>
+          <span className="footer-brand-copy"><strong>Empower with Hafsat</strong><small>From girlhood to greatness</small></span>
         </a>
         <p>Second Edition · Kaduna, Nigeria · 2026</p>
         <a href="/staff">Staff access</a>
