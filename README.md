@@ -12,19 +12,23 @@ A standalone event website and restricted event-day registration/check-in worksp
 - **Venue:** Yakubu Hub, Surami Road, U/Rimi, Kaduna, Nigeria
 - **Audience:** Women aged 20 and above
 
-This is an independent event platform. ISEYC is the registration and documentation systems partner, not the event organiser. No unapproved speakers or programme details are invented.
+This is an independent event platform. ISEYC is the systems partner, not the event organiser. Do not invent speakers, programme items, attendance figures or endorsements.
 
-## Application
+## Application surfaces
 
-- `/` — public event website and registration.
-- `/staff` — restricted staff sign-in, guest search, cursor pagination, attendance filters, check-in, walk-in capture and CSV export of loaded results.
-- `/feedback` — anonymous feedback.
+- `/` — public event information and registration.
+- `/feedback` — anonymous post-event feedback.
+- `/staff` — restricted staff access, guest search, filters, cursor pagination, check-in, walk-in capture, CSV export and sign-out.
 - `/api/health/notion` — Notion integration health.
 - `/api/register`, `/api/feedback`, `/api/staff/*` — server routes.
 
-## Stack
+## Design and performance
 
-Next.js 15, React 19, TypeScript, Tailwind CSS, Zod and the Notion SDK.
+- Next.js 15, React 19, TypeScript, Tailwind CSS, Zod and the Notion SDK.
+- Uses the original Empower with Hafsat brand asset and a restrained plum/rose/gold palette.
+- The hero is a lightweight typographic campaign composition; it does not load the retired generated campaign image or require its external image origin.
+- CSS-only entrance and micro-interactions respect `prefers-reduced-motion`.
+- No additional animation framework or heavy visual dependency.
 
 ## Local setup
 
@@ -32,61 +36,47 @@ Next.js 15, React 19, TypeScript, Tailwind CSS, Zod and the Notion SDK.
 2. Copy `.env.example` to `.env.local`.
 3. Use the dedicated GTG Notion integration and share the two GTG databases with it.
 4. Configure `NOTION_API_KEY`, `NOTION_REGISTRATIONS_DB_ID`, `NOTION_FEEDBACK_DB_ID`, `REGISTER_PASSCODE`, `SESSION_SECRET` (32+ characters) and `NEXT_PUBLIC_SITE_URL`.
-5. Run `npm ci`.
-6. Run `npm run dev`.
+5. Run `npm ci`, then `npm run dev`.
 
 Do not reuse the ISEYC × TIRNGAN production databases or credentials. Never commit `.env.local` or expose server credentials in client code.
 
-## Verification
+## Verification and release candidate
 
-The review-branch GitHub Actions run `46061984501` on commit `d7a3db8c989cc96e82fb0d11623f84c5a56ceb4b` completed successfully. All 12 steps passed, including dependency security checks, typecheck, lint, production build and Playwright browser QA.
+The current review branch and exact release-candidate commit are tracked in [PR #2](https://github.com/mrzulqarnainnadabo/iseyc-field-register-desk/pull/2). The current preview URL and CI run are recorded there after each final candidate update.
 
-The preview deployment was independently checked:
-- Public event page: HTTP 200.
-- `/api/register`: `configured: true`.
-- `/api/health/notion`: HTTP 200; registrations and feedback databases connected.
-- Synthetic registration and feedback submissions were accepted through the preview and written to the dedicated event databases.
-- Duplicate replay and validation behavior passed.
-- Invalid staff login and unauthenticated staff API requests were rejected.
+The current acceptance cycle includes:
+- Automated GitHub Actions checks: dependency/security threshold, typecheck, lint, production build, isolated server and Playwright browser QA.
+- Live preview checks: homepage, feedback, staff, registration configuration and Notion health.
+- Live API regression: registration write/replay, duplicate-person rejection, invalid registration, anonymous feedback write/replay, invalid staff login and unauthenticated staff-list rejection.
+- Synthetic registration and feedback records created for the regression were moved to Notion Trash. Follow-up Notion search returned no matches for those synthetic submission IDs. No genuine attendee records were touched.
 
-Successful authenticated staff operations (correct-passcode login, search, pagination, check-in, walk-in, CSV and logout) have not yet been completed. Manual visual review on physical mobile and desktop devices remains outstanding.
+Automated browser QA includes a 360px mobile-width overflow check. Manual review on a physical mobile device and desktop remains an owner acceptance step.
 
-## Security and known limitations
+## Security and operational limitations
 
 - Registration and feedback use server-side validation and report success only after the Notion write succeeds.
-- Duplicate protection is query-before-create and is not atomic under concurrent requests.
+- Staff routes require signed sessions; cookies use `httpOnly`, `sameSite=strict` and `secure` in production.
 - Rate limiting is bounded but process-local, not distributed.
-- Staff access uses a shared passcode and does not provide individual staff identities.
+- Duplicate name/phone protection is query-before-create and is not atomic under concurrent requests.
+- Staff access uses a shared passcode, not individual staff identities.
 - Offline registration/check-in queueing is not implemented.
 - CSV export covers the currently loaded page, not every database row.
-
-The `NOTION_API_KEY` environment variable exists in the standalone Vercel project but is still marked with `config` visibility and a `readable-secret` security warning. It must be changed to Sensitive/secret visibility before production release. `REGISTER_PASSCODE` and `SESSION_SECRET` are already Sensitive.
 
 ## Deployment status — 28 November 2026
 
 - Dedicated Vercel project: `from-girlhood-to-greatness`.
 - Canonical domain: `https://fromgirlhoodtogreatness.vercel.app`.
-- Verified preview: `https://from-girlhood-to-greatness-rggjfcmkz.vercel.app`.
-- Preview deployment `dpl_8mUJRxYgWoDCr2UdjBtHBr13gN2F` is READY and was built from commit `6acb7f06ee795b506ac5cb300c29afb88f4e233f`.
-- The review branch has advanced through documentation-only release reconciliation commits. The application code still matches the preview build; consult PR #2 for the exact current head.
-- Preview Notion health is connected. The canonical production domain currently returns HTTP 503 from `/api/health/notion` and `configured: false` from `/api/register`.
-- The canonical production homepage returns HTTP 200, but its canonical metadata, robots sitemap reference and sitemap URL still point to the old deployment hostname. A fresh production build must regenerate these values using the configured canonical `NEXT_PUBLIC_SITE_URL`.
-- The standalone Vercel project is paused (`live: false`). Do not unpause or promote it until the owner explicitly approves final deployment.
-- PR #2 remains open and unmerged. Main has not been changed.
+- The production domain remains on the older deployment: `/api/register` reports `configured: false`; `/api/health/notion` returns HTTP 503 and Notion unconfigured.
+- The standalone Vercel project remains paused (`live: false`).
+- The existing `NOTION_API_KEY` is encrypted but still has `config` visibility and Vercel's `readable-secret` warning. Change its visibility to **Sensitive** in Vercel, preserving the existing value and Preview + Production targets. Do not rotate or expose it.
+- `REGISTER_PASSCODE` and `SESSION_SECRET` are already Sensitive.
+- PR #2 remains open and unmerged. The production domain has not been promoted, redeployed or unpaused.
 
-Three labelled synthetic QA submissions created through preview acceptance testing were moved to Notion Trash after the owner explicitly authorized cleanup. Their exact submission IDs were re-queried in the active registrations and feedback data sources after deletion; both queries returned zero active matches. No genuine attendee records were touched:
-- `GTG-TEST-1795857587-d2fd8d04` — QA Test Guest Alpha
-- `GTG-TEST-1795857613-CLEANUP` — QA Test Guest Beta Cleanup
-- `GTG-FB-1795857595-b473badb` — anonymous feedback QA record
+## Remaining owner-only release gates
 
-## Remaining release gates
-
-1. Change `NOTION_API_KEY` visibility to Sensitive/secret in Vercel without rotating or exposing its value.
-2. Configure and verify the production deployment's Notion integration; production currently reports Notion as unconfigured.
-3. Complete authenticated staff acceptance using the owner-held passcode, without sharing it in chat or logs.
-4. Review the three synthetic records and obtain authorization before moving those exact records to Trash.
-5. Complete manual visual QA on mobile and desktop.
-6. Confirm the intended production environment variables and run final acceptance against the exact release candidate.
-7. Obtain the owner's explicit final deployment instruction before unpausing, promoting, merging or assigning production traffic.
+1. Change the existing `NOTION_API_KEY` to Sensitive visibility in Vercel without rotating or exposing its value.
+2. Complete authenticated staff acceptance using the owner-held passcode: login, search, filters, pagination, walk-in, check-in, CSV and sign-out. The passcode must not be shared in chat or logs.
+3. Complete manual visual review on a physical mobile device and desktop.
+4. After those gates, issue a separate explicit production deployment instruction.
 
 The existing ISEYC × TIRNGAN application, data, credentials and domain must remain untouched.
