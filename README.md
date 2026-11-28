@@ -74,7 +74,7 @@ The `NOTION_API_KEY` environment variable exists in the standalone Vercel projec
 - The standalone Vercel project is paused (`live: false`). Do not unpause or promote it until the owner explicitly approves final deployment.
 - PR #2 remains open and unmerged. Main has not been changed.
 
-Three labelled synthetic QA submissions are currently present in the live GTG databases. They must be checked and moved to Trash only with explicit owner authorization:
+Three labelled synthetic QA submissions created through preview acceptance testing were moved to Notion Trash after the owner explicitly authorized cleanup. Their exact submission IDs were re-queried in the active registrations and feedback data sources after deletion; both queries returned zero active matches. No genuine attendee records were touched:
 - `GTG-TEST-1795857587-d2fd8d04` — QA Test Guest Alpha
 - `GTG-TEST-1795857613-CLEANUP` — QA Test Guest Beta Cleanup
 - `GTG-FB-1795857595-b473badb` — anonymous feedback QA record
