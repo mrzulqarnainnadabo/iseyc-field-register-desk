@@ -12,7 +12,7 @@ export default function FeedbackPage() {
           <Image src="/brand/empower-with-hafsat.jpg" alt="Empower with Hafsat" width={58} height={58} priority className="brand-logo" />
           <span className="brand-wording">
             <span className="brand-name">Empower with Hafsat</span>
-            <span className="brand-caption">From Girlhood to Greatness · Second Edition</span>
+            <span className="brand-caption">From girlhood to greatness</span>
           </span>
         </Link>
         <Link className="quiet-link" href="/">Event home <span aria-hidden="true">↗</span></Link>
