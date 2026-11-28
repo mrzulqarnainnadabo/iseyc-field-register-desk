@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   twitter: { card: "summary", title: "From Girlhood to Greatness — Second Edition", description: GTG.theme },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 5, themeColor: "#F8E5E9" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 5, themeColor: "#FFF9F7" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="en-NG"><body>{children}</body></html>;
