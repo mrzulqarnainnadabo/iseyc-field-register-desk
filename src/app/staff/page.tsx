@@ -22,7 +22,7 @@ export default function StaffPage() {
       <footer className="site-footer">
         <Link className="footer-brand" href="/">
           <Image src="/brand/empower-with-hafsat.jpg" alt="" width={40} height={40} />
-          <span>From Girlhood <em>to Greatness</em></span>
+          <span className="footer-brand-copy"><strong>Empower with Hafsat</strong><small>From girlhood to greatness</small></span>
         </Link>
         <p>Restricted event operations</p>
       </footer>
