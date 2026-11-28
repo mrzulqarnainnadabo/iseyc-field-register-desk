@@ -25,7 +25,7 @@ export default function FeedbackPage() {
       </section>
       <footer className="feedback-footer">
         <Image src="/brand/empower-with-hafsat.jpg" alt="" width={36} height={36} />
-        <span>Empower with Hafsat · From Girlhood to Greatness</span>
+        <span><span className="footer-brand-copy"><strong>Empower with Hafsat</strong><small>From girlhood to greatness</small></span></span>
       </footer>
     </main>
   );
