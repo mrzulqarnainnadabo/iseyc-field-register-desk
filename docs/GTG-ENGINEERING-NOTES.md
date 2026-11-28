@@ -7,12 +7,11 @@
 - Organiser: Empower with Hafsat
 - Partner: Baytal Rihaa
 - Systems partner: Initiative for Sustainable Evolution for Youth and Community (ISEYC)
-- Date: Sunday, 29 November 2026
-- Time: 1:00 PM
+- Date/time: Sunday, 29 November 2026 · 1:00 PM
 - Venue: Yakubu Hub, Surami Road, U/Rimi, Kaduna, Nigeria
 - Audience: Women aged 20 and above
 
-No speaker names, programme details, attendance figures or endorsements are invented.
+The platform is independent. ISEYC is the registration/documentation systems partner, not the event organiser. No unapproved speakers, programme details, attendance figures or endorsements are invented.
 
 ## Current implementation
 
@@ -22,7 +21,7 @@ The staff desk in `src/components/StaffDesk.tsx` and `src/app/staff/staff.css` s
 
 Server routes include `/api/staff/login`, `/api/staff/registrations`, `/api/staff/check-in`, `/api/staff/walk-in`, `/api/staff/logout`, public registration and anonymous feedback. Notion is the persistence layer.
 
-The supplied Empower with Hafsat logo asset is `public/brand/empower-with-hafsat.jpg`. No unapproved speakers or programme items are displayed.
+The supplied Empower with Hafsat logo asset is `public/brand/empower-with-hafsat.jpg`. The event hero campaign image is separate from the organiser logo.
 
 ## Data and security behavior
 
@@ -33,40 +32,39 @@ The supplied Empower with Hafsat logo asset is `public/brand/empower-with-hafsat
 - Login, registration and feedback rate limits use bounded process-local in-memory tracking. They are not distributed across serverless instances.
 - Staff access uses a shared passcode, not individual officer accounts or per-person attribution.
 - Registration reports success only after the Notion write succeeds. A network interruption does not imply a successful registration.
-- Offline registration/check-in queueing is not implemented. Do not claim offline support.
+- Offline registration/check-in queueing is not implemented.
+- CSV export covers the currently loaded page, not an exhaustive export of every database row.
 
-## Notion workspaces and QA
+## Notion databases and live acceptance records
 
 The dedicated Notion page `From Girlhood to Greatness — Event Operations` contains the live event databases:
-- `GTG 2026 — Registrations`
-- `GTG 2026 — Feedback`
 
-Both production data sources were fetched and their schemas match the application's expected properties. Both were queried and confirmed to contain zero active records at the time of verification.
+- Registrations: `4245db88-ef46-817f-8638-f71e34d26205`
+- Feedback: `4245db88-ef46-81cc-944a-f1cccceba720`
 
-Separate test-only databases remain isolated:
-- `GTG 2026 — QA Sandbox Registrations`
-- `GTG 2026 — QA Sandbox Feedback`
+Their schemas were fetched and match the expected application properties. The source descriptions identify registrations as the source of truth for online registrations and event-day walk-ins, and feedback as anonymous post-event feedback.
 
-Real HTTP requests through the earlier review application were independently read back from the QA databases:
-- Registration creation passed.
-- Replaying the same client submission was recognised as a repeated request.
-- Reusing the same name and phone with a new submission ID was rejected as a duplicate (HTTP 409).
-- Anonymous feedback creation passed.
-- Feedback replay was recognised as repeated.
-- Invalid staff passcode and unauthenticated guest-list, check-in and walk-in requests were rejected (HTTP 401).
+The preview's Notion health endpoint returned HTTP 200 with both databases connected. Actual preview website/API test submissions were written to these live event databases and read back:
 
-Both QA records created for those tests were moved to Notion Trash after verification. The active QA views were checked again and returned zero active records. No production event records were created, updated or deleted.
+- Registration: `GTG-TEST-1795857587-d2fd8d04` — QA Test Guest Alpha.
+- Registration: `GTG-TEST-1795857613-CLEANUP` — QA Test Guest Beta Cleanup; explicitly labelled synthetic test only.
+- Feedback: `GTG-FB-1795857595-b473badb` — anonymous feedback QA record.
 
-The Notion API token has **not** been configured in the standalone Vercel project. The production databases still need to be shared with the dedicated Notion integration whose token is used by the app. The prior QA integration tests do not prove that the new project's integration has access.
+A fresh query of both live data sources confirmed that these three records remain active. They have not been moved to Trash. Do not delete or alter them without explicit owner authorization. No genuine attendee records were identified in this QA set.
+
+The preview acceptance report recorded successful creation, idempotent replay, duplicate-name/phone rejection (HTTP 409), invalid registration rejection (HTTP 400), feedback creation/replay, and rejection of invalid staff credentials and unauthenticated staff APIs.
 
 ## Repository and CI
 
-- Repository: `mrzulqarnainnadabo/iseyc-field-register-desk` (public, as requested).
+- Repository: `mrzulqarnainnadabo/iseyc-field-register-desk` (public).
 - Review branch: `feat/gtg-second-edition-review-build`.
-- Current head: `6acb7f06ee795b506ac5cb300c29afb88f4e233f`.
+- Current head before this documentation reconciliation: `d7a3db8c989cc96e82fb0d11623f84c5a56ceb4b`.
 - Pull request: #2, open and unmerged; base `feat/gtg-second-edition-continuation`.
-- GitHub Actions run `46061696813` (run 164) passed all 12 workflow steps on application commit `d71bbc8acc2e59d95376569c2283dc4579f2e6f3`: dependency audit/security threshold, typecheck, lint, production build and Playwright browser QA.
-- The verified application changes include the canonical event URL fallback and an environment template with no legacy ISEYC database IDs. The later commit updating this engineering note is documentation-only and must retain a passing CI check.
+- GitHub Actions run `46061984501` completed successfully on the stated head. All 12 steps passed: dependency audit/security threshold, typecheck, lint, production build, isolated test server and Playwright browser QA.
+- There are no outstanding inline review threads and no submitted PR reviews at the time of the latest check.
+- The preview deployment was built from `6acb7f06ee795b506ac5cb300c29afb88f4e233f`. The commits after that preview build are documentation-only; the application code matches the current review branch application code.
+
+A documentation-only reconciliation commit is being added to this branch to remove stale claims about the Notion token being absent and the preview being unconfigured. This does not change application code or deployment behavior. Re-run CI after the documentation commit.
 
 ## Dedicated Vercel project
 
@@ -77,39 +75,51 @@ The event has its own Vercel project, separate from the existing ISEYC × TIRNGA
 - Git source: `mrzulqarnainnadabo/iseyc-field-register-desk`
 - Canonical event address: `https://fromgirlhoodtogreatness.vercel.app`
 - Alternate address: `https://from-girlhood-to-greatness.vercel.app`
-- Both domains are verified and attached to this separate project.
-- Project Node.js runtime is set to 22.x.
+- Project Node.js runtime: 22.x.
+- Latest READY preview deployment: `dpl_8mUJRxYgWoDCr2UdjBtHBr13gN2F`, URL `https://from-girlhood-to-greatness-rggjfcmkz.vercel.app`.
+- The preview deployment's Git commit is `6acb7f06ee795b506ac5cb300c29afb88f4e233f`.
+- Vercel project state reports `live: false`; the standalone project remains paused. Do not unpause or promote it without explicit final owner approval.
 
-Vercel environment configuration is partially complete:
-- `NOTION_REGISTRATIONS_DB_ID` — configured to the dedicated live registrations database.
-- `NOTION_FEEDBACK_DB_ID` — configured to the dedicated live feedback database.
-- `REGISTER_PASSCODE` — configured as a sensitive variable for Preview and Production.
-- `SESSION_SECRET` — generated independently and configured as a sensitive variable for Preview and Production.
-- `NEXT_PUBLIC_SITE_URL` — configured to the canonical event domain.
-- `NOTION_API_KEY` — **missing**. This is the remaining required application credential.
+### Environment variables (verified without decrypting secrets)
 
-A preview deployment and a production-target deployment were automatically created by the Git-linked project. The production-target deployment was paused after it was detected serving the incomplete application. The standalone project's custom domains are therefore not currently serving the site. The ISEYC × TIRNGAN project and its production domain were not changed.
+- `NOTION_API_KEY`: present for Preview and Production, but returned as `type: encrypted`, `visibility: config`, with Vercel security issue `readable-secret`. It must be changed to Sensitive/secret visibility before release. Do not rotate or expose its value.
+- `NOTION_REGISTRATIONS_DB_ID`: configured for Preview and Production with the dedicated registrations database ID.
+- `NOTION_FEEDBACK_DB_ID`: configured for Preview and Production with the dedicated feedback database ID.
+- `REGISTER_PASSCODE`: Sensitive for Preview and Production.
+- `SESSION_SECRET`: Sensitive for Preview and Production.
+- `NEXT_PUBLIC_SITE_URL`: configured for Preview and Production as the canonical GTG domain.
 
-The most recent READY preview deployment was built from the current review branch head before the latest environment variables were added. Its Notion health endpoint correctly returned HTTP 503 because `NOTION_API_KEY` is absent. It must be redeployed after the token is configured so the new environment is loaded.
+An attempted API-only visibility change was rejected: the Vercel environment-variable update wrapper does not expose the required `visibility: secret` field, while the underlying API rejects `type: sensitive` without it. The wrapper schema rejects that extra field. This remains an owner dashboard action; do not delete/recreate the variable or rotate its value as a workaround.
 
-The Vercel deployment API returned HTTP 402 with the `api-deployments-free-per-day` limit (retry after 86,400 seconds). Do not retry deployment creation through the same API before the limit resets or the team resolves the quota. The production project remains paused while release prerequisites are incomplete.
+### Live HTTP verification on 28 November 2026
+
+Preview:
+- Homepage: HTTP 200.
+- `/api/register`: HTTP 200, `configured: true`.
+- `/api/health/notion`: HTTP 200, `configured: true`, both databases connected.
+
+Canonical production domain:
+- `/api/health/notion`: HTTP 503, `configured: false`.
+- `/api/register`: HTTP 200, `configured: false`.
+
+Production is therefore not operational for registrations or feedback. A working preview does not prove that production has loaded the same integration. Production environment loading and deployment must be resolved and re-tested before release.
 
 ## Remaining release acceptance requirements
 
-1. Create or select a dedicated Notion integration for the event, share both live event databases with it, and add its API token directly to the standalone Vercel project's `NOTION_API_KEY` environment variable. Do not paste the token into chat or reuse the ISEYC × TIRNGAN production integration.
-2. After the Vercel deployment quota resets or is resolved, create a fresh preview deployment so it loads all configured environment variables.
-3. Verify `/api/health/notion` reports both databases connected; verify the public registration and anonymous feedback routes without leaving test records in the live databases.
-4. Complete a controlled successful staff acceptance test: login, guest search/pagination, walk-in creation, check-in update and sign-out. Do not expose the passcode in logs or chat.
-5. Complete manual visual review on real mobile and desktop devices.
-6. Confirm the release commit and unpause the standalone project only when the public form, backend and staff desk pass acceptance.
-7. Decide whether offline queueing is required; if so, obtain the original implementation/specification or approve a safe, explicit retry/queue design.
-8. Consider distributed rate limiting and atomic duplicate protection before relying on this system for high-concurrency event-day traffic.
+1. In the Vercel dashboard, change the existing `NOTION_API_KEY` visibility to Sensitive/secret, preserving its current value and Preview/Production targets.
+2. Resolve production's unconfigured Notion state. Confirm the production deployment receives the dedicated GTG integration and both correct database IDs; do not reuse ISEYC × TIRNGAN credentials or databases.
+3. Complete successful authenticated staff acceptance using the owner-held passcode: login, guest search, filters, pagination, walk-in creation, check-in update, CSV export and logout. Do not expose the passcode in chat or logs.
+4. Obtain owner authorization to move the three explicitly listed synthetic records to Trash, then verify only those exact IDs were cleaned up. Preserve all genuine attendee records.
+5. Complete manual visual review on physical mobile and desktop devices.
+6. Re-run CI after documentation reconciliation and confirm the exact release commit.
+7. Verify the production environment and actual website form behavior on the final release candidate.
+8. Keep the project paused and PR #2 open/unmerged until the owner gives the final deployment instruction.
 
 ## Git and production safeguards
 
 - Repository visibility remains public as explicitly requested.
 - Review branch: `feat/gtg-second-edition-review-build`.
 - PR base: `feat/gtg-second-edition-continuation`.
-- PR remains open and unmerged; main remains untouched.
-- Existing ISEYC × TIRNGAN production project and its data remain untouched.
-- The new standalone event project is paused until the Notion integration and acceptance checks are complete.
+- PR #2 remains open and unmerged; main remains untouched.
+- Existing ISEYC × TIRNGAN production project, data, credentials and domain remain untouched.
+- The standalone GTG project remains paused pending production configuration and final approval.
