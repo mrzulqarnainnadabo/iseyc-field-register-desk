@@ -54,6 +54,8 @@ A fresh query of both live data sources confirmed that these three records remai
 
 The preview acceptance report recorded successful creation, idempotent replay, duplicate-name/phone rejection (HTTP 409), invalid registration rejection (HTTP 400), feedback creation/replay, and rejection of invalid staff credentials and unauthenticated staff APIs.
 
+On 28 November 2026, after explicit owner authorization, the three synthetic QA records listed below were moved to Notion Trash. Their exact Client Submission IDs were queried again in their respective active data sources; both queries returned zero matches. Only these three identified test records were moved. No genuine attendee data was touched.
+
 ## Repository and CI
 
 - Repository: `mrzulqarnainnadabo/iseyc-field-register-desk` (public).
